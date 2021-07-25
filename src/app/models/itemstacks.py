@@ -33,7 +33,7 @@ class Potion(models.Model):
     def __str__(self):
         if modifiers := PotionModifierToPotion.objects.filter(potion=self):
             modifier_labels = [str(m.potion_modifier) for m in modifiers]
-            return f"{self.potion_type} ({' | '.join(modifier_labels)})"
+            return f"{' '.join(modifier_labels)} {self.potion_type}"
 
         return f"{self.potion_type}"
 

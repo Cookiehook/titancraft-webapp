@@ -2,7 +2,7 @@
 {% block content %}
 <div align="center">
     <form action="{% url 'get_all_stock' %}" method="get">
-        <input autocomplete="off" name="item" list="minecraft_items" size="60%" placeholder="I want to buy...">
+        <input autocomplete="off" name="search" list="minecraft_items" size="60%" placeholder="I want to buy...">
         <datalist id="minecraft_items">
             {% for name in items %}
             <option value="{{ name }}">
@@ -15,14 +15,25 @@
 </div>
 {% if stock %}
 {% include 'list_stock_items.html' %}
- <ul class="pager">
- {% if previous_page is not None %}
-    <li class="previous"><a href="{% url 'get_all_stock' %}?page={{ previous_page }}">Previous</a></li>
- {% endif %}
- {% if next_page %}
-  <li class="next"><a href="{% url 'get_all_stock' %}?page={{ next_page }}">Next</a></li>
- {% endif %}
-</ul>
+<div class="row">
+    <ul class="pager">
+        {% if search_term %}
+            {% if previous_page is not None %}
+            <li class="previous"><a href="{% url 'get_all_stock' %}?search={{ search_term }}&page={{ previous_page }}">Previous</a></li>
+            {% endif %}
+            {% if next_page %}
+            <li class="next"><a href="{% url 'get_all_stock' %}?search={{ search_term }}&page={{ next_page }}">Next</a></li>
+            {% endif %}
+        {% else %}
+            {% if previous_page is not None %}
+            <li class="previous"><a href="{% url 'get_all_stock' %}?page={{ previous_page }}">Previous</a></li>
+            {% endif %}
+            {% if next_page %}
+            <li class="next"><a href="{% url 'get_all_stock' %}?page={{ next_page }}">Next</a></li>
+            {% endif %}
+        {% endif %}
+    </ul>
+</div>
 {% else %}
 <h1>Could not find a match</h1>
 {% endif %}
