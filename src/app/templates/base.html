@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>TitanCraft Shops</title>
+
+    <!-- General Boostrap CSS / JS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'styles.css' %}">
+    <link rel="shortcut icon" href="{% static 'images/favicon.png' %}"/>
+</head>
+<body>
+<div class="topnav">
+    {% if user.is_authenticated %}
+    <a href="{% url 'logout' %}">Log Out</a>
+    <a href="{% url 'get_my_businesses' %}">My Businesses</a>
+    <a href="{% url 'get_all_businesses' 'Shop' %}">Browse Shops</a>
+    <a href="{% url 'get_all_businesses' 'Farm' %}">Browse Farms</a>
+    <a href="{% url 'get_all_services' %}">Browse Services</a>
+    <a href="{% url 'get_all_stock' %}">Browse Items</a>
+    {% else %}
+    <a href="{% url 'login' %}">Log In</a>
+    {% endif %}
+</div>
+<div align="center" class="title-bar">
+    <a href="{% url 'index' %}">
+        <span><img class="tt-logo" src="https://yt3.ggpht.com/ytc/AKedOLSz2R7xKZtt4T0a0mq5CMQYE6AP0k1EeZJgGmq0pQ=s88-c-k-c0x00ffffff-no-rj"></span>
+        <span><img class="title-logo" src="{% static 'images/title.png' %}"></span>
+        <span><img class="tt-logo" src="https://yt3.ggpht.com/ytc/AKedOLSz2R7xKZtt4T0a0mq5CMQYE6AP0k1EeZJgGmq0pQ=s88-c-k-c0x00ffffff-no-rj"></span>
+    </a>
+</div>
+<div align="center" class="content">
+    <img align="center" src="{% static 'images/under_construction.png' %}" width="25%">
+    <p>Site is still under construction! DM Cookiehook with questions or suggestions</p>
+    {% block content %}{% endblock %}
+</div>
+</body>
+</html>

@@ -1,0 +1,35 @@
+version: "3.7"
+secrets:
+  DISCORD_TITANCRAFT_CLIENT_ID:
+    file: ./secrets/DISCORD_TITANCRAFT_CLIENT_ID.secret
+  DISCORD_TITANCRAFT_CLIENT_SECRET:
+    file: ./secrets/DISCORD_TITANCRAFT_CLIENT_SECRET.secret
+  TITANCRAFT_WEBAPP_SECRET_KEY:
+    file: ./secrets/TITANCRAFT_WEBAPP_SECRET_KEY.secret
+
+services:
+  app:
+    build: .
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "127.0.0.1:5000:5000"
+    environment:
+      - titancraft_db_dsn=postgresql://postgres:bob@db:5432
+    secrets:
+      - DISCORD_TITANCRAFT_CLIENT_ID
+      - DISCORD_TITANCRAFT_CLIENT_SECRET
+      - TITANCRAFT_WEBAPP_SECRET_KEY
+  db:
+    image: postgres
+#    command: [ "postgres", "-c", "log_statement=all" ]
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 1s
+      timeout: 1s
+      retries: 5
+    ports:
+      - "127.0.0.1:5432:5432"
+    environment:
+      - POSTGRES_PASSWORD=bob
