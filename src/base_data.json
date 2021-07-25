@@ -62,12 +62,10 @@
   "potion_types": [
     {"name": "Speed"},
     {"name": "Slowness"},
-    {"name": "Haste"},
     {"name": "Strength"},
     {"name": "Healing"},
     {"name": "Harming"},
     {"name": "Leaping"},
-    {"name": "Nausea"},
     {"name": "Regeneration"},
     {"name": "Fire Resistance"},
     {"name": "Water Breathing"},
@@ -75,7 +73,6 @@
     {"name": "Night Vision"},
     {"name": "Weakness"},
     {"name": "Poison"},
-    {"name": "Levitation"},
     {"name": "Slow Falling"},
     {"name": "Turtle Master"}
   ],
@@ -89,6 +86,7 @@
 
     {"name": "Arrows", "icon": "https://static.wikia.nocookie.net/minecraft_gamepedia/images/2/25/Arrow_%28item%29_JE1_BE1.png/revision/latest/", "classes": ["Tools", "Arrows"]},
     {"name": "Spectral Arrow", "icon": "https://static.wikia.nocookie.net/minecraft_gamepedia/images/a/af/Spectral_Arrow_%28item%29_JE1.png/revision/latest/", "classes": ["Tools", "Arrows"]},
+    {"is_potion": true, "name": "Tipped Arrow", "icon": "https://static.wikia.nocookie.net/minecraft_gamepedia/images/e/eb/Arrow_of_Decay_BE3.png/revision/latest/", "classes": ["Tools", "Arrows"]},
     {"is_potion": true, "name": "Tipped Arrow", "icon": "https://static.wikia.nocookie.net/minecraft_gamepedia/images/c/c4/Arrow_of_Swiftness_JE2_BE2.png/revision/latest/", "potion": "Speed", "classes": ["Tools", "Arrows"]},
     {"is_potion": true, "name": "Tipped Arrow", "icon": "https://static.wikia.nocookie.net/minecraft_gamepedia/images/e/e8/Arrow_of_Slowness_JE2_BE2.png/revision/latest/", "potion": "Slowness", "classes": ["Tools", "Arrows"]},
     {"is_potion": true, "name": "Tipped Arrow", "icon": "https://static.wikia.nocookie.net/minecraft_gamepedia/images/2/2e/Arrow_of_Strength_JE2_BE2.png/revision/latest/", "potion": "Strength", "classes": ["Tools", "Arrows"]},
@@ -102,7 +100,7 @@
     {"is_potion": true, "name": "Tipped Arrow", "icon": "https://static.wikia.nocookie.net/minecraft_gamepedia/images/9/98/Arrow_of_Night_Vision_JE2_BE2.png/revision/latest/", "potion": "Night Vision","classes": ["Tools", "Arrows"]},
     {"is_potion": true, "name": "Tipped Arrow", "icon": "https://static.wikia.nocookie.net/minecraft_gamepedia/images/c/c2/Arrow_of_Weakness_JE2_BE2.png/revision/latest/", "potion": "Weakness", "classes": ["Tools", "Arrows"]},
     {"is_potion": true, "name": "Tipped Arrow", "icon": "https://static.wikia.nocookie.net/minecraft_gamepedia/images/9/9b/Arrow_of_Poison_JE2_BE2.png/revision/latest/", "potion": "Poison", "classes": ["Tools", "Arrows"]},
-    {"is_potion": true, "name": "Tipped Arrow", "icon": "https://static.wikia.nocookie.net/minecraft_gamepedia/images/e/eb/Arrow_of_Slow_Falling_JE1_BE1.png/revision/", "potion": "Slow Falling","classes": ["Tools", "Arrows"]},
+    {"is_potion": true, "name": "Tipped Arrow", "icon": "https://static.wikia.nocookie.net/minecraft_gamepedia/images/e/eb/Arrow_of_Slow_Falling_JE1_BE1.png/revision/latest", "potion": "Slow Falling","classes": ["Tools", "Arrows"]},
     {"is_potion": true, "name": "Tipped Arrow", "icon": "https://static.wikia.nocookie.net/minecraft_gamepedia/images/0/01/Arrow_of_the_Turtle_Master_JE1_BE1.png/revision/latest/", "potion": "Turtle Master","classes": ["Tools", "Arrows"]},
 
     {"name": "Bucket", "icon": "https://static.wikia.nocookie.net/minecraft_gamepedia/images/f/fc/Bucket_JE2_BE2.png/revision/latest/", "classes": ["Tools"]},
@@ -123,7 +121,7 @@
     {"is_enchantable": true, "name": "Crossbow", "icon": "https://static.wikia.nocookie.net/minecraft_gamepedia/images/7/79/Crossbow.png/revision/latest/", "classes": ["Tools"]},
     {"is_enchantable": true, "name": "Trident", "icon": "https://static.wikia.nocookie.net/minecraft_gamepedia/images/b/ba/Trident_%28item%29.png/revision/latest/", "classes": ["Tools"]},
 
-    {"is_enchantable": true, "enchanted": true, "name": "Shield", "icon": "https://static.wikia.nocookie.net/minecraft_gamepedia/images/7/79/Enchanted_Shield_%28item%29.gif/revision/", "classes": ["Tools"]},
+    {"is_enchantable": true, "enchanted": true, "name": "Shield", "icon": "https://static.wikia.nocookie.net/minecraft_gamepedia/images/7/79/Enchanted_Shield_%28item%29.gif/revision/latest", "classes": ["Tools"]},
     {"is_enchantable": true, "enchanted": true, "name": "Shears", "icon": "https://static.wikia.nocookie.net/minecraft_gamepedia/images/b/b7/Enchanted_Shears.gif/revision/latest/", "classes": ["Tools"]},
     {"is_enchantable": true, "enchanted": true, "name": "Carrot on a Stick", "icon": "https://static.wikia.nocookie.net/minecraft_gamepedia/images/5/5e/Enchanted_Carrot_on_a_Stick.gif/revision/latest/", "classes": ["Tools"]},
     {"is_enchantable": true, "enchanted": true, "name": "Warped Fungus on a Stick", "icon": "https://static.wikia.nocookie.net/minecraft_gamepedia/images/1/16/Warped_Fungus_on_a_Stick_JE1_BE1.png/revision/latest/", "classes": ["Tools"]},
@@ -229,11 +227,11 @@
     {"is_enchantable": true, "name": "Elytra", "icon": "https://static.wikia.nocookie.net/minecraft_gamepedia/images/9/98/Elytra_%28item%29_JE2_BE2.png/revision/latest/", "classes": ["Armor", "End"]},
 
     {"is_enchantable": true, "enchanted": true, "name": "Leather Boots", "icon": "https://static.wikia.nocookie.net/minecraft_gamepedia/images/b/b4/Enchanted_Leather_Boots_%28item%29.gif/revision/latest/", ",classes": ["Armor", "Leather"]},
-    {"is_enchantable": true, "enchanted": true, "name": "Chainmail Boots", "icon": "https://static.wikia.nocookie.net/minecraft_gamepedia/images/0/01/Enchanted_Chainmail_Boots_%28item%29.gif/revision/", "classes": ["Armor", "Chainmail"]},
+    {"is_enchantable": true, "enchanted": true, "name": "Chainmail Boots", "icon": "https://static.wikia.nocookie.net/minecraft_gamepedia/images/0/01/Enchanted_Chainmail_Boots_%28item%29.gif/revision/latest", "classes": ["Armor", "Chainmail"]},
     {"is_enchantable": true, "enchanted": true, "name": "Iron Boots", "icon": "https://static.wikia.nocookie.net/minecraft_gamepedia/images/6/6e/Enchanted_Iron_Boots_%28item%29.gif/revision/latest/", "classes": ["Armor", "Iron"]},
     {"is_enchantable": true, "enchanted": true, "name": "Golden Boots", "icon": "https://static.wikia.nocookie.net/minecraft_gamepedia/images/4/41/Enchanted_Golden_Boots_%28item%29.gif/revision/latest/", "classes": ["Armor", "Golden"]},
     {"is_enchantable": true, "enchanted": true, "name": "Diamond Boots", "icon": "https://static.wikia.nocookie.net/minecraft_gamepedia/images/c/c1/Enchanted_Diamond_Boots_%28item%29.gif/revision/latest/", "classes": ["Armor", "Diamond"]},
-    {"is_enchantable": true, "enchanted": true, "name": "Netherite Boots", "icon": "https://static.wikia.nocookie.net/minecraft_gamepedia/images/2/23/Enchanted_Netherite_Boots_%28item%29.gif/revision/", "classes": ["Armor", "Netherite"]},
+    {"is_enchantable": true, "enchanted": true, "name": "Netherite Boots", "icon": "https://static.wikia.nocookie.net/minecraft_gamepedia/images/2/23/Enchanted_Netherite_Boots_%28item%29.gif/revision/latest", "classes": ["Armor", "Netherite"]},
     {"is_enchantable": true, "enchanted": true, "name": "Leather Chestplate", "icon": "https://static.wikia.nocookie.net/minecraft_gamepedia/images/9/9f/Enchanted_Leather_Tunic_%28item%29.gif/revision/latest/", "classes": ["Armor", "Leather"]},
     {"is_enchantable": true, "enchanted": true, "name": "Chainmail Chestplate", "icon": "https://static.wikia.nocookie.net/minecraft_gamepedia/images/9/9a/Enchanted_Chainmail_Chestplate_%28item%29.gif/revision/latest/", "classes": ["Armor", "Chainmail"]},
     {"is_enchantable": true, "enchanted": true, "name": "Iron Chestplate", "icon": "https://static.wikia.nocookie.net/minecraft_gamepedia/images/6/60/Enchanted_Iron_Chestplate_%28item%29.gif/revision/latest/", "classes": ["Armor", "Iron"]},
@@ -371,6 +369,7 @@
     {"name": "Popped Chorus Fruit", "icon": "https://static.wikia.nocookie.net/minecraft_gamepedia/images/7/7f/Popped_Chorus_Fruit_JE2_BE2.png/revision/latest/","classes": ["End"]},
     {"name": "Shulker Shell", "icon": "https://static.wikia.nocookie.net/minecraft_gamepedia/images/f/f5/Shulker_Shell_JE2_BE2.png/revision/latest/","classes": ["End", "Mob Drops"]},
 
+    {"is_potion": true, "name": "Potion", "icon": "https://static.wikia.nocookie.net/minecraft_gamepedia/images/2/2c/Uncraftable_Potion_JE2.png/revision/latest/","classes": ["Brewing"]},
     {"is_potion": true, "name": "Potion", "potion": "Speed", "icon": "https://static.wikia.nocookie.net/minecraft_gamepedia/images/2/28/Potion_of_Swiftness.gif/revision/latest/","classes": ["Brewing"]},
     {"is_potion": true, "name": "Potion", "potion": "Slowness", "icon": "https://static.wikia.nocookie.net/minecraft_gamepedia/images/0/07/Potion_of_Slowness.gif/revision/latest/","classes": ["Brewing"]},
     {"is_potion": true, "name": "Potion", "potion": "Strength", "icon": "https://static.wikia.nocookie.net/minecraft_gamepedia/images/9/98/Potion_of_Strength.gif/revision/latest/","classes": ["Brewing"]},
@@ -817,7 +816,7 @@
     {"name": "Jungle Trapdoor", "icon": "https://static.wikia.nocookie.net/minecraft_gamepedia/images/a/ae/Jungle_Trapdoor_JE1_BE1.png/revision/latest/", "classes": ["Wood"]},
     {"name": "Jungle Wood", "icon": "https://static.wikia.nocookie.net/minecraft_gamepedia/images/c/cf/Jungle_Wood_%28UD%29_JE4_BE2.png/revision/latest/", "classes": ["Wood"]},
 
-    {"name": "Kelp", "icon": "https://static.wikia.nocookie.net/minecraft_gamepedia/images/1/13/Kelp_%28block%29_JE3_BE2.png/revision/latest/"},
+    {"name": "Kelp Block", "icon": "https://static.wikia.nocookie.net/minecraft_gamepedia/images/1/13/Kelp_%28block%29_JE3_BE2.png/revision/latest/"},
     {"name": "Ladder", "icon": "https://static.wikia.nocookie.net/minecraft_gamepedia/images/b/bc/Ladder_%28S%29_JE3_BE2.png/revision/latest/"},
     {"name": "Lantern", "icon": "https://static.wikia.nocookie.net/minecraft_gamepedia/images/3/39/Lantern_JE1_BE1.png/revision/latest/"},
     {"name": "Lapis Lazuli Ore", "icon": "https://static.wikia.nocookie.net/minecraft_gamepedia/images/e/ea/Lapis_Lazuli_Ore_JE4_BE4.png/revision/latest/", "classes": ["Minerals"]},
@@ -903,7 +902,6 @@
     {"name": "Nether Gold Ore", "icon": "https://static.wikia.nocookie.net/minecraft_gamepedia/images/6/62/Nether_Gold_Ore_JE2_BE1.png/revision/latest/", "classes": ["Nether", "Minerals"]},
     {"name": "Nether Quartz Ore", "icon": "https://static.wikia.nocookie.net/minecraft_gamepedia/images/2/28/Nether_Quartz_Ore_JE3_BE2.png/revision/latest/", "classes": ["Nether", "Minerals"]},
     {"name": "Nether Sprouts", "icon": "https://static.wikia.nocookie.net/minecraft_gamepedia/images/3/38/Nether_Sprouts_JE2_BE2.png/revision/latest/", "classes": ["Nether"]},
-    {"name": "Nether Wart", "icon": "https://static.wikia.nocookie.net/minecraft_gamepedia/images/4/43/Nether_Wart.png/revision/latest/", "classes": ["Nether"]},
     {"name": "Nether Wart Block", "icon": "https://static.wikia.nocookie.net/minecraft_gamepedia/images/0/04/Nether_Wart_Block_JE3_BE3.png/revision/latest/", "classes": ["Nether"]},
     {"name": "Netherrack", "icon": "https://static.wikia.nocookie.net/minecraft_gamepedia/images/0/02/Netherrack_JE4_BE2.png/revision/latest/", "classes": ["Nether"]},
     {"name": "Note Block", "icon": "https://static.wikia.nocookie.net/minecraft_gamepedia/images/1/18/Note_Block_JE2_BE2.png/revision/latest/"},

@@ -5,9 +5,11 @@ An ItemStack is comprised of:
     - Count of Items (usually 1-64)
     - 1 to 0|Many Potion (1 PotionType & 0|Many PotionModifiers)
     - 1 to 0|Many Enchantments (1 EnchantmentType & 1 EnchantmentLevel)
-Each StockRecord has fields representing an ItemStack for the sold item, and accepted pament
+Each StockRecord has fields representing an ItemStack for the sold item, and accepted payment.
+For ease of implementation, only the stock stack can have enchantments and potions added. In the rare
+case a user wants to request a stocked / enchanted item as payment, they can still use the description textfield
 
-None of these classes are made visible to the user. They only exist to satisfy the relationships required to
+None of these classes are made directly visible to the user. They only exist to satisfy the relationships required to
 manage stock records.
 """
 from django.db import models
