@@ -6,7 +6,7 @@ from django.contrib.auth.models import User
 from django.db import models
 from django.utils.text import slugify
 
-from app.models import constants, itemstacks
+from app.models import constants
 
 
 class Business(models.Model):
@@ -35,13 +35,28 @@ class StaffMember(models.Model):
 
 class StockRecord(models.Model):
     business = models.ForeignKey(Business, on_delete=models.CASCADE)
-    item = models.ForeignKey(itemstacks.ItemStack, on_delete=models.CASCADE)
-    cost = models.ForeignKey(itemstacks.ItemStack, on_delete=models.CASCADE, related_name='currency')
+
+    # Itemstack for sale
+    stock_item = models.ForeignKey(constants.Item, on_delete=models.CASCADE, related_name="stock")
+    stock_description = models.CharField(max_length=200, null=True, blank=True)
+    stock_stack_size = models.IntegerField()
+
+    # Itemstack accepted as payment
+    cost_item = models.ForeignKey(constants.Item, on_delete=models.CASCADE, related_name="cost")
+    cost_description = models.CharField(max_length=200, null=True, blank=True)
+    cost_stack_size = models.IntegerField()
+
     units = models.IntegerField()
     last_updated = models.DateTimeField()
 
     def __str__(self):
-        return f"{self.business}: {self.item} - {self.cost}"
+        if self.enchantment_set.all():
+            labels = " | ".join([str(i) for i in self.enchantment_set.all()])
+            return f"{self.business}: {self.stock_stack_size}x {self.stock_item} ({labels}) - {self.cost_stack_size}x {self.cost_item}"
+        if self.potion_set.all():
+            labels = " | ".join([str(i) for i in self.potion_set.all()])
+            return f"{self.business}: {self.stock_stack_size}x {self.stock_item} ({labels}) - {self.cost_stack_size}x {self.cost_item}"
+        return f"{self.business}: {self.stock_stack_size}x {self.stock_item} - {self.cost_stack_size}x {self.cost_item}"
 
 
 class ServiceRecord(models.Model):

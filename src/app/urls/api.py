@@ -17,12 +17,9 @@ router_v1.register('constants/enchantment_level', constants_views.EnchantmentLev
 router_v1.register('constants/item_class', constants_views.ItemClassViewSet)
 router_v1.register('constants/item_icon', constants_views.ItemIconViewSet)
 
-router_v1.register('itemstacks/itemstack', itemstacks_views.ItemStackViewSet)
 router_v1.register('itemstacks/enchantment', itemstacks_views.EnchantmentViewSet)
 router_v1.register('itemstacks/potion', itemstacks_views.PotionViewSet)
 router_v1.register('itemstacks/potion_modifier_to_potion', itemstacks_views.PotionModifierToPotionViewSet)
-router_v1.register('itemstacks/enchantment_to_itemstack', itemstacks_views.EnchantmentToItemStackViewSet)
-router_v1.register('itemstacks/potion_to_itemstack', itemstacks_views.PotionToItemStackStackViewSet)
 
 router_v1.register('businesses/business', businesses_views.BusinessViewSet)
 router_v1.register('businesses/staff_member', businesses_views.StaffMemberViewSet)

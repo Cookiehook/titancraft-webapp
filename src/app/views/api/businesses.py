@@ -14,6 +14,8 @@ class IsStaffMemberOrReadOnlyPermission(BasePermission):
     def has_permission(self, request, view):
         if request.method in SAFE_METHODS:
             return True
+        if request.user and request.user.is_staff:  # Flag for admins of entire Webapp
+            return True
 
         # If there is data in the request.POST, check the current user is a staff member
         if request.POST and (isinstance(view, StockRecordViewSet) or isinstance(view, StaffMemberViewSet) or isinstance(view, ServiceRecordViewSet)):
@@ -25,6 +27,8 @@ class IsStaffMemberOrReadOnlyPermission(BasePermission):
 
     def has_object_permission(self, request, view, obj):
         if request.method in SAFE_METHODS:
+            return True
+        if request.user and request.user.is_staff:  # Flag for admins of entire Webapp
             return True
 
         if isinstance(obj, models.Business):
@@ -39,8 +43,6 @@ class IsStaffMemberOrReadOnlyPermission(BasePermission):
             return True
         else:
             return request.user in [s.user for s in staff]
-
-
 
 
 class BusinessViewSet(viewsets.ModelViewSet):

@@ -17,5 +17,6 @@ urlpatterns = [
     path('auth/failure', auth.auth_failure, name='auth_failure'),
     path('auth/logout', auth.logout, name='logout'),
 
-    path('refdata/init', ref_data.initialise, name='logout'),
+    path('refdata/init', ref_data.initialise, name='refdata-init'),
+    path('refdata/business', ref_data.create_test_businesses, name='refdata-business'),
 ]
