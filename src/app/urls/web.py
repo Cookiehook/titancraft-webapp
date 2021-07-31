@@ -7,8 +7,8 @@ urlpatterns = [
 
     path('businesses/stock', businesses.list_all_stock, name='get_all_stock'),
     path('businesses/services', static.under_construction, name='get_all_services'),
+    path('businesses/<str:business_type>', static.under_construction, name='get_all_businesses'),
 
-    path('buisnesses/<str:business_type>', static.under_construction, name='get_all_businesses'),
     path('business/<slug>', static.under_construction, name='get_single_business'),
     path('business/add', static.under_construction, name='add_business'),
 

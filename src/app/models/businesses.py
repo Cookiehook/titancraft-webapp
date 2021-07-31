@@ -15,10 +15,10 @@ class Business(models.Model):
     slug = models.SlugField()
     description = models.CharField(max_length=1000, blank=True, null=True)
     x_pos = models.IntegerField()
-    y_pos = models.IntegerField()
+    z_pos = models.IntegerField()
 
     def __str__(self):
-        return f"{self.name} ({self.x_pos}/{self.y_pos})"
+        return f"{self.name} ({self.x_pos}/{self.z_pos})"
 
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
         self.slug = slugify(self.name)

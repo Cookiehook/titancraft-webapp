@@ -6,7 +6,7 @@ import app.models.businesses as models
 class BusinessSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Business
-        fields = ['id', 'name', 'type', 'description', 'x_pos', 'y_pos']
+        fields = ['id', 'name', 'type', 'description', 'x_pos', 'z_pos']
 
 
 class StaffMemberSerializer(serializers.ModelSerializer):

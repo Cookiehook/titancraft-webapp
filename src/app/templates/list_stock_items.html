@@ -1,50 +1,46 @@
 <div class="row">
     {% if include_business %}
-        <div class="col-lg-2"></div>
-        <div class="col-lg-2"><h3>{{ business_type }} Name</h3></div>
+        <div class="col"><h3>{{ business_type }} Name</h3></div>
     {% endif %}
-    <div class="col-lg-2"><h3>Item</h3></div>
-    <div class="col-lg-2"><h3>Price</h3></div>
-    <div class="col-lg-1"><h3>Units available</h3></div>
-    <div class="col-lg-3"><h3>Last Updated</h3></div>
+    <div class="col"><h3>Item</h3></div>
+    <div class="col"><h3>Price</h3></div>
+    <div class="col"><h3>Units</h3></div>
+    <div class="col"><h3>Last Updated (UTC)</h3></div>
 </div>
 {% for stock in stock %}
-<div class="content-item">
-    <div class="row">
-        {% if include_business %}
-            <div class="col-lg-2">
-                {% load static %}
-                <img src="{% static 'images/shop_placeholder.jpg' %}" width="80px"/>
-            </div>
-            <div class="col-lg-2" align="left">
-                <div class="row"><a href="{% url 'get_single_business' stock.business.slug %}"><h3>{{ stock.business.name }}</h3></a></div>
-                <div class="row"><p>X: {{ stock.business.x_pos }} Y: {{ stock.business.y_pos }}</p></div>
-            </div>
-        {% endif %}
-        <div class="col-lg-2">
-            <div class="row"><img src="{{ stock.stock_icon }}" width="64px"/><h4>{{ stock.stock_stack_size }} {{ stock.stock_item }}</h4>
-                {% if stock.stock_labels %}
-                <p>
-                    {% for label in stock.stock_labels %}
-                        ({{ label }})<br>
-                    {% endfor %}
+    <div class="content-item">
+        <div class="row">
+            {% if include_business %}
+                <div class="col">
+                    <div class="row"><a href="{% url 'get_single_business' stock.business.slug %}">
+                        <p>{{ stock.business.name }}</p></a></div>
+                    <div class="row"><p>X/Z: {{ stock.business.x_pos }}/{{ stock.business.z_pos }}</p></div>
+                </div>
+            {% endif %}
+            <div class="col">
+                <img alt="{{ stock.stock_item }}" src="{{ stock.stock_icon }}" width="64px"/>
+                <p>{{ stock.stock_stack_size }} {{ stock.stock_item }}
+                    {% if stock.stock_labels %}
+                        {% for label in stock.stock_labels %}
+                            <br>({{ label }})
+                        {% endfor %}
+                    {% endif %}
                 </p>
+            </div>
+            <div class="col">
+                <img alt="{{ stock.stock_item }}" src="{{ stock.cost_icon }}" width="64px"/>
+                <p>{{ stock.cost_stack_size }} {{ stock.cost_item }}</p>
+            </div>
+            <div class="col">
+                {% if stock.units == 0 %}
+                    <i>Out of Stock</i>
+                {% else %}
+                    <p>{{ stock.units }}</p>
                 {% endif %}
             </div>
-        </div>
-        <div class="col-lg-2">
-            <div class="row"><img src="{{ stock.cost_icon }}"  width="64px"/><h4>{{ stock.cost_stack_size }} {{ stock.cost_label }}</h4></div>
-        </div>
-        <div class="col-lg-1">
-            {% if stock.units == 0 %}
-                <i>Out of Stock</i>
-            {% else %}
-                <h4>{{ stock.units }}</h4>
-            {% endif %}
-        </div>
-        <div class="col-lg-3">
-            <h4>{{ stock.last_updated }}</h4>
+            <div class="col">
+                <p>{{ stock.last_updated }}</p>
+            </div>
         </div>
     </div>
-</div>
 {% endfor %}

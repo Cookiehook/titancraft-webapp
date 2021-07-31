@@ -67,7 +67,7 @@ def create_test_businesses(request):
                                                  slug="cookiehooks-debug-shop",
                                                  description="A shop entry for debugging the webapp. Don't try to go here, it doesn't exist",
                                                  x_pos=0,
-                                                 y_pos=0)
+                                                 z_pos=0)
     user, _ = User.objects.get_or_create(username="Cookiehook", is_staff=True)
     user.save()
     business.save()

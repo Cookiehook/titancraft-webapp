@@ -30,6 +30,7 @@ class EnchantmentLevel(models.Model):  # eg: I, II, III, IV, V
 
 class EnchantmentType(models.Model):  # eg: Efficiency, Protection
     name = models.CharField(max_length=200, unique=True)
+    type = models.CharField(max_length=200)
 
     def __str__(self):
         return self.name
