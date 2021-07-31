@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block content %}
+{%  include 'components/search_form.html' %}
+
+<div class="row">
+    <div class="col"><h3>{{ business_type }} Name</h3></div>
+    <div class="col"><h3>Description</h3></div>
+</div>
+{% for business in businesses %}
+    <div class="content-item">
+        <div class="row">
+            <div class="col">
+                <div class="row"><a href="{% url 'get_single_business' business.slug %}"><p>{{ business.name }}</p></a></div>
+                <div class="row"><p>X/Z: {{ business.x_pos }}/{{ business.z_pos }}</p></div>
+            </div>
+        </div>
+    </div>
+{% endfor %}
+
+{% include 'components/pagination.html' %}
+{% endblock %}

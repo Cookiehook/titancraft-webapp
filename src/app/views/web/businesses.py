@@ -5,8 +5,9 @@ from django.db.models import Q
 from django.shortcuts import render
 from django.urls import reverse
 
-from app.models.businesses import StockRecord, ServiceRecord
-from app.models.constants import Item, ItemClass, ItemIcon
+from app.models.businesses import StockRecord, ServiceRecord, Business, StaffMember
+from app.models.constants import Item, ItemClass, ItemIcon, BusinessType
+from app.models.users import UserDetails
 
 logger = logging.getLogger()
 
@@ -84,7 +85,7 @@ def list_all_stock(request):
 
 def list_all_services(request):
     template = "list_all_services.html"
-    pagination = 5
+    pagination = 25
     page = int(request.GET.get("page", 0))
     results = page * pagination
 
@@ -103,6 +104,48 @@ def list_all_services(request):
     }
 
     if len(all_services) == pagination:
+        context["next_page"] = page + 1
+    if page > 0:
+        context['previous_page'] = page - 1
+    if 'search' in request.GET and 'all' not in request.GET:
+        context['search_term'] = request.GET['search']
+
+    return render(request, template, context)
+
+
+def list_all_businesses(request, business_type):
+    template = "list_all_businesses.html"
+    pagination = 25
+    page = int(request.GET.get("page", 0))
+    results = page * pagination
+    business_type_obj = BusinessType.objects.get(name=business_type)
+
+    if 'search' not in request.GET or 'all' in request.GET:
+        all_businesses = Business.objects.filter(type=business_type_obj)[results:results + pagination]
+    else:
+        search_term = request.GET['search']
+        all_businesses = Business.objects.filter(Q(type=business_type_obj) & (Q(name__icontains=search_term) | Q(description__icontains=search_term)))
+
+    for business in all_businesses:
+        staff_list = []
+        for staff in StaffMember.objects.filter(business=business):
+            details = UserDetails.objects.get(user=staff.user)
+            staff_list.append({
+                "username": staff.user.username,
+                "avatar": f"https://cdn.discordapp.com/avatars/{details.discord_id}/{details.avatar_hash}.png"
+            })
+
+        business.staff = staff_list
+
+    context = {
+        "businesses": all_businesses,
+        "include_business": True,
+        "search_placeholder": "I'm looking for...",
+        "business_type": business_type,
+        "form_action": reverse("get_all_businesses", args=(business_type,))
+    }
+
+    if len(all_businesses) == pagination:
         context["next_page"] = page + 1
     if page > 0:
         context['previous_page'] = page - 1
