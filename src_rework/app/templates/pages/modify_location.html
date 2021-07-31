@@ -1,1 +1,47 @@
 {% extends 'components/base.html' %}
+{% block content %}
+    <form action="{% url 'add_location' %}" method="post">
+        {% csrf_token %}
+        <table>
+            <tr>
+                <td><label for="name">Name: </label></td>
+                <td><input size="52px" name="name" id="name" value="{{ location.name }}"></td>
+            </tr>
+            <tr>
+                <td><label for="description">Description: </label></td>
+                <td><textarea cols="50" name="description" id="description">{{ location.description }}</textarea>
+                </td>
+            </tr>
+            <tr>
+                <td><label for="x_pos">X: </label></td>
+                <td><input type="number" size="5px" name="x_pos" id="x_pos" value="{{ location.x_pos }}"></td>
+            </tr>
+            <tr>
+                <td><label for="y_pos">Y: </label></td>
+                <td><input type="number" size="5px" name="y_pos" id="y_pos" value="{{ location.y_pos }}"></td>
+            </tr>
+            <tr>
+                <td><label for="z_pos">Z: </label></td>
+                <td><input type="number" size="5px" name="z_pos" id="z_pos" value="{{ location.z_pos }}"></td>
+            </tr>
+            <tr>
+                <td><label for="region">Region: </label></td>
+                <td><select name="region" id="region">
+                    <option value="{{ location.region }}" selected>{{ location.region }}</option>
+                    <option value="Overworld">Overworld</option>
+                    <option value="End">The End</option>
+                    <option value="Nether">The Nether</option>
+                    <option value="Above">The Above</option>
+                    <option value="Resource-World">Resource World</option>
+                    <option value="Shopping-District">Shopping District</option>
+                    <option value="Entertainment-District">Entertainment District</option>
+                </select></td>
+            </tr>
+            <tr>
+                <td><input type="submit" value="Update"></td>
+            </tr>
+        </table>
+        {% if errors %}
+        {% endif %}
+    </form>
+{% endblock %}

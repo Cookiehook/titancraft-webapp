@@ -29,15 +29,15 @@
                     </tr>
                     <tr>
                         <td><label for="x_pos">X: </label></td>
-                        <td><input size="5px" name="x_pos" id="x_pos"></td>
+                        <td><input type="number" size="5px" name="x_pos" id="x_pos"></td>
                     </tr>
                     <tr>
                         <td><label for="y_pos">Y: </label></td>
-                        <td><input size="5px" name="y_pos" id="y_pos"></td>
+                        <td><input type="number" size="5px" name="y_pos" id="y_pos"></td>
                     </tr>
                     <tr>
                         <td><label for="z_pos">Z: </label></td>
-                        <td><input size="5px" name="z_pos" id="z_pos"></td>
+                        <td><input type="number" size="5px" name="z_pos" id="z_pos"></td>
                     </tr>
                     <tr>
                         <td><label for="region">Region: </label></td>
@@ -55,13 +55,6 @@
                         <td><input type="submit" value="Create"></td>
                     </tr>
                 </table>
-                {% if errors %}
-                    <ul>
-                        {% for error in errors %}
-                            <li>{{ error }}</li>
-                        {% endfor %}
-                    </ul>
-                {% endif %}
             </form>
 
         </div>

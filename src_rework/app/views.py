@@ -151,16 +151,15 @@ def manage_locations(request):
 
 @login_required()
 def add_location(request):
-    location = Location(
-        name=request.POST['name'],
-        description=request.POST['description'],
-        x_pos=int(request.POST['x_pos']),
-        y_pos=int(request.POST['y_pos']),
-        z_pos=int(request.POST['z_pos']),
-        region=Region.objects.get(name=request.POST['region'])
-    )
+    location, _ = Location.objects.get_or_create(name=request.POST['name'])
+    location.description = request.POST['description']
+    location.x_pos = int(request.POST['x_pos'])
+    location.y_pos = int(request.POST['y_pos'])
+    location.z_pos = int(request.POST['z_pos'])
+    location.region = Region.objects.get(name=request.POST['region'])
+
     location.save()
-    maintainer = Maintainer(
+    maintainer, _ = Maintainer.objects.get_or_create(
         location=location,
         user=request.user
     )
@@ -196,8 +195,10 @@ def modify_location(request, slug):
     template_name = 'pages/modify_location.html'
     if not is_maintainer(request.user, slug):
         return redirect(reverse("not_authorised"))
-    context = {
 
+    location = Location.objects.get(slug=slug)
+    context = {
+        "location": location
     }
     return render(request, template_name, context)
 
