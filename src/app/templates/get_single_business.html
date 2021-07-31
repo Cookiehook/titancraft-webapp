@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block content %}
+    <div class="row">
+        <div class="col">
+            <h1>{{ business.name }}</h1>
+            <p>X/Z: {{ business.x_pos }}/{{ business.z_pos }}</p>
+            <p>{{ business.description }}</p>
+        </div>
+        <div class="col">
+            <h2>Staff</h2>
+            <div class="row">
+                {% for staff in staff_list %}
+                    <div class="col">
+                        <img class="rounded-circle" alt="{{ staff.username }} avatar" src="{{ staff.avatar }}">
+                        <h4>{{ staff.username }}</h4>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    {% if stock %}
+        <h3>Items for Sale</h3>
+        {% include 'components/list_stock_items.html' %}
+    {% endif %}
+    {% if services %}
+        <h3>Services</h3>
+        {% include 'components/list_service_items.html' %}
+    {% endif %}
+{% endblock %}

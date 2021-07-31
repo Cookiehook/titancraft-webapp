@@ -5,11 +5,35 @@ from django.db.models import Q
 from django.shortcuts import render
 from django.urls import reverse
 
-from app.models.businesses import StockRecord, ServiceRecord, Business, StaffMember
+from app.models.businesses import StockRecord, ServiceRecord, Business, StaffMember, FarmRecord
 from app.models.constants import Item, ItemClass, ItemIcon, BusinessType
 from app.models.users import UserDetails
 
 logger = logging.getLogger()
+
+
+def append_stock_icons(stock_list):
+    for stock in stock_list:
+        stock_enchanted = True if stock.enchantment_set.all() else False
+        stock_potion = stock.potion_set.all()[0].potion_type if stock.potion_set.all() else None
+        if stock_enchanted:
+            stock.stock_labels = [str(i) for i in stock.enchantment_set.all()]
+        elif stock_potion:
+            stock.stock_labels = [str(i) for i in stock.potion_set.all()]
+        try:
+            stock.stock_icon = ItemIcon.objects.get(item=stock.stock_item, enchanted=stock_enchanted,
+                                                    potion=stock_potion).icon
+        except Exception as e:
+            logger.warning(
+                f"Couldn't find icon for {stock.stock_item} Enchanted={stock_enchanted} Potion={stock_potion}")
+            stock.stock_icon = ItemIcon.objects.filter(item=stock.stock_item)[0].icon
+
+        try:
+            stock.cost_icon = ItemIcon.objects.get(item=stock.cost_item, enchanted=False, potion=None).icon
+        except Exception as e:
+            logger.warning(
+                f"Couldn't find icon for {stock.cost_item} Enchanted=None Potion=None")
+            stock.stock_icon = ItemIcon.objects.filter(item=stock.stock_item)[0].icon
 
 
 def list_all_stock(request):
@@ -44,26 +68,7 @@ def list_all_stock(request):
 
     items = {i.name for i in Item.objects.all()}
     items.update({c.name for c in ItemClass.objects.all()})
-
-    for stock in all_stock:
-        stock_enchanted = True if stock.enchantment_set.all() else False
-        stock_potion = stock.potion_set.all()[0].potion_type if stock.potion_set.all() else None
-        if stock_enchanted:
-            stock.stock_labels = [str(i) for i in stock.enchantment_set.all()]
-        elif stock_potion:
-            stock.stock_labels = [str(i) for i in stock.potion_set.all()]
-        try:
-            stock.stock_icon = ItemIcon.objects.get(item=stock.stock_item, enchanted=stock_enchanted, potion=stock_potion).icon
-        except Exception as e:
-            logger.warning(f"Couldn't find icon for {stock.stock_item} Enchanted={stock_enchanted} Potion={stock_potion}")
-            stock.stock_icon = ItemIcon.objects.filter(item=stock.stock_item)[0].icon
-
-        try:
-            stock.cost_icon = ItemIcon.objects.get(item=stock.cost_item, enchanted=False, potion=None).icon
-        except Exception as e:
-            logger.warning(
-                f"Couldn't find icon for {stock.cost_item} Enchanted=None Potion=None")
-            stock.stock_icon = ItemIcon.objects.filter(item=stock.stock_item)[0].icon
+    append_stock_icons(all_stock)
 
     context = {
         "stock": all_stock,
@@ -126,17 +131,6 @@ def list_all_businesses(request, business_type):
         search_term = request.GET['search']
         all_businesses = Business.objects.filter(Q(type=business_type_obj) & (Q(name__icontains=search_term) | Q(description__icontains=search_term)))
 
-    for business in all_businesses:
-        staff_list = []
-        for staff in StaffMember.objects.filter(business=business):
-            details = UserDetails.objects.get(user=staff.user)
-            staff_list.append({
-                "username": staff.user.username,
-                "avatar": f"https://cdn.discordapp.com/avatars/{details.discord_id}/{details.avatar_hash}.png"
-            })
-
-        business.staff = staff_list
-
     context = {
         "businesses": all_businesses,
         "include_business": True,
@@ -151,5 +145,31 @@ def list_all_businesses(request, business_type):
         context['previous_page'] = page - 1
     if 'search' in request.GET and 'all' not in request.GET:
         context['search_term'] = request.GET['search']
+
+    return render(request, template, context)
+
+
+def get_single_business(request, slug):
+    template = "get_single_business.html"
+    business = Business.objects.get(slug=slug)
+
+    staff_list = []
+    for staff in StaffMember.objects.filter(business=business):
+        details = UserDetails.objects.get(user=staff.user)
+        staff_list.append({
+            "username": staff.user.username,
+            "avatar": f"https://cdn.discordapp.com/avatars/{details.discord_id}/{details.avatar_hash}.png"
+        })
+
+    all_stock = StockRecord.objects.filter(business=business).all()
+    append_stock_icons(all_stock)
+
+    context = {
+        "business": business,
+        "staff_list": staff_list,
+        "stock": all_stock,
+        "services": ServiceRecord.objects.filter(business=business),
+        "farms": FarmRecord.objects.filter(business=business)
+    }
 
     return render(request, template, context)

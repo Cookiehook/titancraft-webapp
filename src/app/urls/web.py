@@ -9,7 +9,7 @@ urlpatterns = [
     path('businesses/services', businesses.list_all_services, name='get_all_services'),
     path('businesses/<str:business_type>', businesses.list_all_businesses, name='get_all_businesses'),
 
-    path('business/<slug>', static.under_construction, name='get_single_business'),
+    path('business/<slug>', businesses.get_single_business, name='get_single_business'),
     path('business/add', static.under_construction, name='add_business'),
 
     path('user/businesses', static.under_construction, name='get_my_businesses'),
