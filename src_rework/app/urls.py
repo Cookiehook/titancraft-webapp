@@ -15,5 +15,13 @@ urlpatterns = [
     path('locations/<str:dimension>/', views.list_locations, name='list_locations'),
     path('locations/manage', views.manage_locations, name='manage_locations'),
     path('locations/add', views.add_location, name='add_location'),
+
     path('location/<str:slug>', views.get_location, name='get_location'),
+    path('location/<str:slug>/modify', views.modify_location, name='modify_location'),
+    path('location/<str:slug>/maintainers/modify', views.modify_maintainers, name='modify_maintainers'),
+    path('location/<str:slug>/stock/modify', views.modify_stock, name='modify_stock'),
+    path('location/<str:slug>/services/modify', views.modify_services, name='modify_services'),
+    path('location/<str:slug>/farmables/modify', views.modify_farmables, name='modify_farmables'),
+
+    path('not_authorised/', views.not_authorised, name='not_authorised'),
 ]

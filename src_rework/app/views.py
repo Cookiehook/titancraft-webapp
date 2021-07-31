@@ -27,6 +27,12 @@ def auth_failure(request):
     return render(request, template_name)
 
 
+def not_authorised(request):
+    """For when a logged in user attempts to access another user's resources"""
+    template_name = 'pages/unauthorised.html'
+    return render(request, template_name)
+
+
 def login(request):
     """
     Send the user to the Discord OAuth authorisation page.
@@ -178,7 +184,73 @@ def get_location(request, slug):
         })
 
     context = {
+        "is_maintainer": request.user in [m.user for m in maintainers],
         "location": location,
         "maintainers": maintainer_details
     }
     return render(request, template_name, context)
+
+
+@login_required()
+def modify_location(request, slug):
+    template_name = 'pages/modify_location.html'
+    if not is_maintainer(request.user, slug):
+        return redirect(reverse("not_authorised"))
+    context = {
+
+    }
+    return render(request, template_name, context)
+
+
+@login_required()
+def modify_maintainers(request, slug):
+    template_name = 'pages/modify_maintainers.html'
+    if not is_maintainer(request.user, slug):
+        return redirect(reverse("not_authorised"))
+
+    context = {
+
+    }
+    return render(request, template_name, context)
+
+
+@login_required()
+def modify_stock(request, slug):
+    template_name = 'pages/modify_stock.html'
+    if not is_maintainer(request.user, slug):
+        return redirect(reverse("not_authorised"))
+
+    context = {
+
+    }
+    return render(request, template_name, context)
+
+
+@login_required()
+def modify_services(request, slug):
+    template_name = 'pages/modify_services.html'
+    if not is_maintainer(request.user, slug):
+        return redirect(reverse("not_authorised"))
+
+    context = {
+
+    }
+    return render(request, template_name, context)
+
+
+@login_required()
+def modify_farmables(request, slug):
+    template_name = 'pages/modify_farmables.html'
+    if not is_maintainer(request.user, slug):
+        return redirect(reverse("not_authorised"))
+
+    context = {
+
+    }
+    return render(request, template_name, context)
+
+
+def is_maintainer(user, slug):
+    location = Location.objects.get(slug=slug)
+    maintainers = Maintainer.objects.filter(location=location)
+    return user in [m.user for m in maintainers]

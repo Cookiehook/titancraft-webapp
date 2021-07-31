@@ -1,5 +1,16 @@
 {% extends 'components/base.html' %}
 {% block content %}
+    {% if is_maintainer %}
+        <nav class="navbar navbar-expand-sm bg-dark navbar-dark justify-content-center">
+            <ul class="navbar-nav">
+                <li class="nav-item"><a class="nav-link" href="{% url 'modify_location' location.slug %}">Modify Details</a></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'modify_maintainers' location.slug %}">Add/Modify Maintainers</a></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'modify_stock' location.slug %}">Add/Modify Stock</a></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'modify_services' location.slug %}">Add/Modify Services</a></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'modify_farmables' location.slug %}">Add/Modify Farmables</a></li>
+            </ul>
+        </nav>
+    {% endif %}
     <div class="row">
         <div class="col">
             <h2>{{ location.name }}</h2>
