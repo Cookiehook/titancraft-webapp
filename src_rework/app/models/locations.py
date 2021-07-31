@@ -13,10 +13,10 @@ class Location(models.Model):
     name = models.CharField(max_length=50, unique=True)
     slug = models.SlugField()
     description = models.CharField(max_length=1000, blank=True, null=True)
-    x_pos = models.IntegerField()
-    y_pos = models.IntegerField()
-    z_pos = models.IntegerField()
-    region = models.ForeignKey(constants.Region, on_delete=models.CASCADE)
+    x_pos = models.IntegerField(null=True)
+    y_pos = models.IntegerField(null=True)
+    z_pos = models.IntegerField(null=True)
+    region = models.ForeignKey(constants.Region, on_delete=models.CASCADE, null=True)
 
     def __str__(self):
         return f"{self.name} {self.x_pos}/{self.y_pos}/{self.z_pos} ({self.region})"

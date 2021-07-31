@@ -152,6 +152,11 @@ def manage_locations(request):
 @login_required()
 def add_location(request):
     location, _ = Location.objects.get_or_create(name=request.POST['name'])
+    if request.POST.get("delete"):
+        location.delete()
+        return redirect(reverse("manage_locations"))
+
+
     location.description = request.POST['description']
     location.x_pos = int(request.POST['x_pos'])
     location.y_pos = int(request.POST['y_pos'])
