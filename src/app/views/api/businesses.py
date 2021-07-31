@@ -20,7 +20,7 @@ class IsStaffMemberOrReadOnlyPermission(BasePermission):
         # If there is data in the request.POST, check the current user is a staff member
         if request.POST and (isinstance(view, StockRecordViewSet) or isinstance(view, StaffMemberViewSet) or isinstance(view, ServiceRecordViewSet)):
             target_business = models.Business.objects.get(id=request.POST['business'])
-            staff = models.StaffMember.objects.filter(business=target_business)
+            staff = models.Maintainer.objects.filter(business=target_business)
             return request.user in [s.user for s in staff]
 
         return True
@@ -32,14 +32,14 @@ class IsStaffMemberOrReadOnlyPermission(BasePermission):
             return True
 
         if isinstance(obj, models.Business):
-            staff = models.StaffMember.objects.filter(business=obj)
-        elif isinstance(obj, models.StaffMember) or isinstance(obj, models.StockRecord) or isinstance(obj, models.ServiceRecord):
-            staff = models.StaffMember.objects.filter(business=obj.business)
+            staff = models.Maintainer.objects.filter(business=obj)
+        elif isinstance(obj, models.Maintainer) or isinstance(obj, models.StockRecord) or isinstance(obj, models.ServiceRecord):
+            staff = models.Maintainer.objects.filter(business=obj.business)
         else:
             raise NotImplemented("This permission should only be used for Business related views")
 
         if len(staff) == 0:  # First time creation of business, add requester as staff
-            models.StaffMember(business=obj, user=request.user).save()
+            models.Maintainer(business=obj, user=request.user).save()
             return True
         else:
             return request.user in [s.user for s in staff]
@@ -52,7 +52,7 @@ class BusinessViewSet(viewsets.ModelViewSet):
 
 
 class StaffMemberViewSet(viewsets.ModelViewSet):
-    queryset = models.StaffMember.objects.all().order_by('user')
+    queryset = models.Maintainer.objects.all().order_by('user')
     serializer_class = serializers.StaffMemberSerializer
     permission_classes = [permissions.IsAuthenticated, IsStaffMemberOrReadOnlyPermission]
 

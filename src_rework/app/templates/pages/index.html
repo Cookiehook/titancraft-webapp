@@ -22,13 +22,160 @@
     </p>
     {% if user.is_authenticated %}
         <div class="row">
-        <div class="col">
-            <div class="card h-100">
-                <div class="card-header"><a class="stretched-link" href="{% url 'list_stock' %}"><h2>Browse Stock</h2></a></div>
-                <div class="card-body">
-                    <p>Find items for sale on the Titancraft server.</p>
+            <div class="col">
+                <div class="card h-100">
+                    <div class="card-header">
+                        <a class="stretched-link" href="{% url 'list_stock' %}"><h2>Browse Stock</h2></a>
+                    </div>
+                    <div class="card-body">
+                        <p>Find items for sale on the Titancraft server.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col">
+                <div class="card h-100">
+                    <div class="card-header">
+                        <a class="stretched-link" href="{% url 'list_services' %}"><h2>Browse Services</h2></a>
+                    </div>
+                    <div class="card-body">
+                        <p>Find services on offer by your fellow TitanCrafters.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col">
+                <div class="card h-100">
+                    <div class="card-header">
+                        <a class="stretched-link" href="{% url 'list_farms' %}"><h2>Browse Farms</h2></a>
+                    </div>
+                    <div class="card-body">
+                        <p>Find publicly accessible farms on Titancraft. Publicly available does not always mean "Free".
+                            Check descriptions and nearby signs before using any farms.
+                        </p>
+                    </div>
                 </div>
             </div>
         </div>
+        <div class="row">
+
+            <div class="col">
+                <div class="card h-100">
+                    <div class="card-header">
+                        <a class="stretched-link" href="{% url 'list_locations' 'Overworld' %}"><h2>Overworld</h2></a>
+                    </div>
+                    <div class="card-body">
+                        <p>Find public locations in the Overworld. For example: </p>
+                        <ul>
+                            <li>Public Trading Hall</li>
+                            <li>End Portals</li>
+                            <li>Entertainment District</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col">
+                <div class="card h-100">
+                    <div class="card-header">
+                        <a class="stretched-link" href="{% url 'list_locations' 'End' %}"><h2>The End</h2></a>
+                    </div>
+                    <div class="card-body">
+                        <p>Find public locations in the End. For example: </p>
+                        <ul>
+                            <li>End Cities</li>
+                            <li>Enderman Farm</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col">
+                <div class="card h-100">
+                    <div class="card-header">
+                        <a class="stretched-link" href="{% url 'list_locations' 'Nether' %}"><h2>The Nether</h2></a>
+                    </div>
+                    <div class="card-body">
+                        <p>Find public locations in the Nether. For example: </p>
+                        <ul>
+                            <li>Nether hub and Paths</li>
+                            <li>Wither Skeleton Farms</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="row">
+
+            <div class="col">
+                <div class="card h-100">
+                    <div class="card-header">
+                        <a class="stretched-link" href="{% url 'list_locations' 'Shopping-District' %}"><h2>Shopping
+                            District</h2></a>
+                    </div>
+                    <div class="card-body">
+                        <p>Find shops and services in the Shopping District. For Example:</p>
+                        <ul>
+                            <li>Individual Shops</li>
+                            <li>Nether Portals</li>
+                            <li>Starter Resources</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col">
+                <div class="card h-100">
+                    <div class="card-header">
+                        <a class="stretched-link" href="{% url 'list_locations' 'Entertainment-District' %}"><h2>Entertainment District</h2></a>
+                    </div>
+                    <div class="card-body">
+                        <p>Find all attractions in the Entertainment District</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col">
+                <div class="card h-100">
+                    <div class="card-header">
+                        <a class="stretched-link" href="{% url 'list_locations' 'Above' %}"><h2>The Above</h2></a>
+                    </div>
+                    <div class="card-body">
+                        <p>Navigate through the custom dimension which is The Above</p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="row">
+
+            <div class="col">
+                <div class="card h-100">
+                    <div class="card-header">
+                        <a class="stretched-link" href="{% url 'list_locations' 'Resource-World' %}"><h2>Resource
+                            World</h2></a>
+                    </div>
+                    <div class="card-body">
+                        <p>Navigate through the custom dimension which is The Resource World</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col">
+                <div class="card h-100">
+                    <div class="card-header">
+                        <a class="stretched-link" href="{% url 'manage_locations' %}"><h2>Manage Locations</h2></a>
+                    </div>
+                    <div class="card-body">
+                        <p>Create and update location listings</p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
     {% endif %}
 {% endblock %}

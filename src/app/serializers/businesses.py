@@ -11,7 +11,7 @@ class BusinessSerializer(serializers.ModelSerializer):
 
 class StaffMemberSerializer(serializers.ModelSerializer):
     class Meta:
-        model = models.StaffMember
+        model = models.Maintainer
         fields = ['id', 'business', 'user']
 
 

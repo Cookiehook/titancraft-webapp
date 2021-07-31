@@ -11,6 +11,7 @@ urlpatterns = [
 
     path('stock/', views.list_stock, name='list_stock'),
     path('services/', views.list_services, name='list_services'),
+    path('farms/', views.list_farms, name='list_farms'),
     path('locations/<str:dimension>', views.list_locations, name='list_locations'),
     path('manage-locations/', views.manage_locations, name='manage_locations'),
 ]
