@@ -28,3 +28,9 @@ class ServiceRecordSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.ServiceRecord
         fields = ['id', 'business', 'name', 'description']
+
+
+class FarmRecordSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.FarmRecord
+        fields = ['id', 'business', 'mob', 'item', 'xp']

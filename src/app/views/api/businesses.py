@@ -67,3 +67,9 @@ class ServiceRecordViewSet(viewsets.ModelViewSet):
     queryset = models.ServiceRecord.objects.all().order_by('business')
     serializer_class = serializers.ServiceRecordSerializer
     permission_classes = [permissions.IsAuthenticated, IsStaffMemberOrReadOnlyPermission]
+
+
+class FarmRecordViewSet(viewsets.ModelViewSet):
+    queryset = models.FarmRecord.objects.all().order_by('business')
+    serializer_class = serializers.FarmRecordSerializer
+    permission_classes = [permissions.IsAuthenticated, IsStaffMemberOrReadOnlyPermission]

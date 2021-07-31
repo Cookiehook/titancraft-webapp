@@ -12,6 +12,14 @@ class BusinessType(models.Model):  # eg: Shop, Farm
         return self.name
 
 
+class Mob(models.Model):  # eg: Zombie, Skeleton
+    name = models.CharField(max_length=200, unique=True)
+    icon = models.CharField(max_length=200)
+
+    def __str__(self):
+        return self.name
+
+
 class Item(models.Model):  # eg: diamond_sword
     name = models.CharField(max_length=200, unique=True)
     is_enchantable = models.BooleanField(default=False)

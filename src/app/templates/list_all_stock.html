@@ -1,39 +1,9 @@
 {% extends "base.html" %}
 {% block content %}
-<div>
-    <form action="{% url 'get_all_stock' %}" method="get">
-        <input autocomplete="off" name="search" list="minecraft_items" size="60%" placeholder="I want to buy...">
-        <datalist id="minecraft_items">
-            {% for name in items %}
-            <option value="{{ name }}">
-                {% endfor %}
-        </datalist>
-        <input type="submit" value="Search">
-        <button type="submit" value="YES" name="all">All Items</button>
-
-    </form>
-</div>
+{%  include 'components/search_form.html' %}
 {% if stock %}
-{% include 'list_stock_items.html' %}
-<div class="row">
-    <ul class="pagination">
-        {% if search_term %}
-            {% if previous_page is not None %}
-            <li class="page-item"><a class="page-link" href="{% url 'get_all_stock' %}?search={{ search_term }}&page={{ previous_page }}">Previous</a></li>
-            {% endif %}
-            {% if next_page %}
-            <li class="page-item"><a class="page-link" href="{% url 'get_all_stock' %}?search={{ search_term }}&page={{ next_page }}">Next</a></li>
-            {% endif %}
-        {% else %}
-            {% if previous_page is not None %}
-            <li class="page-item"><a class="page-link" href="{% url 'get_all_stock' %}?page={{ previous_page }}">Previous</a></li>
-            {% endif %}
-            {% if next_page %}
-            <li class="page-item"><a class="page-link" href="{% url 'get_all_stock' %}?page={{ next_page }}">Next</a></li>
-            {% endif %}
-        {% endif %}
-    </ul>
-</div>
+{% include 'components/list_stock_items.html' %}
+{% include 'components/pagination.html' %}
 {% else %}
 <h1>Could not find a match</h1>
 {% endif %}

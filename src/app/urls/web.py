@@ -6,7 +6,7 @@ urlpatterns = [
     path('', static.index, name='index'),
 
     path('businesses/stock', businesses.list_all_stock, name='get_all_stock'),
-    path('businesses/services', static.under_construction, name='get_all_services'),
+    path('businesses/services', businesses.list_all_services, name='get_all_services'),
     path('businesses/<str:business_type>', static.under_construction, name='get_all_businesses'),
 
     path('business/<slug>', static.under_construction, name='get_single_business'),

@@ -3,8 +3,9 @@ from functools import reduce
 
 from django.db.models import Q
 from django.shortcuts import render
+from django.urls import reverse
 
-from app.models.businesses import StockRecord
+from app.models.businesses import StockRecord, ServiceRecord
 from app.models.constants import Item, ItemClass, ItemIcon
 
 logger = logging.getLogger()
@@ -67,8 +68,41 @@ def list_all_stock(request):
         "stock": all_stock,
         "items": sorted(items),
         "include_business": True,
+        "search_placeholder": 'I want to buy...',
+        "buisness_type": "Shop",
+        "form_action": reverse("get_all_stock")
     }
     if len(all_stock) == pagination:
+        context["next_page"] = page + 1
+    if page > 0:
+        context['previous_page'] = page - 1
+    if 'search' in request.GET and 'all' not in request.GET:
+        context['search_term'] = request.GET['search']
+
+    return render(request, template, context)
+
+
+def list_all_services(request):
+    template = "list_all_services.html"
+    pagination = 5
+    page = int(request.GET.get("page", 0))
+    results = page * pagination
+
+    if 'search' not in request.GET or 'all' in request.GET:
+        all_services = ServiceRecord.objects.all()[results:results + pagination]
+    else:
+        search_term = request.GET['search']
+        all_services = ServiceRecord.objects.filter(Q(name__icontains=search_term) | Q(description__icontains=search_term))
+
+    context = {
+        "services": all_services,
+        "include_business": True,
+        "search_placeholder": 'I need someone to...',
+        "business_type": "Shop",
+        "form_action": reverse("get_all_services")
+    }
+
+    if len(all_services) == pagination:
         context["next_page"] = page + 1
     if page > 0:
         context['previous_page'] = page - 1

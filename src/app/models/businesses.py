@@ -66,3 +66,10 @@ class ServiceRecord(models.Model):
 
     def __str__(self):
         return f"{self.business}: {self.name}"
+
+
+class FarmRecord(models.Model):
+    business = models.ForeignKey(Business, on_delete=models.CASCADE)
+    mob = models.ForeignKey(constants.Mob, on_delete=models.CASCADE, null=True, blank=True)
+    item = models.ForeignKey(constants.Item, on_delete=models.CASCADE, null=True, blank=True)
+    xp = models.BooleanField(default=False)

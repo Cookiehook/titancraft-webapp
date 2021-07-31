@@ -9,7 +9,7 @@ from django.urls import reverse
 
 from app.models.businesses import Business, StaffMember, StockRecord
 from app.models.constants import BusinessType, EnchantmentLevel, EnchantmentType, \
-    PotionModifier, PotionType, Item, ItemIcon, ItemClass
+    PotionModifier, PotionType, Item, ItemIcon, ItemClass, Mob
 from app.models.itemstacks import Enchantment, Potion, PotionModifierToPotion
 from app.models.users import UserDetails
 
@@ -53,6 +53,9 @@ def initialise(request):
                                        )
         for item_class in obj.get("classes", []):
             ItemClass.objects.get_or_create(item=item, name=item_class)
+
+    for obj in base_data['mobs']:
+        Mob.objects.get_or_create(**obj)
 
     return redirect(reverse('index'))
 
