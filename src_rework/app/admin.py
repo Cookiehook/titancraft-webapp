@@ -1,7 +1,7 @@
 from django.contrib import admin
 from app.models import constants, itemstacks, locations, users
 
-admin.site.register(constants.Dimension)
+admin.site.register(constants.Region)
 admin.site.register(constants.Mob)
 admin.site.register(constants.Item)
 admin.site.register(constants.EnchantmentLevel)

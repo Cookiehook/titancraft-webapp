@@ -17,13 +17,13 @@ test: clean
 	pipenv run pytest --cov app --cov-report term-missing
 
 makemigrations:
-	cd src && pipenv run python manage.py makemigrations
+	cd src_rework && pipenv run python manage.py makemigrations
 
 migrate:
-	cd src && pipenv run python manage.py migrate
+	cd src_rework && pipenv run python manage.py migrate
 
 createsuperuser:
-	cd src && pipenv run python manage.py createsuperuser
+	cd src_rework && pipenv run python manage.py createsuperuser
 
 run:
 	DOCKER_BUILDKIT=0 docker-compose up --build

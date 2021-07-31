@@ -9,6 +9,8 @@ from django.shortcuts import render, redirect
 from django.urls import reverse
 
 from app import utils
+from app.models.constants import Region
+from app.models.locations import Location, Maintainer
 from app.models.users import UserDetails
 
 logger = logging.getLogger()
@@ -123,6 +125,7 @@ def list_farms(request):
     context = {}
     return render(request, template_name, context)
 
+
 @login_required()
 def list_locations(request, dimension):
     template_name = 'pages/list_locations.html'
@@ -133,5 +136,49 @@ def list_locations(request, dimension):
 @login_required()
 def manage_locations(request):
     template_name = 'pages/manage_locations.html'
-    context = {}
+    locations = [m.location for m in Maintainer.objects.filter(user=request.user)]
+    context = {
+        "locations": locations
+    }
+    return render(request, template_name, context)
+
+
+@login_required()
+def add_location(request):
+    location = Location(
+        name=request.POST['name'],
+        description=request.POST['description'],
+        x_pos=int(request.POST['x_pos']),
+        y_pos=int(request.POST['y_pos']),
+        z_pos=int(request.POST['z_pos']),
+        region=Region.objects.get(name=request.POST['region'])
+    )
+    location.save()
+    maintainer = Maintainer(
+        location=location,
+        user=request.user
+    )
+    maintainer.save()
+    return redirect(reverse("get_location", args=(location.slug,)))
+
+
+@login_required()
+def get_location(request, slug):
+    template_name = 'pages/get_location.html'
+
+    location = Location.objects.get(slug=slug)
+    maintainers = Maintainer.objects.filter(location=location)
+
+    maintainer_details = []
+    for maintainer in maintainers:
+        details = UserDetails.objects.get(user=maintainer.user)
+        maintainer_details.append({
+            "username": maintainer.user.username,
+            "avatar": f"https://cdn.discordapp.com/avatars/{details.discord_id}/{details.avatar_hash}.png"
+        })
+
+    context = {
+        "location": location,
+        "maintainers": maintainer_details
+    }
     return render(request, template_name, context)

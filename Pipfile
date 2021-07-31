@@ -17,6 +17,8 @@ supervisor = "*"  # Process manager for nginx and gunicorn
 pytest = "*"  # Unit test framework
 pytest-cov = "*"  # Unit test coverage calculator
 flake8 = "*"  # Code quality analysis
+behave = "*"  # Functional Test Framework
+selenium = "*"  # Browser driver for functional tests
 
 [requires]
 python_version = "3.9"

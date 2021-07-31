@@ -8,4 +8,4 @@ class UserDetails(models.Model):
     avatar_hash = models.CharField(max_length=200)
 
     def __str__(self):
-        return self.user
+        return f"{self.user}"

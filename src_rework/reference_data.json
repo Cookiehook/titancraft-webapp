@@ -1,5 +1,5 @@
 {
-  "dimensions": [
+  "regions": [
     {"name": "Overworld"},
     {"name": "Nether"},
     {"name": "End"},

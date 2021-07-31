@@ -1,0 +1,21 @@
+{% extends 'components/base.html' %}
+{% block content %}
+    <div class="row">
+        <div class="col">
+            <h2>{{ location.name }}</h2>
+            <p>Location: {{ location.x_pos }}/{{ location.y_pos }}/{{ location.z_pos }} ({{ location.region }})</p>
+            <p>{{ location.description }}</p>
+        </div>
+        <div class="col">
+            <h2>Maintainers</h2>
+            <div class="row">
+                {% for detail in maintainers %}
+                    <div class="col">
+                        <img class="rounded-circle" alt="{{ detail.username }} avatar" src="{{ detail.avatar }}">
+                        <h4>{{ detail.username }}</h4>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

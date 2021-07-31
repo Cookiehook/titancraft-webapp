@@ -16,10 +16,10 @@ class Location(models.Model):
     x_pos = models.IntegerField()
     y_pos = models.IntegerField()
     z_pos = models.IntegerField()
-    dimension = models.ForeignKey(constants.Dimension, on_delete=models.CASCADE)
+    region = models.ForeignKey(constants.Region, on_delete=models.CASCADE)
 
     def __str__(self):
-        return f"{self.name} {self.x_pos}/{self.y_pos}/{self.z_pos} ({self.dimension})"
+        return f"{self.name} {self.x_pos}/{self.y_pos}/{self.z_pos} ({self.region})"
 
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
         self.slug = slugify(self.name)

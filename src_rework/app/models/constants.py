@@ -5,7 +5,7 @@ These will generally be created once on project release, and maintained as Minec
 from django.db import models
 
 
-class Dimension(models.Model):  # eg: Overworld, Above, Shopping District
+class Region(models.Model):  # eg: Overworld, Above, Shopping District
     name = models.CharField(max_length=50, unique=True)
 
     def __str__(self):

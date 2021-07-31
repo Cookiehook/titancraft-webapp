@@ -1,1 +1,80 @@
 {% extends 'components/base.html' %}
+{% block content %}
+    <div class="row">
+        <div class="col">
+            <h2>Create New Location</h2>
+            <p>Use this form to create a new location that is present on the Titancraft server. For example:</p>
+            <ul>
+                <li>Your new shop selling enchanted books and tool repair services</li>
+                <li>A publicly accessible farm, or farm that you lease access to</li>
+                <li>Community locations such as a public trading hall</li>
+            </ul>
+            <p>
+                When created, you will be added as the sole staff member, and redirected to the new page for that
+                location.
+                From there you can add stock/service/mob details, or change who staffs that location.
+            </p>
+            <form action="{% url 'add_location' %}" method="post">
+                {% csrf_token %}
+                <table>
+                    <tr>
+                        <td><label for="name">Name: </label></td>
+                        <td><input size="52px" name="name" id="name"></td>
+                    </tr>
+                    <tr>
+                        <td><label for="description">Description: </label></td>
+                        <td><textarea cols="50" name="description" id="description"
+                                      placeholder="Describe what this location will provide. Why would people want to come here?"></textarea>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><label for="x_pos">X: </label></td>
+                        <td><input size="5px" name="x_pos" id="x_pos"></td>
+                    </tr>
+                    <tr>
+                        <td><label for="y_pos">Y: </label></td>
+                        <td><input size="5px" name="y_pos" id="y_pos"></td>
+                    </tr>
+                    <tr>
+                        <td><label for="z_pos">Z: </label></td>
+                        <td><input size="5px" name="z_pos" id="z_pos"></td>
+                    </tr>
+                    <tr>
+                        <td><label for="region">Region: </label></td>
+                        <td><select name="region" id="region">
+                            <option value="Overworld">Overworld</option>
+                            <option value="End">The End</option>
+                            <option value="Nether">The Nether</option>
+                            <option value="Above">The Above</option>
+                            <option value="Resource-World">Resource World</option>
+                            <option value="Shopping-District">Shopping District</option>
+                            <option value="Entertainment-District">Entertainment District</option>
+                        </select></td>
+                    </tr>
+                    <tr>
+                        <td><input type="submit" value="Create"></td>
+                    </tr>
+                </table>
+                {% if errors %}
+                    <ul>
+                        {% for error in errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </form>
+
+        </div>
+        <div class="col">
+            <h2>Update Existing Location</h2>
+            <p>The list below shows all locations of which you are a maintainer.</p>
+            <p>Select any from the list to be taken to that location's page, which will allow you to modify the
+                location.</p>
+            <ul>
+                {% for location in locations %}
+                    <li><a href="{% url 'get_location' location.slug %}">{{ location.name }}</a></li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+{% endblock %}
