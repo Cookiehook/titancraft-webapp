@@ -11,7 +11,6 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-
     {% load static %}
     <link rel="stylesheet" type="text/css" href="{% static 'styles.css' %}">
     <link rel="shortcut icon" href="{% static 'images/favicon.png' %}"/>
@@ -23,9 +22,12 @@
             <li class="nav-item"><a class="nav-link" href="{% url 'index' %}">Home</a></li>
             <li class="nav-item"><a class="nav-link" href="{% url 'get_all_stock' %}">Browse Stock</a></li>
             <li class="nav-item"><a class="nav-link" href="{% url 'get_all_services' %}">Browse Services</a></li>
-            <li class="nav-item"><a class="nav-link" href="{% url 'get_all_businesses' 'Farm' %}">Find Farm</a></li>
-            <li class="nav-item"><a class="nav-link" href="{% url 'get_all_businesses' 'Shop' %}">Find Shop</a></li>
-            <li class="nav-item"><a class="nav-link" href="{% url 'get_all_businesses' 'Location' %}">Find Location</a>
+            <li class="nav-item"><a class="nav-link" href="{% url 'get_all_businesses' 'Farm' %}">Farms</a></li>
+            <li class="nav-item"><a class="nav-link" href="{% url 'get_all_businesses' 'Shop' %}">Shopping District</a></li>
+            <li class="nav-item"><a class="nav-link" href="{% url 'get_all_businesses' 'Shop' %}">Entertainment District</a></li>
+            <li class="nav-item"><a class="nav-link" href="{% url 'get_all_businesses' 'Shop' %}">The End</a></li>
+            <li class="nav-item"><a class="nav-link" href="{% url 'get_all_businesses' 'Shop' %}">The Nether</a></li>
+            <li class="nav-item"><a class="nav-link" href="{% url 'get_all_businesses' 'Shop' %}">The Above</a></li>
             </li>
             <li class="nav-item"><a class="nav-link" href="{% url 'get_my_businesses' %}">Manage Locations</a></li>
             <li class="nav-item"><a class="nav-link" href="{% url 'logout' %}">Log Out</a></li>

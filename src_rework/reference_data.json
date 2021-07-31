@@ -1,16 +1,12 @@
 {
-  "business_types": [
-    {"name":  "Farm"},
-    {"name": "Shop"},
-    {"name": "Location"}
-  ],
-
-  "dimensions": [
+  "regions": [
     {"name": "Overworld"},
     {"name": "Nether"},
     {"name": "End"},
     {"name": "Resource World"},
-    {"name": "Above"}
+    {"name": "Above"},
+    {"name": "Shopping District"},
+    {"name": "Entertainment District"}
   ],
 
   "enchantment_levels": [
