@@ -15,7 +15,9 @@ class Business(models.Model):
     slug = models.SlugField()
     description = models.CharField(max_length=1000, blank=True, null=True)
     x_pos = models.IntegerField()
+    y_pos = models.IntegerField()
     z_pos = models.IntegerField()
+    dimension = models.ForeignKey(constants.Dimension, on_delete=models.CASCADE)
 
     def __str__(self):
         return f"{self.name} ({self.x_pos}/{self.z_pos})"

@@ -9,6 +9,8 @@ import app.views.api.users as users_views
 router_v1 = routers.DefaultRouter()
 
 router_v1.register('constants/business_type', constants_views.BusinessTypeViewSet)
+router_v1.register('constants/mob', constants_views.MobViewSet)
+router_v1.register('constants/dimension', constants_views.DimensionViewSet)
 router_v1.register('constants/item', constants_views.ItemViewSet)
 router_v1.register('constants/potion_type', constants_views.PotionTypeViewSet)
 router_v1.register('constants/potion_modifier', constants_views.PotionModifierViewSet)
@@ -16,7 +18,6 @@ router_v1.register('constants/enchantment_type', constants_views.EnchantmentType
 router_v1.register('constants/enchantment_level', constants_views.EnchantmentLevelViewSet)
 router_v1.register('constants/item_class', constants_views.ItemClassViewSet)
 router_v1.register('constants/item_icon', constants_views.ItemIconViewSet)
-router_v1.register('constants/mob', constants_views.MobViewSet)
 
 router_v1.register('itemstacks/enchantment', itemstacks_views.EnchantmentViewSet)
 router_v1.register('itemstacks/potion', itemstacks_views.PotionViewSet)

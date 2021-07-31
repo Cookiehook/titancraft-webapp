@@ -1,6 +1,7 @@
 import logging
 from functools import reduce
 
+from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from django.shortcuts import render
 from django.urls import reverse
@@ -36,6 +37,7 @@ def append_stock_icons(stock_list):
             stock.stock_icon = ItemIcon.objects.filter(item=stock.stock_item)[0].icon
 
 
+@login_required()
 def list_all_stock(request):
     template = "list_all_stock.html"
     pagination = 25
@@ -88,6 +90,7 @@ def list_all_stock(request):
     return render(request, template, context)
 
 
+@login_required()
 def list_all_services(request):
     template = "list_all_services.html"
     pagination = 25
@@ -118,6 +121,7 @@ def list_all_services(request):
     return render(request, template, context)
 
 
+@login_required()
 def list_all_businesses(request, business_type):
     template = "list_all_businesses.html"
     pagination = 25
@@ -149,27 +153,32 @@ def list_all_businesses(request, business_type):
     return render(request, template, context)
 
 
+@login_required()
 def get_single_business(request, slug):
     template = "get_single_business.html"
     business = Business.objects.get(slug=slug)
+    all_staff = StaffMember.objects.filter(business=business)
 
-    staff_list = []
-    for staff in StaffMember.objects.filter(business=business):
+    is_owner = request.user in [s.user for s in all_staff]
+    staff_details = []
+
+    for staff in all_staff:
         details = UserDetails.objects.get(user=staff.user)
-        staff_list.append({
+        staff_details.append({
             "username": staff.user.username,
             "avatar": f"https://cdn.discordapp.com/avatars/{details.discord_id}/{details.avatar_hash}.png"
         })
 
-    all_stock = StockRecord.objects.filter(business=business).all()
+    all_stock = StockRecord.objects.filter(business=business).all()[:25]
     append_stock_icons(all_stock)
 
     context = {
         "business": business,
-        "staff_list": staff_list,
+        "staff_details": staff_details,
+        "is_owner": is_owner,
         "stock": all_stock,
-        "services": ServiceRecord.objects.filter(business=business),
-        "farms": FarmRecord.objects.filter(business=business)
+        "services": ServiceRecord.objects.filter(business=business)[:25],
+        "farms": FarmRecord.objects.filter(business=business)[:25]
     }
 
     return render(request, template, context)

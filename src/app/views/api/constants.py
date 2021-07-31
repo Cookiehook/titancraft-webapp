@@ -11,6 +11,12 @@ class BusinessTypeViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsSiteAdminOrReadOnly]
 
 
+class DimensionViewSet(viewsets.ModelViewSet):
+    queryset = models.Dimension.objects.all().order_by('name')
+    serializer_class = serializers.DimensionSerializer
+    permission_classes = [permissions.IsSiteAdminOrReadOnly]
+
+
 class MobViewSet(viewsets.ModelViewSet):
     queryset = models.Mob.objects.all().order_by('name')
     serializer_class = serializers.MobSerializer

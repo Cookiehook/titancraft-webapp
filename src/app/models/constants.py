@@ -12,6 +12,13 @@ class BusinessType(models.Model):  # eg: Shop, Farm
         return self.name
 
 
+class Dimension(models.Model):  # eg: Shop, Farm
+    name = models.CharField(max_length=50, unique=True)
+
+    def __str__(self):
+        return self.name
+
+
 class Mob(models.Model):  # eg: Zombie, Skeleton
     name = models.CharField(max_length=200, unique=True)
     icon = models.CharField(max_length=200)

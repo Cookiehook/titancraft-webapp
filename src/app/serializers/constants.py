@@ -9,6 +9,12 @@ class BusinessTypeSerializer(serializers.ModelSerializer):
         fields = ['id', 'name']
 
 
+class DimensionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Dimension
+        fields = ['id', 'name']
+
+
 class MobSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Mob

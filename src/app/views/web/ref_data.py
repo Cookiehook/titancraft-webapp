@@ -9,7 +9,7 @@ from django.urls import reverse
 
 from app.models.businesses import Business, StaffMember, StockRecord
 from app.models.constants import BusinessType, EnchantmentLevel, EnchantmentType, \
-    PotionModifier, PotionType, Item, ItemIcon, ItemClass, Mob
+    PotionModifier, PotionType, Item, ItemIcon, ItemClass, Mob, Dimension
 from app.models.itemstacks import Enchantment, Potion, PotionModifierToPotion
 from app.models.users import UserDetails
 
@@ -21,6 +21,9 @@ def initialise(request):
 
     with open("base_data.json") as datafile:
         base_data = json.loads(datafile.read())
+
+    for obj in base_data['dimensions']:
+        Dimension.objects.get_or_create(**obj)
 
     for obj in base_data['business_types']:
         BusinessType.objects.get_or_create(**obj)
@@ -64,13 +67,14 @@ def initialise(request):
 def create_test_businesses(request):
     if not request.user.is_staff:
         return HttpResponseForbidden(b'Only staff may use this endpoint')
-    business_type = BusinessType.objects.get(name="Shop")
     business, _ = Business.objects.get_or_create(name="Cookiehook's Debug shop",
-                                                 type=business_type,
+                                                 type=BusinessType.objects.get(name="Shop"),
                                                  slug="cookiehooks-debug-shop",
                                                  description="A shop entry for debugging the webapp. Don't try to go here, it doesn't exist",
                                                  x_pos=0,
-                                                 z_pos=0)
+                                                 y_pos=0,
+                                                 z_pos=0,
+                                                 dimension=Dimension.objects.get(name="Overworld"))
     user, _ = User.objects.get_or_create(username="Cookiehook", is_staff=True)
     user.save()
     business.save()
@@ -81,6 +85,27 @@ def create_test_businesses(request):
         user_detail.save()
     StaffMember.objects.get_or_create(business=business, user=user)[0].save()
 
+    farm, _ = Business.objects.get_or_create(name="Cookiehook's Debug farm",
+                                                 type=BusinessType.objects.get(name="Farm"),
+                                                 slug="cookiehooks-debug-farm",
+                                                 description="A farm entry for debugging the webapp. Don't try to go here, it doesn't exist",
+                                                 x_pos=0,
+                                                 y_pos=0,
+                                                 z_pos=0,
+                                                 dimension=Dimension.objects.get(name="Overworld"))
+    StaffMember.objects.get_or_create(business=farm, user=user)[0].save()
+
+    location, _ = Business.objects.get_or_create(name="Cookiehook's Debug Location",
+                                                 type=BusinessType.objects.get(name="Location"),
+                                                 slug="cookiehooks-debug-farm",
+                                                 description="A location entry for debugging the webapp. Don't try to go here, it doesn't exist",
+                                                 x_pos=0,
+                                                 y_pos=0,
+                                                 z_pos=0,
+                                                 dimension=Dimension.objects.get(name="Overworld"))
+    StaffMember.objects.get_or_create(business=location, user=user)[0].save()
+
+    # Create shop stock records
     diamond = Item.objects.get(name="Diamond")
     ench_level = EnchantmentLevel.objects.get(name="III")
     pot_strong = PotionModifier.objects.get(name="Strong")

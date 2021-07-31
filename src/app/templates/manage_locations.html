@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+{% block content %}
+    <div class="row">
+        <div class="col">
+            <h2>Create New Location</h2>
+            <p>Use this form to create a new location that is present on the Titancraft server. For example:</p>
+            <ul>
+                <li>Your new shop selling enchanted books and tool repair services</li>
+                <li>A publicly accessible farm, or farm that you lease access to</li>
+                <li>Community locations such as the Entertainment District</li>
+            </ul>
+            <p>
+                When created, you will be added as the sole staff member, and redirected to the new page for that
+                location.
+                From there you can add stock/service/mob details, or change who staffs that location.
+            </p>
+
+            <form action="{% url 'add_business' %}" method="post">
+                <table>
+                    <tr>
+                        <td><label for="name">Name: </label></td>
+                        <td><input size="52px" name="name" id="name"></td>
+                    </tr>
+                    <tr>
+                        <td><label for="description">Description: </label></td>
+                        <td><textarea cols="50" name="description" id="description"
+                                      placeholder="Describe what your business will provide. Why would people want to come here?"></textarea>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><label for="type">Type: </label></td>
+                        <td>
+                            <select name="type" id="type">
+                                <option value="Shop">Shop</option>
+                                <option value="Farm">Farm</option>
+                                <option value="Location">Location</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><label for="x_pos">X co-ordinate: </label></td>
+                        <td><input size="52px" name="x_pos" id="x_pos"></td>
+                    </tr>
+                    <tr>
+                        <td><label for="x_pos">Y co-ordinate: </label></td>
+                        <td><input size="52px" name="y_pos" id="x_pos"></td>
+                    </tr>
+                    <tr>
+                        <td><label for="z_pos">Z co-ordinate: </label></td>
+                        <td><input size="52px" name="z_pos" id="z_pos"></td>
+                    </tr>
+                    <tr>
+                        <td><label for="dimension">Dimension: </label></td>
+                        <td>
+                            <select name="dimension" id="dimension">
+                                <option value="Overworld">Overworld</option>
+                                <option value="Nether">Nether</option>
+                                <option value="End">End</option>
+                                <option value="Above">Above</option>
+                                <option value="Resource World">Resource World</option>
+                            </select>
+                        </td>
+                    </tr>
+                </table>
+
+                <input type="submit" value="Create">
+            </form>
+        </div>
+        <div class="col">
+            <h2>Update Existing Locations</h2>
+            {% for business in businesses %}
+                <div class="content-item">
+                    <div class="row">
+                        <a href="{% url 'get_single_business' business.slug %}">
+                            <p>{{ business.name }}: {{ business.x_pos }}/{{ business.y_pos }}/{{ business.z_pos }} ({{ business.dimension }})</p>
+                        </a>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}

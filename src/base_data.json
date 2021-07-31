@@ -5,6 +5,14 @@
     {"name": "Location"}
   ],
 
+  "dimensions": [
+    {"name": "Overworld"},
+    {"name": "Nether"},
+    {"name": "End"},
+    {"name": "Resource World"},
+    {"name": "Above"}
+  ],
+
   "enchantment_levels": [
     {"name": "I"},
     {"name": "II"},

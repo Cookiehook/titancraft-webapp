@@ -1,0 +1,18 @@
+<div class="row">
+    <div class="col"><h3>{{ business_type }} Name</h3></div>
+    <div class="col"><h3>Description</h3></div>
+</div>
+{% for business in businesses %}
+    <div class="content-item">
+        <div class="row">
+            <div class="col">
+                <div class="row"><a href="{% url 'get_single_business' business.slug %}"><p>{{ business.name }}</p></a></div>
+                <div class="row"><p>Location: {{ business.x_pos }}/{{ business.y_pos }}/{{ business.z_pos }}
+                    ({{ business.dimension }})</p></div>
+            </div>
+            <div class="col">
+                <p>{{ business.description }}</p>
+            </div>
+        </div>
+    </div>
+{% endfor %}

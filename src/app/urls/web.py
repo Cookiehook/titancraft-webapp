@@ -1,6 +1,6 @@
 from django.urls import path
 
-from app.views.web import static, auth, ref_data, businesses
+from app.views.web import static, auth, ref_data, businesses, user
 
 urlpatterns = [
     path('', static.index, name='index'),
@@ -12,7 +12,7 @@ urlpatterns = [
     path('business/<slug>', businesses.get_single_business, name='get_single_business'),
     path('business/add', static.under_construction, name='add_business'),
 
-    path('user/businesses', static.under_construction, name='get_my_businesses'),
+    path('user/businesses', user.manage_locations, name='get_my_businesses'),
 
     path('auth/login', auth.request_oauth_token, name='login'),
     path('auth/callback', auth.oauth_callback, name='auth_callback'),

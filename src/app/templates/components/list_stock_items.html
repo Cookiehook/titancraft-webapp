@@ -14,7 +14,7 @@
                 <div class="col">
                     <div class="row"><a href="{% url 'get_single_business' stock.business.slug %}">
                         <p>{{ stock.business.name }}</p></a></div>
-                    <div class="row"><p>X/Z: {{ stock.business.x_pos }}/{{ stock.business.z_pos }}</p></div>
+                    <div class="row"><p>Location: {{ business.x_pos }}/{{ business.y_pos }}/{{ business.z_pos }} ({{ business.dimension }})</p></div>
                 </div>
             {% endif %}
             <div class="col">

@@ -11,7 +11,7 @@
             {% if include_business %}
                 <div class="col-sm-2">
                     <div class="row"><a href="{% url 'get_single_business' service.business.slug %}"><p>{{ service.business.name }}</p></a></div>
-                    <div class="row"><p>X/Z: {{ service.business.x_pos }}/{{ service.business.z_pos }}</p></div>
+                    <div class="row"><p>Location: {{ business.x_pos }}/{{ business.y_pos }}/{{ business.z_pos }} ({{ business.dimension }})</p></div>
                 </div>
             {% endif %}
             <div class="col-sm-2"><p>{{ service.name }}</p></div>
