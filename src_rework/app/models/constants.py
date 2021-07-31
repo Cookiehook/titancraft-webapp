@@ -5,14 +5,7 @@ These will generally be created once on project release, and maintained as Minec
 from django.db import models
 
 
-class BusinessType(models.Model):  # eg: Shop, Farm
-    name = models.CharField(max_length=50, unique=True)
-
-    def __str__(self):
-        return self.name
-
-
-class Dimension(models.Model):  # eg: Shop, Farm
+class Dimension(models.Model):  # eg: Overworld, Above, Shopping District
     name = models.CharField(max_length=50, unique=True)
 
     def __str__(self):
@@ -46,13 +39,6 @@ class EnchantmentLevel(models.Model):  # eg: I, II, III, IV, V
 class EnchantmentType(models.Model):  # eg: Efficiency, Protection
     name = models.CharField(max_length=200, unique=True)
     type = models.CharField(max_length=200)
-
-    def __str__(self):
-        return self.name
-
-
-class PotionModifier(models.Model):  # eg: Strong, Extended, Splash, Lingering
-    name = models.CharField(max_length=200, unique=True)
 
     def __str__(self):
         return self.name

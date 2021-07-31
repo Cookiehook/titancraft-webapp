@@ -1,5 +1,5 @@
 """
-All data used to create and manage Shops, Farms and their stocks.
+All data used to create and manage Locations and their stocks.
 These are defined by the user.
 """
 from django.contrib.auth.models import User
@@ -9,9 +9,8 @@ from django.utils.text import slugify
 from app.models import constants
 
 
-class Business(models.Model):
+class Location(models.Model):
     name = models.CharField(max_length=50, unique=True)
-    type = models.ForeignKey(constants.BusinessType, on_delete=models.CASCADE)
     slug = models.SlugField()
     description = models.CharField(max_length=1000, blank=True, null=True)
     x_pos = models.IntegerField()
@@ -20,23 +19,23 @@ class Business(models.Model):
     dimension = models.ForeignKey(constants.Dimension, on_delete=models.CASCADE)
 
     def __str__(self):
-        return f"{self.name} ({self.x_pos}/{self.z_pos})"
+        return f"{self.name} {self.x_pos}/{self.y_pos}/{self.z_pos} ({self.dimension})"
 
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
         self.slug = slugify(self.name)
-        super(Business, self).save(force_insert, force_update, using, update_fields)
+        super(Location, self).save(force_insert, force_update, using, update_fields)
 
 
-class StaffMember(models.Model):
-    business = models.ForeignKey(Business, on_delete=models.CASCADE)
+class Maintainer(models.Model):
+    location = models.ForeignKey(Location, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
     def __str__(self):
-        return f"{self.business} - {self.user}"
+        return f"{self.location} - {self.user}"
 
 
 class StockRecord(models.Model):
-    business = models.ForeignKey(Business, on_delete=models.CASCADE)
+    location = models.ForeignKey(Location, on_delete=models.CASCADE)
 
     # Itemstack for sale
     stock_item = models.ForeignKey(constants.Item, on_delete=models.CASCADE, related_name="stock")
@@ -54,24 +53,24 @@ class StockRecord(models.Model):
     def __str__(self):
         if self.enchantment_set.all():
             labels = " | ".join([str(i) for i in self.enchantment_set.all()])
-            return f"{self.business}: {self.stock_stack_size}x {self.stock_item} ({labels}) - {self.cost_stack_size}x {self.cost_item}"
+            return f"{self.location}: {self.stock_stack_size}x {self.stock_item} ({labels}) - {self.cost_stack_size}x {self.cost_item}"
         if self.potion_set.all():
             labels = " | ".join([str(i) for i in self.potion_set.all()])
-            return f"{self.business}: {self.stock_stack_size}x {self.stock_item} ({labels}) - {self.cost_stack_size}x {self.cost_item}"
-        return f"{self.business}: {self.stock_stack_size}x {self.stock_item} - {self.cost_stack_size}x {self.cost_item}"
+            return f"{self.location}: {self.stock_stack_size}x {self.stock_item} ({labels}) - {self.cost_stack_size}x {self.cost_item}"
+        return f"{self.location}: {self.stock_stack_size}x {self.stock_item} - {self.cost_stack_size}x {self.cost_item}"
 
 
 class ServiceRecord(models.Model):
-    business = models.ForeignKey(Business, on_delete=models.CASCADE)
+    location = models.ForeignKey(Location, on_delete=models.CASCADE)
     name = models.CharField(max_length=1000)
     description = models.CharField(max_length=1000)
 
     def __str__(self):
-        return f"{self.business}: {self.name}"
+        return f"{self.location}: {self.name}"
 
 
 class FarmRecord(models.Model):
-    business = models.ForeignKey(Business, on_delete=models.CASCADE)
+    location = models.ForeignKey(Location, on_delete=models.CASCADE)
     mob = models.ForeignKey(constants.Mob, on_delete=models.CASCADE, null=True, blank=True)
     item = models.ForeignKey(constants.Item, on_delete=models.CASCADE, null=True, blank=True)
     xp = models.BooleanField(default=False)

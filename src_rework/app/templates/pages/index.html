@@ -1,0 +1,34 @@
+{% extends "components/base.html" %}
+{% block content %}
+    <h1>Welcome TitanCrafters!</h1>
+    <p>
+        Welcome to your one-stop-shop for information about the Titancraft server.
+        Please read the instructions below in order to use this site.
+    <p>
+        This site is run by Cookiehook, with assistance from the lovely Titancraft community.
+        Please do not ask the Titancraft mods for support, they will not be able to help.
+        If you think a record for a shop or location is wrong, please contact the maintainers for that location. You can
+        see a location's maintainers by opening the page for that location.
+        If you are having difficulty using this site, please contact Cookiehook on Discord.
+    </p>
+    <p>
+        To create an account, click the "Log In" button at the top of this site.
+        This will take you to the Discord authorisation page, where you will be asked to Authorise the <code>titancraft-info-portal app</code>.
+        This allows the site to check that you are part of the Titancraft server before allowing access. Click Authorise to continue.
+        Access can be revoked at any time by going to accessing Settings -> Authorised Apps in Discord.
+    </p>
+    <p>
+        You will not be able to access any other parts of the site until you have created an account.
+    </p>
+    {% if user.is_authenticated %}
+        <div class="row">
+        <div class="col">
+            <div class="card h-100">
+                <div class="card-header"><a class="stretched-link" href="{% url 'list_stock' %}"><h2>Browse Stock</h2></a></div>
+                <div class="card-body">
+                    <p>Find items for sale on the Titancraft server.</p>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+{% endblock %}

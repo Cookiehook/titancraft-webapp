@@ -1,0 +1,41 @@
+.title-bar {
+    padding-top: 5px;
+}
+
+body {
+	background: url("images/bg_clouds2.webp") no-repeat center 0,
+	url("images/bg_ground_tile2.webp") repeat-x center 0,
+	url("images/bg_black_tile.png") repeat top;
+}
+
+.container::before {
+	content: "";
+	height:14px;
+	background: url("images/mcf_top_brown_bar.webp");
+	background-size: cover;
+    width: 100%;
+	display: table;
+
+}
+
+.container {
+    background: #fff;
+	border-radius: 5px;
+	padding: 0;
+}
+
+.content {
+	padding: 15px;
+}
+
+.content-item {
+	margin: 5px;
+	border-radius: 5px;
+    border: solid 1px #a2a2a2 ;
+    background: #fff;
+}
+
+.row {
+	margin-left: 2%;
+	margin-right: 2%;
+}

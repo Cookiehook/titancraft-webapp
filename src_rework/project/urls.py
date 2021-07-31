@@ -19,7 +19,7 @@ from django.urls import path, include
 from project.views import health
 
 urlpatterns = [
-    # path('', include('app.urls')),
-    # path('admin/', admin.site.urls),
-    # path('health/', health, name="health"),  # Used by ALB
+    path('', include('app.urls')),
+    path('admin/', admin.site.urls),
+    path('health/', health, name="health"),  # Used by ALB
 ]

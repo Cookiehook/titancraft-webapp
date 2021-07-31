@@ -14,11 +14,11 @@ manage stock records.
 """
 from django.db import models
 
-from app.models import constants, businesses
+from app.models import constants, locations
 
 
 class Enchantment(models.Model):
-    stock_record = models.ForeignKey(businesses.StockRecord, on_delete=models.CASCADE)
+    stock_record = models.ForeignKey(locations.StockRecord, on_delete=models.CASCADE)
     enchantment_type = models.ForeignKey(constants.EnchantmentType, on_delete=models.CASCADE)
     enchantment_level = models.ForeignKey(constants.EnchantmentLevel, on_delete=models.CASCADE)
 
@@ -27,20 +27,12 @@ class Enchantment(models.Model):
 
 
 class Potion(models.Model):
-    stock_record = models.ForeignKey(businesses.StockRecord, on_delete=models.CASCADE)
+    stock_record = models.ForeignKey(locations.StockRecord, on_delete=models.CASCADE)
     potion_type = models.ForeignKey(constants.PotionType, on_delete=models.CASCADE)
+    is_strong = models.BooleanField(default=False)
+    is_extended = models.BooleanField(default=False)
+    is_splash = models.BooleanField(default=False)
+    is_lingering = models.BooleanField(default=False)
 
     def __str__(self):
-        if modifiers := PotionModifierToPotion.objects.filter(potion=self):
-            modifier_labels = [str(m.potion_modifier) for m in modifiers]
-            return f"{' '.join(modifier_labels)} {self.potion_type}"
-
-        return f"{self.potion_type}"
-
-
-class PotionModifierToPotion(models.Model):
-    potion_modifier = models.ForeignKey(constants.PotionModifier, on_delete=models.CASCADE)
-    potion = models.ForeignKey(Potion, on_delete=models.CASCADE)
-
-    def __str__(self):
-        return f"{self.potion} - {self.potion_modifier}"
+        return f"{self.potion_type} Strong: {self.is_strong} Extended: {self.is_extended} Splash: {self.is_splash} Lingering: {self.is_lingering}"

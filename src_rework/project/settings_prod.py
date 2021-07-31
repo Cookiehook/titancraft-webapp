@@ -2,7 +2,7 @@ import re
 
 import requests
 
-from project import utils
+from app import utils
 from project.settings import *  # noqa. Wildcard import is used to mimic inheritance
 
 DEBUG = False
