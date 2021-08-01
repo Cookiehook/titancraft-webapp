@@ -16,6 +16,12 @@ from app.models.users import UserDetails
 logger = logging.getLogger()
 
 
+def is_maintainer(user, slug):
+    location = Location.objects.get(slug=slug)
+    maintainers = Maintainer.objects.filter(location=location)
+    return user in [m.user for m in maintainers]
+
+
 def index(request):
     template_name = 'pages/index.html'
     context = {}
@@ -133,7 +139,7 @@ def list_farms(request):
 
 
 @login_required()
-def list_locations(request, dimension):
+def list_locations(request, region):
     template_name = 'pages/list_locations.html'
     context = {}
     return render(request, template_name, context)
@@ -147,29 +153,6 @@ def manage_locations(request):
         "locations": locations
     }
     return render(request, template_name, context)
-
-
-@login_required()
-def add_location(request):
-    location, _ = Location.objects.get_or_create(name=request.POST['name'])
-    if request.POST.get("delete"):
-        location.delete()
-        return redirect(reverse("manage_locations"))
-
-
-    location.description = request.POST['description']
-    location.x_pos = int(request.POST['x_pos'])
-    location.y_pos = int(request.POST['y_pos'])
-    location.z_pos = int(request.POST['z_pos'])
-    location.region = Region.objects.get(name=request.POST['region'])
-
-    location.save()
-    maintainer, _ = Maintainer.objects.get_or_create(
-        location=location,
-        user=request.user
-    )
-    maintainer.save()
-    return redirect(reverse("get_location", args=(location.slug,)))
 
 
 @login_required()
@@ -211,11 +194,19 @@ def modify_location(request, slug):
 @login_required()
 def modify_maintainers(request, slug):
     template_name = 'pages/modify_maintainers.html'
+    location = Location.objects.get(slug=slug)
     if not is_maintainer(request.user, slug):
         return redirect(reverse("not_authorised"))
 
-    context = {
+    maintainers = Maintainer.objects.filter(location=location)
+    for maintainer in maintainers:
+        details = UserDetails.objects.get(user=maintainer.user)
+        maintainer.avatar = f"https://cdn.discordapp.com/avatars/{details.discord_id}/{details.avatar_hash}.png"
 
+    context = {
+        "location": location,
+        "maintainers": maintainers,
+        "users": User.objects.all()
     }
     return render(request, template_name, context)
 
@@ -256,7 +247,42 @@ def modify_farmables(request, slug):
     return render(request, template_name, context)
 
 
-def is_maintainer(user, slug):
-    location = Location.objects.get(slug=slug)
-    maintainers = Maintainer.objects.filter(location=location)
-    return user in [m.user for m in maintainers]
+@login_required()
+def add_location(request):
+    location, _ = Location.objects.get_or_create(name=request.POST['name'])
+    if request.POST.get("delete"):
+        location.delete()
+        return redirect(reverse("manage_locations"))
+
+    location.description = request.POST['description']
+    location.x_pos = int(request.POST['x_pos'])
+    location.y_pos = int(request.POST['y_pos'])
+    location.z_pos = int(request.POST['z_pos'])
+    location.region = Region.objects.get(name=request.POST['region'])
+
+    location.save()
+    maintainer, _ = Maintainer.objects.get_or_create(
+        location=location,
+        user=request.user
+    )
+    maintainer.save()
+    return redirect(reverse("get_location", args=(location.slug,)))
+
+
+@login_required()
+def add_maintainer(request):
+    location = Location.objects.get(id=request.POST['location'])
+    maintainer = Maintainer(
+        location=location,
+        user=User.objects.get(id=request.POST['user'])
+    )
+    maintainer.save()
+    return redirect(reverse("modify_maintainers", args=(location.slug,)))
+
+
+@login_required()
+def delete_maintainer(request):
+    maintainer = Maintainer.objects.get(id=request.POST['id'])
+    location_slug = maintainer.location.slug
+    maintainer.delete()
+    return redirect(reverse("modify_maintainers", args=(location_slug,)))

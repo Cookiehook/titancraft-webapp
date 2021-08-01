@@ -1,1 +1,30 @@
 {% extends 'components/base.html' %}
+{% block content %}
+    <h2>Add Maintainer</h2>
+    <form action="{% url 'add_maintainer' %}" method="post">
+        {% csrf_token %}
+        <td><label for="user">User</label></td>
+        <select name="user" id="user">
+            {% for user in users %}
+                <option value="{{ user.id }}">{{ user.username }}</option>
+            {% endfor %}
+        </select>
+        <input type="hidden" name="location" value="{{ location.id }}">
+        <td><input class="btn btn-success" type="submit" value="Add"></td>
+    </form>
+
+    <h2>Maintainers</h2>
+    {% for maintainer in maintainers %}
+        <form action="{% url 'delete_maintainer' %}" method="post">
+            {% csrf_token %}
+            <table>
+                <tr>
+                    <td><img class="rounded-circle" alt="{{ maintainer.user.username }} avatar" src="{{ maintainer.avatar }}"></td>
+                    <td>{{ maintainer.user.username }}</td>
+                    <td><input class="btn btn-danger" type="submit" name="delete" value="Delete" onclick="return confirm('Are you sure you want to remove {{ maintainer.user.username }}?');"></td>
+                    <td><input type="hidden" name="id" value="{{ maintainer.id }}"></td>
+                </tr>
+            </table>
+        </form>
+    {% endfor %}
+{% endblock %}
