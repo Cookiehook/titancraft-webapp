@@ -1,1 +1,25 @@
 {% extends 'components/base.html' %}
+{% block content %}
+    {% include 'components/search_form.html' %}
+    <div class="row">
+    <div class="col"><h3>Name</h3></div>
+    <div class="col"><h3>Description</h3></div>
+    </div>
+    {% for location in locations %}
+        <div class="content-item">
+            <div class="row">
+                <div class="col">
+                    <div class="row"><a href="{% url 'get_location' location.slug %}"><p>{{ location.name }}</p>
+                    </a></div>
+                    <div class="row"><p>Location: {{ location.x_pos }}/{{ location.y_pos }}/{{ location.z_pos }}
+                        ({{ location.region }})</p></div>
+                </div>
+                <div class="col">
+                    <p>{{ location.description }}</p>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+
+    {% include 'components/pagination.html' %}
+{% endblock %}
