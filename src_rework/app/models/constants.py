@@ -29,26 +29,20 @@ class Item(models.Model):  # eg: diamond_sword
         return self.name
 
 
-class EnchantmentLevel(models.Model):  # eg: I, II, III, IV, V
-    name = models.CharField(max_length=10)
-
-    def __str__(self):
-        return self.name
-
-
-class EnchantmentType(models.Model):  # eg: Efficiency, Protection
-    name = models.CharField(max_length=200, unique=True)
-    type = models.CharField(max_length=200)
-
-    def __str__(self):
-        return self.name
-
-
-class PotionType(models.Model):  # eg: Regeneration, Night Vision
+class Enchantment(models.Model):  # eg: Efficiency, Protection
     name = models.CharField(max_length=200, unique=True)
 
     def __str__(self):
         return self.name
+
+
+class Potion(models.Model):  # eg: Regeneration, Night Vision
+    name = models.CharField(max_length=200, unique=True)
+    is_splash = models.BooleanField(default=False)
+    is_lingering = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"{self.name} Splash: {self.is_splash} Lingering: {self.is_lingering}"
 
 
 class ItemClass(models.Model):
@@ -63,7 +57,7 @@ class ItemClass(models.Model):
 class ItemIcon(models.Model):  # Find appropriate icon based on Item and modifiers
     item = models.ForeignKey(Item, on_delete=models.CASCADE)
     enchanted = models.BooleanField(default=False)
-    potion = models.ForeignKey(PotionType, on_delete=models.CASCADE, blank=True, null=True)
+    potion = models.ForeignKey(Potion, on_delete=models.CASCADE, blank=True, null=True)
     icon = models.CharField(max_length=200)
 
     def __str__(self):
