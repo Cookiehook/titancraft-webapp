@@ -1,4 +1,5 @@
 {% extends 'components/base.html' %}
+{% load markdownify %}
 {% block content %}
     {% if is_maintainer %}
         <nav class="navbar navbar-expand-sm bg-dark navbar-dark justify-content-center">
@@ -15,7 +16,7 @@
         <div class="col">
             <h2>{{ location.name }}</h2>
             <p>Location: {{ location.x_pos }}/{{ location.y_pos }}/{{ location.z_pos }} ({{ location.region }})</p>
-            <p>{{ location.description }}</p>
+            <p>{{ location.description|markdownify }}</p>
         </div>
         <div class="col">
             <h2>Maintainers</h2>

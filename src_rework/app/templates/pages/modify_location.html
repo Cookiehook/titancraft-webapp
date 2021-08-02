@@ -8,8 +8,10 @@
                 <td><input size="52px" name="name" id="name" value="{{ location.name }}"></td>
             </tr>
             <tr>
-                <td><label for="description">Description: </label></td>
-                <td><textarea cols="50" name="description" id="description">{{ location.description }}</textarea>
+                <td><label for="description">Description<br> <em>(Supports Markdown)</em>: </label></td>
+                <td><textarea rows="20" cols="100" name="description" id="description">{{ location.description }}</textarea>
+                    <script>var editor = new Editor({element: document.getElementById("description")});
+                    editor.render();</script>
                 </td>
             </tr>
             <tr>

@@ -8,6 +8,7 @@ import math
 from django.contrib.auth.models import User
 from django.db import models
 from django.utils.text import slugify
+from markdownx.models import MarkdownxField
 
 from app.models import constants
 from app.models.constants import Enchantment, Potion, ItemIcon
@@ -18,7 +19,7 @@ logger = logging.getLogger()
 class Location(models.Model):
     name = models.CharField(max_length=50, unique=True)
     slug = models.SlugField()
-    description = models.CharField(max_length=1000, blank=True, null=True)
+    description = MarkdownxField(null=True)
     x_pos = models.IntegerField(null=True)
     y_pos = models.IntegerField(null=True)
     z_pos = models.IntegerField(null=True)

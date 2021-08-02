@@ -23,7 +23,7 @@ DEBUG = True
 ALLOWED_HOSTS = []
 INSTALLED_APPS = [
     'app.apps.AppConfig',
-    'rest_framework',
+    'markdownify.apps.MarkdownifyConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -111,4 +111,24 @@ LOGGING = {
         'handlers': ['console'],
         'level': 'DEBUG',
     },
+}
+
+MARKDOWNIFY = {
+    "default": {
+        "WHITELIST_TAGS": [
+            'a',
+            'abbr',
+            'acronym',
+            'b',
+            'blockquote',
+            'em',
+            'i',
+            'li',
+            'ol',
+            'p',
+            'strong',
+            'ul',
+            'h1', 'h2', 'h3', 'h4', 'h5', 'h6'
+        ]
+    }
 }
