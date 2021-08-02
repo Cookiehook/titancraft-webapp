@@ -15,5 +15,4 @@ admin.site.register(locations.StockRecord)
 admin.site.register(locations.ServiceRecord)
 admin.site.register(locations.FarmRecord)
 
-
 admin.site.register(users.UserDetails)

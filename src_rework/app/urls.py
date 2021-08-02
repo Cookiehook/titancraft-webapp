@@ -1,6 +1,6 @@
 from django.urls import path
 
-from app.views import add, auth, delete, list, location, modify
+from app.views import add, auth, delete, list, location, modify, ref_data
 
 urlpatterns = [
     path('', auth.index, name='index'),
@@ -27,4 +27,9 @@ urlpatterns = [
     path('location/<str:slug>/stock/modify', modify.modify_stock, name='modify_stock'),
     path('location/<str:slug>/services/modify', modify.modify_services, name='modify_services'),
     path('location/<str:slug>/farmables/modify', modify.modify_farmables, name='modify_farmables'),
+
+    path('stock/update_availability', modify.update_availability, name='update_availability'),
+
+    path('refdata/init/', ref_data.initialise, name='refdata_initialise'),
+    path('refdata/location/', ref_data.create_debug, name='refdata_create_debug'),
 ]

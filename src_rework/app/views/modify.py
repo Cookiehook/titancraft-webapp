@@ -1,5 +1,6 @@
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
+from django.http import HttpResponse
 from django.shortcuts import redirect, render
 from django.urls import reverse
 
@@ -80,3 +81,8 @@ def modify_farmables(request, slug):
 
     }
     return render(request, template_name, context)
+
+
+@login_required()
+def update_availability(request):
+    return HttpResponse()
