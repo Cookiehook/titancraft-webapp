@@ -38,16 +38,9 @@ class Enchantment(models.Model):  # eg: Efficiency, Protection
 
 class Potion(models.Model):  # eg: Regeneration, Night Vision
     name = models.CharField(max_length=200)
-    splash = models.BooleanField(default=False)
-    lingering = models.BooleanField(default=False)
 
     def __str__(self):
-        if self.splash:
-            return f"{self.name} (Splash)"
-        elif self.lingering:
-            return f"{self.name} (Lingering)"
-        else:
-            return self.name
+        return self.name
 
 
 class ItemClass(models.Model):

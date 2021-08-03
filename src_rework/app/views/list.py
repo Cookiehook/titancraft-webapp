@@ -60,22 +60,21 @@ def list_stock(request):
     all_stock = all_stock[results:results + pagination]
     items = {i.name for i in Item.objects.all()}
     items.update({c.name for c in ItemClass.objects.all()})
-    [s.set_display_data() for s in all_stock]
+    [s.set_display_data(request.user) for s in all_stock]
 
     context = {
         "all_stock": all_stock,
         "item_suggestions": Item.objects.all(),
         "enchantment_suggestions": Enchantment.objects.all(),
         "potion_suggestions": Potion.objects.all(),
-        "all_classes": sorted({c.name for c in ItemClass.objects.all()})
+        "all_classes": sorted({c.name for c in ItemClass.objects.all()}),
+        "query": request.GET.urlencode()
     }
 
     if len(all_stock) == pagination:
         context["next_page"] = page + 1
     if page > 0:
         context['previous_page'] = page - 1
-    if 'search' in request.GET and 'all' not in request.GET:
-        context['search_term'] = request.GET['search']
 
     return render(request, template_name, context)
 
@@ -111,14 +110,13 @@ def list_locations(request, region):
     context = {
         "search_placeholder": f"Search {region}...",
         "locations": locations,
-        "search_suggestions": [l.name for l in locations]
+        "search_suggestions": [l.name for l in locations],
+        "query": request.GET.urlencode()
     }
 
     if len(locations) == pagination:
         context["next_page"] = page + 1
     if page > 0:
         context['previous_page'] = page - 1
-    if 'search' in request.GET and 'all' not in request.GET:
-        context['search_term'] = request.GET['search']
 
     return render(request, template_name, context)

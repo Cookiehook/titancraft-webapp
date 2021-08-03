@@ -1,7 +1,7 @@
 {% extends 'components/base.html' %}
 {% block content %}
     <div class="d-flex justify-content-center">
-        <form method="get">
+        <form action="{% url 'list_stock' %}" method="get">
             <fieldset>
                 <legend>Browse by Item</legend>
                 <table>

@@ -1,1 +1,107 @@
 {% extends 'components/base.html' %}
+{% block content %}
+    <h2>Add/Modify Stock</h2>
+    <form action="{% url 'add_stock' %}" method="post">
+        {% csrf_token %}
+        <input type="hidden" value="{{ location.id }}" name="location">
+        {% if stock_record %}
+            <input type="hidden" name="id" value="{{ stock_record.id }}">
+        {% endif %}
+        <table>
+            <tr>
+                <td><label for="stock_item">Item for sale: </label></td>
+                <td><input type="text" placeholder="Item" name="stock_item" id="stock_item"
+                            autocomplete="off" list="items" value="{{ stock_record.stock_item }}"></td>
+                <td><em>Must be an item from the auto-complete list</em></td>
+            </tr>
+
+            <tr>
+                <td><label for="stock_description">Item description: <br><em>(Optional)</em></label></td>
+                <td><input type="text" placeholder="Customisations, if any" name="stock_description"
+                           id="stock_description" value="{{ stock_record.stock_description }}"></td>
+            </tr>
+            <tr>
+                <td><label for="stock_stack_size">Stack Size: </label></td>
+                <td><input type="number" name="stock_stack_size" id="stock_stack_size"
+                           value="{{ stock_record.stock_stack_size }}"></td>
+            </tr>
+            <tr>
+                <td><label for="cost_stack_size">Price: </label></td>
+                <td><input type="number" name="cost_stack_size" id="cost_stack_size"
+                           value="{{ stock_record.cost_stack_size }}"></td>
+            </tr>
+            <tr>
+                <td><label for="cost_item">Accepted Payment: </label></td>
+                {% if stock_record %}
+                    <td><input autocomplete="off" list="items" type="text" name="cost_item" id="cost_item" value="{{ stock_record.cost_item }}"></td>
+                {% else %}
+                    <td><input autocomplete="off" list="items" type="text" name="cost_item" id="cost_item" value="Diamond"></td>
+                {% endif %}
+                <td><em>Must be an item from the auto-complete list</em></td>
+            </tr>
+            <tr>
+                <td><label for="units">Units Available: </label></td>
+                <td><input type="number" name="units" id="units" value="{{ stock_record.units }}"></td>
+            </tr>
+        </table>
+        <datalist id="items">
+            {% for name in items %}
+                <option value="{{ name }}">{{ name }}
+            {% endfor %}
+        </datalist>
+
+        <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#collapseEnchantments"
+                aria-expanded="false" aria-controls="collapseExample">Enchantments (Optional)
+        </button>
+        <div class="collapse" id="collapseEnchantments">
+            <div class="row">
+                {% for enchantment in enchantments %}
+                    {% if forloop.counter|divisibleby:"8" %}
+                        </div>
+                        <div class="row">
+                    {% endif %}
+                    <div class="col">
+                        <label class="btn btn-light" for="{{ enchantment.name }}">
+                            {% if enchantment.name in current_enchantments %}
+                                <input type="checkbox" id="{{ enchantment.name }}"
+                                       name="enchantment_{{ enchantment.name }}" checked>
+                                {{ enchantment.name }}
+                            {% else %}
+                                <input type="checkbox" id="{{ enchantment.name }}"
+                                       name="enchantment_{{ enchantment.name }}">
+                                {{ enchantment.name }}
+                            {% endif %}
+                        </label>
+                    </div>
+                {% endfor %}
+                </div>
+        </div>
+
+        <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#collapsePotions"
+                aria-expanded="false" aria-controls="collapseExample">Potion Effects (Optional)
+        </button>
+        <div class="collapse" id="collapsePotions">
+            <div class="row">
+                {% for potion in potions %}
+                    {% if forloop.counter|divisibleby:"8" %}
+                        </div>
+                        <div class="row">
+                    {% endif %}
+                    <div class="col">
+                        <label class="btn btn-light" for="{{ potion.name }}">
+                            {% if potion.name in current_potions %}
+                                <input type="checkbox" id="{{ potion.name }}" name="potion_{{ potion.name }}" checked>
+                                {{ potion }}
+                            {% else %}
+                                <input type="checkbox" id="{{ potion.name }}" name="potion_{{ potion.name }}">
+                                {{ potion }}
+                            {% endif %}
+                        </label>
+                    </div>
+                {% endfor %}
+                </div>
+        </div>
+        <input id="create" class="btn btn-success" type="submit" value="Create">
+    </form>
+{% endblock %}
+{% load static %}

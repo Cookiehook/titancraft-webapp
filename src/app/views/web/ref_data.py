@@ -113,7 +113,7 @@ def create_test_businesses(request):
         # Create 1 unenchanted / unpotioned instance, then stock the modifiers
         stock_base = StockRecord(business=business,
                                  stock_item=item, stock_description="debug", stock_stack_size=64,
-                                 cost_item=diamond, cost_description="debug diamond", cost_stack_size=8,
+                                 cost_item=diamond, cost_stack_size=8,
                                  units=12,
                                  last_updated=datetime.datetime.now())
         stock_base.save()
@@ -121,12 +121,12 @@ def create_test_businesses(request):
             for ench_type in EnchantmentType.objects.all():
                 stock_1 = StockRecord(business=business,
                                       stock_item=item, stock_description="debug", stock_stack_size=64,
-                                      cost_item=diamond, cost_description="debug diamond", cost_stack_size=8,
+                                      cost_item=diamond, cost_stack_size=8,
                                       units=12,
                                       last_updated=datetime.datetime.now())
                 stock_2 = StockRecord(business=business,
                                       stock_item=item, stock_description="debug", stock_stack_size=64,
-                                      cost_item=diamond, cost_description="debug diamond", cost_stack_size=8,
+                                      cost_item=diamond, cost_stack_size=8,
                                       units=12,
                                       last_updated=datetime.datetime.now())
                 stock_1.save()
@@ -138,12 +138,12 @@ def create_test_businesses(request):
             for pot_type in PotionType.objects.all():
                 stock_1 = StockRecord(business=business,
                                       stock_item=item, stock_description="debug", stock_stack_size=64,
-                                      cost_item=diamond, cost_description="debug diamond", cost_stack_size=8,
+                                      cost_item=diamond, cost_stack_size=8,
                                       units=12,
                                       last_updated=datetime.datetime.now())
                 stock_2 = StockRecord(business=business,
                                       stock_item=item, stock_description="debug", stock_stack_size=64,
-                                      cost_item=diamond, cost_description="debug diamond", cost_stack_size=8,
+                                      cost_item=diamond, cost_stack_size=8,
                                       units=12,
                                       last_updated=datetime.datetime.now())
                 stock_1.save()

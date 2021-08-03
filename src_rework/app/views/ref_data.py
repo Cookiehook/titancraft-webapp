@@ -32,14 +32,14 @@ def initialise(request):
                 Enchantment.objects.get_or_create(name=obj['name'] + " " + enchantment_levels[i])
 
     for obj in reference_data['potions']:
-        Potion.objects.get_or_create(**obj, splash=False, lingering=False)
-        Potion.objects.get_or_create(**obj, splash=True)
-        Potion.objects.get_or_create(**obj, lingering=True)
+        Potion.objects.get_or_create(name=obj['name'])
+        Potion.objects.get_or_create(name=obj['name'] + " (Splash)")
+        Potion.objects.get_or_create(name=obj['name'] + " (Lingering)")
 
     for obj in reference_data['items']:
         potions = None
         if "potions" in obj:
-            potions = Potion.objects.filter(name__in=obj["potions"], splash=False, lingering=False)
+            potions = Potion.objects.filter(name__in=obj["potions"])
 
         item, _ = Item.objects.get_or_create(name=obj['name'],
                                              is_enchantable=obj.get('is_enchantable', False),
@@ -105,22 +105,22 @@ def create_debug(request):
         # Create 1 unenchanted / unpotioned instance, then stock the modifiers
         stock_base = StockRecord(location=shop,
                                  stock_item=item, stock_description="debug", stock_stack_size=64,
-                                 cost_item=diamond, cost_description="debug diamond", cost_stack_size=8,
+                                 cost_item=diamond, cost_stack_size=8,
                                  units=12,
-                                 last_updated=datetime.datetime.now())
+                                 last_updated=datetime.datetime.utcnow())
         stock_base.save()
         if item.is_enchantable:
             for ench in Enchantment.objects.all():
                 stock_1 = StockRecord(location=shop,
                                       stock_item=item, stock_description="debug", stock_stack_size=64,
-                                      cost_item=diamond, cost_description="debug diamond", cost_stack_size=8,
+                                      cost_item=diamond, cost_stack_size=8,
                                       units=12,
-                                      last_updated=datetime.datetime.now())
+                                      last_updated=datetime.datetime.utcnow())
                 stock_2 = StockRecord(location=shop,
                                       stock_item=item, stock_description="debug", stock_stack_size=64,
-                                      cost_item=diamond, cost_description="debug diamond", cost_stack_size=8,
+                                      cost_item=diamond, cost_stack_size=8,
                                       units=12,
-                                      last_updated=datetime.datetime.now())
+                                      last_updated=datetime.datetime.utcnow())
                 stock_1.save()
                 stock_2.save()
                 EnchantmentToStockRecord(enchantment=ench, stock_record=stock_1).save()
@@ -130,14 +130,14 @@ def create_debug(request):
             for potion in Potion.objects.all():
                 stock_1 = StockRecord(location=shop,
                                       stock_item=item, stock_description="debug", stock_stack_size=64,
-                                      cost_item=diamond, cost_description="debug diamond", cost_stack_size=8,
+                                      cost_item=diamond, cost_stack_size=8,
                                       units=12,
-                                      last_updated=datetime.datetime.now())
+                                      last_updated=datetime.datetime.utcnow())
                 StockRecord(location=shop,
                             stock_item=item, stock_description="debug", stock_stack_size=64,
-                            cost_item=diamond, cost_description="debug diamond", cost_stack_size=8,
+                            cost_item=diamond, cost_stack_size=8,
                             units=12,
-                            last_updated=datetime.datetime.now()).save()
+                            last_updated=datetime.datetime.utcnow()).save()
                 stock_1.save()
                 PotionToStockRecord(potion=potion, stock_record=stock_1).save()
 

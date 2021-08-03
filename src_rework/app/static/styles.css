@@ -8,7 +8,7 @@ body {
 	url("images/bg_black_tile.png") repeat top;
 }
 
-.container::before {
+.topmast::before {
 	content: "";
 	height:14px;
 	background: url("images/mcf_top_brown_bar.webp");
@@ -18,7 +18,7 @@ body {
 
 }
 
-.container {
+.topmast {
     background: #fff;
 	border-radius: 5px;
 	padding: 0;

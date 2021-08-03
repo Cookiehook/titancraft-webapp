@@ -1,10 +1,13 @@
+import datetime
+
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.http import HttpResponse
 from django.shortcuts import redirect, render
 from django.urls import reverse
 
-from app.models.locations import Maintainer, Location
+from app.models.constants import Enchantment, Potion, Item
+from app.models.locations import Maintainer, Location, StockRecord, EnchantmentToStockRecord, PotionToStockRecord
 from app.models.users import UserDetails
 
 
@@ -53,9 +56,22 @@ def modify_stock(request, slug):
     if not is_maintainer(request.user, slug):
         return redirect(reverse("not_authorised"))
 
-    context = {
+    enchantments = Enchantment.objects.all().order_by("name")
+    potions = Potion.objects.all().order_by("name")
 
+    context = {
+        "items": Item.objects.all().order_by("name"),
+        "location": Location.objects.get(slug=slug),
+        "enchantments": enchantments,
+        "potions": potions,
+        "enchantment_height": int(len(enchantments) / 5)
     }
+    if 'id' in request.GET:
+        stock_record = StockRecord.objects.get(id=request.GET['id'])
+        context['stock_record'] = stock_record
+        context['current_enchantments'] = [e.enchantment.name for e in EnchantmentToStockRecord.objects.filter(stock_record=stock_record)]
+        context['current_potions'] = [e.potion.name for e in PotionToStockRecord.objects.filter(stock_record=stock_record)]
+
     return render(request, template_name, context)
 
 
@@ -85,4 +101,43 @@ def modify_farmables(request, slug):
 
 @login_required()
 def update_availability(request):
+    stock = StockRecord.objects.get(id=request.POST['id'])
+    stock.units = int(request.POST['units'])
+    stock.last_updated = datetime.datetime.utcnow()
+    stock.save()
     return HttpResponse()
+
+
+@login_required()
+def add_stock(request):
+    if "id" in request.POST:
+        stock_record = StockRecord.objects.get(id=request.POST['id'])
+    else:
+        stock_record = StockRecord()
+    stock_record.location = Location.objects.get(id=int(request.POST['location']))
+
+    stock_record.stock_item = Item.objects.get(name=request.POST['stock_item'])
+    stock_record.stock_description = request.POST['stock_description']
+    stock_record.stock_stack_size = int(request.POST['stock_stack_size'])
+
+    stock_record.cost_item = Item.objects.get(name=request.POST['cost_item'])
+    stock_record.cost_stack_size = int(request.POST['cost_stack_size'])
+    stock_record.units = int(request.POST['units'])
+    stock_record.last_updated = datetime.datetime.utcnow()
+
+    stock_record.save()
+
+    # Clear old potions and enchantments
+    EnchantmentToStockRecord.objects.filter(stock_record=stock_record).delete()
+    PotionToStockRecord.objects.filter(stock_record=stock_record).delete()
+
+    # Cycle through form, find enabled enchantment and potion checkboxes
+    for key, value in request.POST.items():
+        if key.startswith("enchantment_"):
+            enchantment = Enchantment.objects.get(name=key.split("enchantment_")[1])
+            EnchantmentToStockRecord.objects.get_or_create(enchantment=enchantment, stock_record=stock_record)[0].save()
+        if key.startswith("potion_"):
+            potion = Potion.objects.get(name=key.split("potion_")[1])
+            PotionToStockRecord.objects.get_or_create(potion=potion, stock_record=stock_record)[0].save()
+
+    return redirect(reverse('get_location', args=(stock_record.location.slug,)))

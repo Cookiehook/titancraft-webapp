@@ -54,7 +54,6 @@ class StockRecord(models.Model):
 
     # Itemstack accepted as payment
     cost_item = models.ForeignKey(constants.Item, on_delete=models.CASCADE, related_name="cost")
-    cost_description = models.CharField(max_length=200, null=True, blank=True)
     cost_stack_size = models.IntegerField()
 
     units = models.IntegerField()
@@ -62,8 +61,10 @@ class StockRecord(models.Model):
 
     def __str__(self):
         return f"{self.location}: {self.stock_stack_size}x {self.stock_item} - {self.cost_stack_size}x {self.cost_item}"
-    
-    def set_display_data(self):
+
+    def set_display_data(self, user):
+        self.user_is_maintainer = user in [m.user for m in Maintainer.objects.filter(location=self.location)]
+
         stock_enchanted = True if self.enchantmenttostockrecord_set.all() else False
         stock_potion = self.potiontostockrecord_set.all()[0].potion if self.potiontostockrecord_set.all() else None
         if stock_enchanted:
@@ -82,7 +83,7 @@ class StockRecord(models.Model):
         except Exception:
             logger.warning(f"Couldn't find icon for {self.cost_item} Enchanted=None Potion=None")
             self.stock_icon = ItemIcon.objects.filter(item=self.stock_item)[0].icon
-    
+
 
 class EnchantmentToStockRecord(models.Model):
     enchantment = models.ForeignKey(Enchantment, on_delete=models.CASCADE)
