@@ -1,19 +1,10 @@
 <div class="row">
     <ul class="pagination">
-        {% if search_term %}
-            {% if previous_page is not None %}
-            <li class="page-item"><a class="page-link" href="{{ form_action }}?search={{ search_term }}&page={{ previous_page }}">Previous</a></li>
-            {% endif %}
-            {% if next_page %}
-            <li class="page-item"><a class="page-link" href="{{ form_action }}?search={{ search_term }}&page={{ next_page }}">Next</a></li>
-            {% endif %}
-        {% else %}
-            {% if previous_page is not None %}
-            <li class="page-item"><a class="page-link" href="{{ form_action }}?page={{ previous_page }}">Previous</a></li>
-            {% endif %}
-            {% if next_page %}
-            <li class="page-item"><a class="page-link" href="{{ form_action }}?page={{ next_page }}">Next</a></li>
-            {% endif %}
+        {% if previous_page is not None %}
+            <li class="page-item"><a class="page-link" href="?page={{ previous_page }}&{{ query }}">Previous</a></li>
+        {% endif %}
+        {% if next_page %}
+            <li class="page-item"><a class="page-link" href="?page={{ next_page }}&{{ query }}">Next</a></li>
         {% endif %}
     </ul>
 </div>

@@ -12,10 +12,5 @@ requests = "*"  # HTTP requests to Discord API
 gunicorn = "*"  # Production webserver
 supervisor = "*"  # Process manager for nginx and gunicorn
 
-[dev-packages]
-pytest = "*"  # Unit test framework
-pytest-cov = "*"  # Unit test coverage calculator
-flake8 = "*"  # Code quality analysis
-
 [requires]
 python_version = "3.9"
