@@ -5,6 +5,7 @@ from django.contrib.auth.models import User
 from django.http import HttpResponse
 from django.shortcuts import redirect, render
 from django.urls import reverse
+from django.utils.safestring import mark_safe
 
 from app.models.constants import Enchantment, Potion, Item
 from app.models.locations import Maintainer, Location, StockRecord, EnchantmentToStockRecord, PotionToStockRecord
@@ -69,8 +70,8 @@ def modify_stock(request, slug):
     if 'id' in request.GET:
         stock_record = StockRecord.objects.get(id=request.GET['id'])
         context['stock_record'] = stock_record
-        context['current_enchantments'] = [e.enchantment.name for e in EnchantmentToStockRecord.objects.filter(stock_record=stock_record)]
-        context['current_potions'] = [e.potion.name for e in PotionToStockRecord.objects.filter(stock_record=stock_record)]
+        context['current_enchantments'] = mark_safe([e.enchantment.name for e in EnchantmentToStockRecord.objects.filter(stock_record=stock_record)])
+        context['current_potions'] = mark_safe([e.potion.name for e in PotionToStockRecord.objects.filter(stock_record=stock_record)])
 
     return render(request, template_name, context)
 
@@ -131,13 +132,12 @@ def add_stock(request):
     EnchantmentToStockRecord.objects.filter(stock_record=stock_record).delete()
     PotionToStockRecord.objects.filter(stock_record=stock_record).delete()
 
-    # Cycle through form, find enabled enchantment and potion checkboxes
-    for key, value in request.POST.items():
-        if key.startswith("enchantment_"):
-            enchantment = Enchantment.objects.get(name=key.split("enchantment_")[1])
-            EnchantmentToStockRecord.objects.get_or_create(enchantment=enchantment, stock_record=stock_record)[0].save()
-        if key.startswith("potion_"):
-            potion = Potion.objects.get(name=key.split("potion_")[1])
-            PotionToStockRecord.objects.get_or_create(potion=potion, stock_record=stock_record)[0].save()
+    for enchantment_name in request.POST.getlist("enchantments"):
+        enchantment = Enchantment.objects.get(name=enchantment_name)
+        EnchantmentToStockRecord.objects.get_or_create(enchantment=enchantment, stock_record=stock_record)[0].save()
+
+    for potion_name in request.POST.getlist("potions"):
+        potion = Potion.objects.get(name=potion_name)
+        PotionToStockRecord.objects.get_or_create(potion=potion, stock_record=stock_record)[0].save()
 
     return redirect(reverse('get_location', args=(stock_record.location.slug,)))
