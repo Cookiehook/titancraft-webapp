@@ -10,7 +10,7 @@
         <div class="content-item">
             <div class="row">
                 <div class="col">
-                    <div class="row"><a href="{% url 'get_location' location.slug %}"><p>{{ location.name }}</p>
+                    <div class="row"><a href="{% url 'get_location' location.id %}"><p>{{ location.name }}</p>
                     </a></div>
                     <div class="row"><p>Location: {{ location.x_pos }}/{{ location.y_pos }}/{{ location.z_pos }}
                         ({{ location.region }})</p></div>

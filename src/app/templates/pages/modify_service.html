@@ -1,5 +1,6 @@
 {% extends 'components/base.html' %}
 {% block content %}
+    {% include 'components/location_nav.html' %}
     <form action="{% url 'add_service' %}" method="post">
         {% csrf_token %}
         <input type="hidden" name="location" value="{{ location.id }}">

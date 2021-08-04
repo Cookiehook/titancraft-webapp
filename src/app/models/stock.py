@@ -5,8 +5,7 @@ from markdownx.models import MarkdownxField
 
 from app.models import constants
 from app.models.constants import Enchantment, Potion, ItemIcon
-from app.models.locations import Location, Maintainer
-from app.utils import is_maintainer
+from app.models.locations import Location
 
 logger = logging.getLogger()
 
@@ -20,7 +19,7 @@ class StockRecord(models.Model):
     last_updated = models.DateTimeField()
 
     def set_display_data(self, user):
-        self.user_is_maintainer = is_maintainer(user, id=self.location.id)
+        self.user_is_maintainer = self.location.is_maintainer(user)
         self.item_stacks = []
 
         for idx, stack in enumerate(self.itemstacktostockrecord_set.all()):
@@ -89,7 +88,7 @@ class ServiceRecord(models.Model):
         return f"{self.location}: {self.name}"
 
     def set_display_data(self, user):
-        self.user_is_maintainer = is_maintainer(user, id=self.location.id)
+        self.user_is_maintainer = self.location.is_maintainer(user)
 
 
 class FarmRecord(models.Model):
@@ -97,3 +96,22 @@ class FarmRecord(models.Model):
     mob = models.ForeignKey(constants.Mob, on_delete=models.CASCADE, null=True, blank=True)
     item = models.ForeignKey(constants.Item, on_delete=models.CASCADE, null=True, blank=True)
     xp = models.BooleanField(default=False)
+
+    def __str__(self):
+        if self.mob:
+            return f"{self.location} - {self.mob} (XP={self.xp})"
+        else:
+            return f"{self.location} - {self.item}"
+
+    def set_display_data(self, user):
+        self.user_is_maintainer = self.location.is_maintainer(user)
+        self.view_data = {}
+        if self.mob:
+            self.view_data['label_type'] = "mob"
+            self.view_data['label'] = self.mob.name
+            self.view_data['xp'] = self.xp
+            self.view_data['icon'] = self.mob.icon
+        else:
+            self.view_data['label_type'] = "item"
+            self.view_data['label'] = self.item.name
+            self.view_data['icon'] = ItemIcon.objects.get(item=self.item).icon

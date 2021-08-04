@@ -3,20 +3,20 @@ from django.contrib.auth.models import User
 from django.shortcuts import redirect, render
 from django.urls import reverse
 
-from app.models.constants import Enchantment, Potion, Item
+from app.models.constants import Enchantment, Potion, Item, Mob
 from app.models.locations import Maintainer, Location
-from app.models.stock import StockRecord, ServiceRecord
+from app.models.stock import StockRecord, ServiceRecord, FarmRecord
 from app.models.users import UserDetails
-from app.utils import is_maintainer
 
 
 @login_required()
-def modify_location(request, slug):
+def modify_location(request, id):
     template_name = 'pages/modify_location.html'
-    if not is_maintainer(request.user, slug=slug):
+    location = Location.objects.get(id=id)
+    if not location.is_maintainer(request.user):
         return redirect(reverse("not_authorised"))
 
-    location = Location.objects.get(slug=slug)
+    location.set_display_data(request.user)
     maintainers = Maintainer.objects.filter(location=location)
     for maintainer in maintainers:
         details = UserDetails.objects.get(user=maintainer.user)
@@ -31,17 +31,19 @@ def modify_location(request, slug):
 
 
 @login_required()
-def modify_stock(request, slug):
+def modify_stock(request, id):
     template_name = 'pages/modify_stock.html'
-    if not is_maintainer(request.user, slug=slug):
+    location = Location.objects.get(id=id)
+    if not location.is_maintainer(request.user):
         return redirect(reverse("not_authorised"))
 
+    location.set_display_data(request.user)
     enchantments = Enchantment.objects.all().order_by("name")
     potions = Potion.objects.all().order_by("name")
 
     context = {
         "items": Item.objects.all().order_by("name"),
-        "location": Location.objects.get(slug=slug),
+        "location": location,
         "enchantments": enchantments,
         "potions": potions,
         "enchantment_height": int(len(enchantments) / 5)
@@ -55,13 +57,16 @@ def modify_stock(request, slug):
 
 
 @login_required()
-def modify_service(request, slug):
+def modify_service(request, id):
     template_name = 'pages/modify_service.html'
-    if not is_maintainer(request.user, slug=slug):
+    location = Location.objects.get(id=id)
+    if not location.is_maintainer(request.user):
         return redirect(reverse("not_authorised"))
 
+    location.set_display_data(request.user)
+
     context = {
-        'location': Location.objects.get(slug=slug)
+        'location': location
     }
 
     if 'id' in request.GET:
@@ -71,12 +76,21 @@ def modify_service(request, slug):
 
 
 @login_required()
-def modify_farm(request, slug):
+def modify_farm(request, id):
     template_name = 'pages/modify_farm.html'
-    if not is_maintainer(request.user, slug=slug):
+    location = Location.objects.get(id=id)
+    if not location.is_maintainer(request.user):
         return redirect(reverse("not_authorised"))
 
-    context = {
+    location.set_display_data(request.user)
+    current_records = FarmRecord.objects.filter(location=location)
+    [f.set_display_data(request.user) for f in current_records]
 
+    context = {
+        "location": location,
+        "items": Item.objects.all().order_by("name"),
+        "mobs": Mob.objects.all().order_by("name"),
+        "current_records": [f.view_data for f in current_records],
     }
+
     return render(request, template_name, context)

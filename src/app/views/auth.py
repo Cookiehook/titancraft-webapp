@@ -96,9 +96,11 @@ def verify_callback(request):
 
     # Store all details from Discord and log the user in. Return to index page when completed
     user, _ = User.objects.get_or_create(username=name_resp_body.get('username'))
-    user_details, _ = UserDetails.objects.get_or_create(user=user,
-                                                        discord_id=name_resp_body.get('id'),
-                                                        avatar_hash=name_resp_body.get('avatar'))
+    user_details, _ = UserDetails.objects.get_or_create(user=user)
+    user_details.discord_id=name_resp_body.get('id')
+    user_details.avatar_hash=name_resp_body.get('avatar')
+    user_details.save()
+
     auth.login(request, user)
     return redirect(reverse('index'))
 

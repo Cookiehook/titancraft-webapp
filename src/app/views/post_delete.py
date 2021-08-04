@@ -3,47 +3,59 @@ from django.shortcuts import redirect
 from django.urls import reverse
 
 from app.models.locations import Maintainer, Location
-from app.models.stock import StockRecord, ServiceRecord
-from app.utils import is_maintainer
+from app.models.stock import StockRecord, ServiceRecord, FarmRecord
 
 
 @login_required()
 def delete_maintainer(request):
-    if not is_maintainer(request.user, id=int(request.POST['location'])):
+    location = Location.objects.get(id=int(request.POST['location']))
+    if not location.is_maintainer(request.user):
         return redirect(reverse("not_authorised"))
 
     maintainer = Maintainer.objects.get(id=request.POST['id'])
-    location_slug = maintainer.location.slug
+    location_id = maintainer.location.id
     maintainer.delete()
-    return redirect(reverse("modify_location", args=(location_slug,)))
+    return redirect(reverse("modify_location", args=(location_id,)))
 
 
 @login_required()
 def delete_location(request):
-    if not is_maintainer(request.user, id=int(request.POST['location'])):
+    location = Location.objects.get(id=int(request.POST['location']))
+    if not location.is_maintainer(request.user):
         return redirect(reverse("not_authorised"))
 
-    Location.objects.get(id=int(request.POST['location'])).delete()
+    location.delete()
     return redirect(reverse("manage_locations"))
 
 
 @login_required()
 def delete_stock(request):
     stock_record = StockRecord.objects.get(id=request.POST['id'])
-    if not is_maintainer(request.user, id=stock_record.location.id):
+    if not stock_record.location.is_maintainer(request.user):
         return redirect(reverse("not_authorised"))
 
-    location_slug = stock_record.location.slug
+    location_id = stock_record.location.id
     stock_record.delete()
-    return redirect(reverse("get_location", args=(location_slug,)))
+    return redirect(reverse("get_location", args=(location_id,)))
 
 
 @login_required()
 def delete_service(request):
     service_record = ServiceRecord.objects.get(id=request.POST['id'])
-    if not is_maintainer(request.user, id=service_record.location.id):
+    if not service_record.location.is_maintainer(request.user):
         return redirect(reverse("not_authorised"))
 
-    location_slug = service_record.location.slug
+    location_id = service_record.location.id
     service_record.delete()
-    return redirect(reverse("get_location", args=(location_slug,)))
+    return redirect(reverse("get_location", args=(location_id,)))
+
+
+@login_required()
+def delete_farm(request):
+    location = Location.objects.get(id=request.POST['location'])
+    if not location.is_maintainer(request.user):
+        return redirect(reverse("not_authorised"))
+
+    FarmRecord.objects.filter(location=location).delete()
+
+    return redirect(reverse("get_location", args=(location.id,)))

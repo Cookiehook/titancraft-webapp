@@ -6,20 +6,22 @@ from django.http import HttpResponse
 from django.shortcuts import redirect
 from django.urls import reverse
 
-from app.models.constants import Region, Item, Enchantment, Potion
+from app.models.constants import Region, Item, Enchantment, Potion, Mob
 from app.models.locations import Location, Maintainer
 from app.models.stock import StockRecord, PotionToItemStack, EnchantmentToItemStack, ItemStackToStockRecord, \
-    ServiceRecord
-from app.utils import is_maintainer
+    ServiceRecord, FarmRecord
 
 
 @login_required()
 def upsert_location(request):
     if 'location' in request.POST:
-        if not is_maintainer(request.user, id=int(request.POST['location'])):
+        location = Location.objects.get(id=int(request.POST['location']))
+        if not location.is_maintainer(request.user):
             return redirect(reverse("not_authorised"))
+    else:
+        location = Location(name=request.POST['name'])
 
-    location, _ = Location.objects.get_or_create(name=request.POST['name'])
+    location.name = request.POST['name']
     location.description = request.POST['description']
     location.x_pos = int(request.POST['x_pos'])
     location.y_pos = int(request.POST['y_pos'])
@@ -32,26 +34,27 @@ def upsert_location(request):
         user=request.user
     )
     maintainer.save()
-    return redirect(reverse("get_location", args=(location.slug,)))
+    return redirect(reverse("get_location", args=(location.id,)))
 
 
 @login_required()
 def upsert_maintainer(request):
-    if not is_maintainer(request.user, id=int(request.POST['location'])):
+    location = Location.objects.get(id=request.POST['location'])
+    if not location.is_maintainer(request.user):
         return redirect(reverse("not_authorised"))
 
-    location = Location.objects.get(id=request.POST['location'])
     maintainer, _ = Maintainer.objects.get_or_create(
         location=location,
         user=User.objects.get(id=request.POST['user'])
     )
     maintainer.save()
-    return redirect(reverse("modify_location", args=(location.slug,)))
+    return redirect(reverse("modify_location", args=(location.id,)))
 
 
 @login_required()
 def upsert_stock(request):
-    if not is_maintainer(request.user, id=int(request.POST['location'])):
+    location = Location.objects.get(id=int(request.POST['location']))
+    if not location.is_maintainer(request.user):
         return redirect(reverse("not_authorised"))
 
     if "id" in request.POST:
@@ -92,7 +95,10 @@ def upsert_stock(request):
             potion = Potion.objects.get(name=potion_name)
             PotionToItemStack(potion=potion, item_stack=item_stack).save()
 
-    return redirect(reverse('get_location', args=(stock_record.location.slug,)))
+    if 'add-another' in request.POST:
+        return redirect(reverse('modify_stock', args=(stock_record.location.id,)))
+    else:
+        return redirect(reverse('get_location', args=(stock_record.location.id,)))
 
 
 @login_required()
@@ -107,7 +113,8 @@ def update_availability(request):
 
 @login_required()
 def upsert_service(request):
-    if not is_maintainer(request.user, id=int(request.POST['location'])):
+    location = Location.objects.get(id=int(request.POST['location']))
+    if not location.is_maintainer(request.user):
         return redirect(reverse("not_authorised"))
 
     if "service" in request.POST:
@@ -120,4 +127,26 @@ def upsert_service(request):
     service_record.description = request.POST['description']
     service_record.save()
 
-    return redirect(reverse('get_location', args=(service_record.location.slug,)))
+    return redirect(reverse('get_location', args=(service_record.location.id,)))
+
+
+def upsert_farm(request):
+    location = Location.objects.get(id=int(request.POST['location']))
+    if not location.is_maintainer(request.user):
+        return redirect(reverse("not_authorised"))
+    FarmRecord.objects.filter(location=location).delete()
+
+    for key, value in request.POST.items():
+        if value == "":
+            continue  # Empty values left by unused fieldsets
+        if key.startswith("item"):
+            FarmRecord(location=location,item=Item.objects.get(name=value)).save()
+        if key.startswith("mob"):
+            mob_num = key[-1]
+            FarmRecord(
+                location=location,
+                mob=Mob.objects.get(name=value),
+                xp=f"xp_{mob_num}" in request.POST  # Checkboxes only appear if they are selected
+            ).save()
+
+    return redirect(reverse('get_location', args=(location.id,)))

@@ -5,7 +5,6 @@ from app import utils
 from app.models.locations import Maintainer, Location
 from app.models.stock import StockRecord, ServiceRecord
 from app.models.users import UserDetails
-from app.utils import is_maintainer
 
 
 @login_required()
@@ -19,10 +18,11 @@ def manage_locations(request):
 
 
 @login_required()
-def get_location(request, slug):
+def get_location(request, id):
     template_name = 'pages/get_location.html'
 
-    location = Location.objects.get(slug=slug)
+    location = Location.objects.get(id=id)
+    location.set_display_data(request.user)
     maintainers = Maintainer.objects.filter(location=location)
 
     maintainer_details = []
@@ -42,9 +42,12 @@ def get_location(request, slug):
     context = {
         "all_stock": all_stock,
         "all_services": all_services,
-        "is_maintainer": is_maintainer(request.user, slug=slug),
         "location": location,
         "maintainers": maintainer_details
     }
+
+    farm_records = utils.get_farms_for_locations(Location.objects.filter(id=id), request.user)
+    if farm_records[location]:
+        context["all_farms"] = farm_records
 
     return render(request, template_name, context)

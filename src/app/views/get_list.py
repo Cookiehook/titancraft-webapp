@@ -1,12 +1,10 @@
-from copy import copy
 from functools import reduce
-from urllib.parse import urlencode
 
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from django.shortcuts import render
 
-from app.models.constants import Region, Item, ItemClass, Enchantment, Potion
+from app.models.constants import Region, Item, ItemClass, Enchantment, Potion, Mob
 from app.models.locations import Location
 from app.models.stock import StockRecord, EnchantmentToItemStack, PotionToItemStack, ItemStackToStockRecord, \
     ServiceRecord, FarmRecord
@@ -39,32 +37,15 @@ def list_stock(request):
         all_stacks = ItemStackToStockRecord.objects.filter(enchantment_filter).filter(potion_filter)
         all_stock = StockRecord.objects.filter(id__in=all_stacks.values("stock_record")).order_by("-last_updated")
     else:
-        search_term = request.GET['search']
-        all_stock = []
+        # Get all ItemStacks for relevant items
         all_itemstacks = []
+        for item_group in utils.search_item(request.GET['search']):
+            all_itemstacks.append(
+                ItemStackToStockRecord.objects.filter(item__in=item_group).filter(enchantment_filter).filter(potion_filter).values("stock_record")
+            )
 
-        # In order, search for items that:
-        #   Name exactly matches the search term
-        #   Name contains the search term (excluding already found)
-        #   Name contains a word from the search term (excluding already found)
-        #   Items in the same class as exact or close matches
-        #   Class contains a word from the search term (excluding already found)
-        any_word_query = reduce(lambda q, f: q | Q(name__icontains=f), search_term.split(), Q())
-        match_exact_items = Item.objects.filter(name__iexact=search_term).all()
-        match_close_items = Item.objects.filter(name__icontains=search_term).exclude(id__in=match_exact_items).all()
-        match_single_word_items = Item.objects.filter(Q(any_word_query & ~Q(id__in=match_exact_items | match_close_items)))
-        classes = ItemClass.objects.filter(item__in=match_exact_items | match_close_items)
-        match_class_items = ItemClass.objects.filter(Q(Q(name__in=classes.values('name')) & ~Q(item__in=match_exact_items | match_close_items | match_single_word_items))).values("item")
-        match_class_name_items = ItemClass.objects.filter(Q(any_word_query & ~Q(item__in=match_exact_items | match_close_items | match_single_word_items))).values("item")
-
-        # Fetch ItemStackToStockRecords matching the items found above, in that order
-        all_itemstacks.append(ItemStackToStockRecord.objects.filter(item__in=match_exact_items      ).filter(enchantment_filter).filter(potion_filter).values("stock_record"))
-        all_itemstacks.append(ItemStackToStockRecord.objects.filter(item__in=match_close_items      ).filter(enchantment_filter).filter(potion_filter).values("stock_record"))
-        all_itemstacks.append(ItemStackToStockRecord.objects.filter(item__in=match_single_word_items).filter(enchantment_filter).filter(potion_filter).values("stock_record"))
-        all_itemstacks.append(ItemStackToStockRecord.objects.filter(item__in=match_class_items      ).filter(enchantment_filter).filter(potion_filter).values("stock_record"))
-        all_itemstacks.append(ItemStackToStockRecord.objects.filter(item__in=match_class_name_items ).filter(enchantment_filter).filter(potion_filter).values("stock_record"))
-
-        # Get the parent StockRecords
+        # Get the parent StockRecords for the itemstacks
+        all_stock = []
         for stack_group in all_itemstacks:
             all_stock.extend(StockRecord.objects.filter(id__in=stack_group).order_by("-last_updated"))
 
@@ -114,14 +95,29 @@ def list_farms(request):
     page = int(request.GET.get("page", 0))
     results = page * utils.PAGINATION
 
-    # TODO - Search
-    all_farms = FarmRecord.objects.all()
+    if ('search' not in request.GET or request.GET.get('search') == '' and 'mob' not in request.GET) or 'all' in request.GET:
+        farm_locations = FarmRecord.objects.distinct("location").values("location")
+        locations = Location.objects.filter(id__in=farm_locations)
+    else:
+        item_filter = Q()
+        mob_filter = Q()
+        if search_term := request.GET.get("search"):
+            items = []
+            [items.extend(i) for i in utils.search_item(search_term)]
+            item_filter = Q(item__in=items)
+        if mobs := request.GET.getlist("mob"):
+            mob_filter = Q(mob__in=Mob.objects.filter(name__in=mobs))
 
-    all_farms = all_farms[results:results + utils.PAGINATION]
+        locations = [f.location for f in FarmRecord.objects.filter(item_filter | mob_filter)]
+
+    locations = locations[results:results + utils.PAGINATION]
+    all_farms = utils.get_farms_for_locations(locations, request.user)
     context = {
-        "all_farms": all_farms
+        "all_farms": all_farms,
+        "item_suggestions": Item.objects.all(),
+        "mobs": Mob.objects.all()
     }
-    utils.set_pagination_details(request.GET, all_farms, page, context)
+    utils.set_pagination_details(request.GET, locations, page, context)
     return render(request, template_name, context)
 
 
@@ -130,13 +126,15 @@ def list_locations(request, region):
     template_name = 'pages/list_locations.html'
     page = int(request.GET.get("page", 0))
     results = page * utils.PAGINATION
+    parent_region = Region.objects.get(name=region)
+    region_filter = Q(region__in=Region.objects.filter(parent=parent_region)) | Q(region=parent_region)
 
     if 'search' not in request.GET or 'all' in request.GET:
-        all_locations = Location.objects.filter(region=Region.objects.get(name=region)).order_by("spawn_distance")[results:results + pagination]
+        all_locations = Location.objects.filter(region_filter).order_by("spawn_distance")[results:results + utils.PAGINATION]
     else:
         search_term = request.GET['search']
         all_locations = Location.objects.filter(
-            Q(region=Region.objects.get(name=region)) & (Q(name__icontains=search_term) | Q(description__icontains=search_term))).order_by("spawn_distance")
+            region_filter & (Q(name__icontains=search_term) | Q(description__icontains=search_term))).order_by("spawn_distance")
 
     context = {
         "all_locations": all_locations,
@@ -146,3 +144,9 @@ def list_locations(request, region):
 
     utils.set_pagination_details(request.GET, all_locations, page, context)
     return render(request, template_name, context)
+
+
+@login_required()
+def how_to(request):
+    template_name = "pages/how_to.html"
+    return render(request, template_name)

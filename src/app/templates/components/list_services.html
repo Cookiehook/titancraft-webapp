@@ -7,7 +7,7 @@
 {% for service in all_services %}
     <div class="row content-item">
         <div class="col">
-            <div class="row"><a href="{% url 'get_location' service.location.slug %}"><p>{{ service.location.name }}</p>
+            <div class="row"><a href="{% url 'get_location' service.location.id %}"><p>{{ service.location.name }}</p>
             </a>
             </div>
             <div class="row"><p>
@@ -15,7 +15,7 @@
             </div>
             {% if service.user_is_maintainer %}
                 <div class="row">
-                    <form action="{% url 'modify_service' service.location.slug %}" method="get">
+                    <form action="{% url 'modify_service' service.location.id %}" method="get">
                         <input type="hidden" name="id" value="{{ service.id }}">
                         <input class="btn btn-primary" type="submit" value="Modify">
                     </form>

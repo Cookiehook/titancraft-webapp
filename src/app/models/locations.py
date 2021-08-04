@@ -7,7 +7,6 @@ import math
 
 from django.contrib.auth.models import User
 from django.db import models
-from django.utils.text import slugify
 from markdownx.models import MarkdownxField
 
 from app.models import constants
@@ -16,8 +15,7 @@ logger = logging.getLogger()
 
 
 class Location(models.Model):
-    name = models.CharField(max_length=50, unique=True)
-    slug = models.SlugField()
+    name = models.CharField(max_length=200)
     description = MarkdownxField(null=True)
     x_pos = models.IntegerField(default=0)
     y_pos = models.IntegerField(default=0)
@@ -31,8 +29,14 @@ class Location(models.Model):
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
         # Disregard height when calculating distance to spawn. It's close enough for ordering a web page.
         self.spawn_distance = math.sqrt((self.x_pos * self.x_pos) + (self.z_pos * self.z_pos))
-        self.slug = slugify(self.name)
         super(Location, self).save(force_insert, force_update, using, update_fields)
+
+    def set_display_data(self, user):
+        self.user_is_maintainer = self.is_maintainer(user)
+
+    def is_maintainer(self, user):
+        maintainers = Maintainer.objects.filter(location=self)
+        return user.is_staff or user in [m.user for m in maintainers]
 
 
 class Maintainer(models.Model):

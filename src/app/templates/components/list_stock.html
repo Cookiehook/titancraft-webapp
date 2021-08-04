@@ -8,14 +8,14 @@
 {% for stock in all_stock %}
     <div class="row content-item">
         <div class="col">
-            <div class="row"><a href="{% url 'get_location' stock.location.slug %}"><p>{{ stock.location.name }}</p></a>
+            <div class="row"><a href="{% url 'get_location' stock.location.id %}"><p>{{ stock.location.name }}</p></a>
             </div>
             <div class="row"><p>
                 Location: {{ stock.location.x_pos }}/{{ stock.location.y_pos }}/{{ stock.location.z_pos }}({{ stock.location.region }})</p>
             </div>
             {% if stock.user_is_maintainer %}
                 <div class="row">
-                    <form action="{% url 'modify_stock' stock.location.slug %}" method="get">
+                    <form action="{% url 'modify_stock' stock.location.id %}" method="get">
                         <input type="hidden" name="id" value="{{ stock.id }}">
                         <input class="btn btn-primary" type="submit" value="Modify">
                     </form>

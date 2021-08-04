@@ -17,7 +17,11 @@ def initialise(request):
         reference_data = json.loads(datafile.read())
 
     for obj in reference_data['regions']:
-        Region.objects.get_or_create(**obj)
+        region, _ = Region.objects.get_or_create(name=obj['name'])
+        if obj.get("parent"):
+            parent, _ = Region.objects.get_or_create(name=obj["parent"])
+            region.parent = parent
+            region.save()
 
     enchantment_levels = ['I', 'II', 'III', 'IV', 'V']
     for obj in reference_data['enchantments']:

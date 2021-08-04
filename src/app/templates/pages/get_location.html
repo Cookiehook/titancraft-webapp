@@ -1,16 +1,7 @@
 {% extends 'components/base.html' %}
 {% load markdownify %}
 {% block content %}
-    {% if is_maintainer %}
-        <nav class="navbar navbar-expand-sm bg-dark navbar-dark justify-content-center">
-            <ul class="navbar-nav">
-                <li class="nav-item"><a class="nav-link" href="{% url 'modify_location' location.slug %}">Update/Delete Location</a></li>
-                <li class="nav-item"><a class="nav-link" href="{% url 'modify_stock' location.slug %}">Add Stock</a></li>
-                <li class="nav-item"><a class="nav-link" href="{% url 'modify_service' location.slug %}">Add Service</a></li>
-                <li class="nav-item"><a class="nav-link" href="{% url 'modify_farm' location.slug %}">Add Farm</a></li>
-            </ul>
-        </nav>
-    {% endif %}
+    {% include 'components/location_nav.html' %}
     <div class="row">
         <div class="col">
             <h2>{{ location.name }}</h2>
@@ -30,15 +21,21 @@
         </div>
     </div>
     {% if all_stock %}
-        <h2>Stock</h2>
+        <div class="d-flex justify-content-center"><h2>Stock</h2></div>
         <div class="topmast">
             {% include 'components/list_stock.html' %}
         </div>
     {% endif %}
     {% if all_services %}
-        <h2>Services</h2>
+    <div class="d-flex justify-content-center"><h2>Services</h2></div>
         <div class="topmast">
             {% include 'components/list_services.html' %}
+        </div>
+    {% endif %}
+    {% if all_farms %}
+        <div class="d-flex justify-content-center"><h2>Farms</h2></div>
+        <div class="topmast">
+            {% include 'components/list_farms.html' %}
         </div>
     {% endif %}
 {% endblock %}
