@@ -4,6 +4,8 @@ import os
 
 import boto3
 
+from app.models.locations import Location, Maintainer
+
 logger = logging.getLogger()
 
 
@@ -33,3 +35,9 @@ def get_secret(secret_name):
         return get_secret_value_response['SecretString']
     else:
         return base64.b64decode(get_secret_value_response['SecretBinary'])
+
+
+def is_maintainer(user, **kwargs):
+    location = Location.objects.get(**kwargs)
+    maintainers = Maintainer.objects.filter(location=location)
+    return user in [m.user for m in maintainers]

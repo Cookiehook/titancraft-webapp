@@ -7,18 +7,55 @@
         {% if stock_record %}
             <input type="hidden" name="id" value="{{ stock_record.id }}">
         {% endif %}
+        <div class="item-wrapper">
+            <div class="item-fieldset content-item">
+                <table>
+                    <tr>
+                        <td><label for="stock_item">Item: </label></td>
+                        <td><select class="chosen-select" name="stock_item_1" id="stock_item_1"
+                                    data-placeholder="Choose Item...">
+                            <option value=""></option>
+                            {% for name in items %}
+                                <option value="{{ name }}">{{ name }}
+                            {% endfor %}
+                        </select></td>
+                    </tr>
+                <tr>
+                    <td><label for="stock_stack_size_1">Stack Size: </label></td>
+                    <td><input size="3" type="number" name="stock_stack_size_1" id="stock_stack_size_1"
+                                   value="{{ stock_record.stock_stack_size }}"></td>
+                </tr>
+                    <tr>
+                        <td><label for="stock_description_1">Description<br><em>(Optional)</em>: </label></td>
+                        <td><input size="30" type="text" placeholder="Customisations, if any" name="stock_description_1"
+                                   id="stock_description_1" value="{{ stock_record.stock_description }}"></td>
+                    </tr>
+                    <tr>
+                        <td><label for="enchantments_1">Enchantments: </label></td>
+                        <td><select class="chosen-select" name="enchantments_1" id="enchantments_1"
+                                    data-placeholder="Choose Enchantment..." multiple>
+                            <option value=""></option>
+                            {% for enchantment in enchantments %}
+                                <option value="{{ enchantment }}">{{ enchantment }}
+                            {% endfor %}
+                        </select></td>
+                    </tr>
+                    <tr>
+                        <td><label for="potions_1">Potion Effects: </label></td>
+                        <td><select class="chosen-select" name="potions_1" id="potions_1"
+                                    data-placeholder="Choose Potions..." multiple>
+                            <option value=""></option>
+                            {% for potion in potions %}
+                                <option value="{{ potion }}">{{ potion }}
+                            {% endfor %}
+                        </select></td>
+                    </tr>
+                </table>
+                <button type="button" class="remove-fieldset btn btn-danger">Remove</button>
+            </div>
+        </div>
+        <button class="add-fieldset btn btn-primary">Add Item +</button>
         <table>
-            <tr>
-                <td><label for="stock_item">Item for sale: </label></td>
-                <td><input size="3" type="number" name="stock_stack_size" id="stock_stack_size"
-                           value="{{ stock_record.stock_stack_size }}"></td>
-                <td><select class="chosen-select" name="stock_item" id="stock_item" data-placeholder="Choose Item...">
-                    <option value=""></option>
-                    {% for name in items %}
-                        <option value="{{ name }}">{{ name }}
-                    {% endfor %}
-                </select></td>
-            </tr>
             <tr>
                 <td><label for="cost_stack_size">Price: </label></td>
                 <td><input size="3" type="number" name="cost_stack_size" id="cost_stack_size"
@@ -37,33 +74,6 @@
                 <td><input size="3" type="number" name="units" id="units" value="{{ stock_record.units }}"></td>
             </tr>
         </table>
-        <table>
-            <tr>
-                <td><label for="stock_description">Item description<br><em>(Optional)</em>: </label></td>
-                <td><input size="30" type="text" placeholder="Customisations, if any" name="stock_description"
-                           id="stock_description" value="{{ stock_record.stock_description }}"></td>
-            </tr>
-            <tr>
-                <td><label for="enchantments">Enchantments: </label></td>
-                <td><select class="chosen-select" name="enchantments" id="enchantments"
-                            data-placeholder="Choose Enchantment..." multiple>
-                    <option value=""></option>
-                    {% for enchantment in enchantments %}
-                        <option value="{{ enchantment }}">{{ enchantment }}
-                    {% endfor %}
-                </select></td>
-            </tr>
-            <tr>
-                <td><label for="potions">Potion Effects: </label></td>
-                <td><select class="chosen-select" name="potions" id="potions"
-                            data-placeholder="Choose Potions..." multiple>
-                    <option value=""></option>
-                    {% for potion in potions %}
-                        <option value="{{ potion }}">{{ potion }}
-                    {% endfor %}
-                </select></td>
-            </tr>
-        </table>
         {% if stock_record %}
             <input id="create" class="btn btn-success" type="submit" value="Update">
         {% else %}
@@ -76,22 +86,87 @@
     <script src="{% static 'chosen/docsupport/prism.js' %}" type="text/javascript" charset="utf-8"></script>
     <script src="{% static 'chosen/docsupport/init.js' %}" type="text/javascript" charset="utf-8"></script>
 
-    <script>
-        $(document).ready(function () {
-            {% if stock_record %}
-                $('#stock_item').val("{{ stock_record.stock_item.name }}").trigger('chosen:updated');
-                $('#cost_item').val("{{ stock_record.cost_item.name }}").trigger('chosen:updated');
-            {% else %}
-                $('#cost_item').val("Diamond").trigger('chosen:updated');
-            {% endif %}
+    {{ stock_record.item_stacks|json_script:"itemstack-data" }}
 
-            {% if current_enchantments %}
-                $('#enchantments').val({{ current_enchantments }}).trigger('chosen:updated');
-            {% endif %}
-            {% if current_potions %}
-                $('#potions').val({{ current_potions }}).trigger('chosen:updated');
+    <script>
+
+        // Default the cost to be Diamonds, as that's the most likely currency.
+        $(document).ready(function () {
+            let cost_field = $('#cost_item');
+            {% if stock_record %}
+                cost_field.val("{{ stock_record.cost_item.name }}").trigger('chosen:updated');
+            {% else %}
+                cost_field.val("Diamond").trigger('chosen:updated');
             {% endif %}
         });
+
+        // Add or remove itemstacks dynamically
+        $(document).ready(function () {
+            /*
+                item_counter is used to track the number of item boxes on screen, so we don't delete the last one
+                item_number is used to create unique name/IDs on each record. This is never decremented, to ensure
+                the value is always unique. Eg: A user could create 4 items, then delete #2, leaving us with 1,3,4.
+                If we used decremented item_counter for the ID, the next created item would be #4, conflicting with
+                the existing #4, making the form unusable server-side
+             */
+            let item_counter = 1;
+            let item_number = 1;
+
+            // Clone the item-fieldset group to allow multiple items on a stock record
+            $(".add-fieldset").click(function (event) {
+                item_counter++;
+                item_number++;
+                event.preventDefault();
+                $("select").chosen("destroy");  // Required to keep the 'chosen' select elements working
+                let clone = $(".item-fieldset").first().clone();
+                clone.find("input").each(function () {
+                        $(this).attr('name', $(this).attr("name").slice(0, -1) + item_number);
+                        $(this).attr('id', $(this).attr("id").slice(0, -1)  + item_number);
+                    }
+                )
+                clone.find("select").each(function () {
+                        $(this).attr('name', $(this).attr("name").slice(0, -1) + item_number);
+                        $(this).attr('id', $(this).attr("id").slice(0, -1) + item_number);
+                    }
+                )
+                clone.appendTo(".item-wrapper");
+                $("select").chosen();
+            });
+
+        // Remove an item-fieldset group, for accidental clicks / changed mind
+            $(".item-wrapper").on("click", ".remove-fieldset", function (event) {
+                if (item_counter !== 1) {
+                    event.preventDefault();
+                    $(this).parent().remove();
+                    item_counter--;
+                }
+            })
+        });
+
+        // Populate the data from the existing stock record
+        $(document).ready(function () {
+            {% if stock_record %}
+                let itemstacks = JSON.parse(document.getElementById('itemstack-data').textContent);
+                for (var i = 1; i < itemstacks.length + 1; i++) {
+                    $('#stock_item_' + i).val(itemstacks[i-1]['item']).trigger('chosen:updated');
+                    $('#stock_stack_size_' + i).val(itemstacks[i-1]['stack_size']);
+                    $('#stock_description_' + i).val(itemstacks[i-1]['description']);
+
+                    if (itemstacks[i-1]['label_type'] === "enchantment") {
+                        $('#enchantments_' + i).val(itemstacks[i - 1]['labels']).trigger('chosen:updated');
+                    } else if (itemstacks[i-1]['label_type'] === "potion") {
+                        $('#potions_' + i).val(itemstacks[i - 1]['labels']).trigger('chosen:updated');
+                    }
+
+                    if (i !== itemstacks.length) {  // Prepare the next fieldset
+                        $(".add-fieldset").trigger('click')
+                    }
+                }
+                {% else %}
+            {% endif %}
+
+        });
+
+
     </script>
 {% endblock %}
-{% load static %}

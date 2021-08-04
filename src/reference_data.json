@@ -109,6 +109,7 @@
     {"is_enchantable": true, "name": "Warped Fungus on a Stick", "icon": "https://static.wikia.nocookie.net/minecraft_gamepedia/images/1/16/Warped_Fungus_on_a_Stick_JE1_BE1.png/revision/latest/", "classes": ["Tools"]},
     {"is_enchantable": true, "name": "Fishing Rod", "icon": "https://static.wikia.nocookie.net/minecraft_gamepedia/images/7/7f/Fishing_Rod_JE2_BE2.png/revision/latest/", "classes": ["Tools"]},
     {"is_enchantable": true, "name": "Flint and Steel", "icon": "https://static.wikia.nocookie.net/minecraft_gamepedia/images/9/94/Flint_and_Steel_JE4_BE2.png/revision/latest/", "classes": ["Tools"]},
+    {"is_enchantable": true, "name": "Bow", "icon": "https://static.wikia.nocookie.net/minecraft_gamepedia/images/9/99/Bow_JE2_BE1.png/revision/latest/", "classes": ["Tools"]},
     {"is_enchantable": true, "name": "Crossbow", "icon": "https://static.wikia.nocookie.net/minecraft_gamepedia/images/7/79/Crossbow.png/revision/latest/", "classes": ["Tools"]},
     {"is_enchantable": true, "name": "Trident", "icon": "https://static.wikia.nocookie.net/minecraft_gamepedia/images/b/ba/Trident_%28item%29.png/revision/latest/", "classes": ["Tools"]},
 
@@ -118,6 +119,7 @@
     {"is_enchantable": true, "enchanted": true, "name": "Warped Fungus on a Stick", "icon": "https://static.wikia.nocookie.net/minecraft_gamepedia/images/1/16/Warped_Fungus_on_a_Stick_JE1_BE1.png/revision/latest/", "classes": ["Tools"]},
     {"is_enchantable": true, "enchanted": true, "name": "Fishing Rod", "icon": "https://static.wikia.nocookie.net/minecraft_gamepedia/images/e/e0/Enchanted_Fishing_Rod.gif/revision/latest/", "classes": ["Tools"]},
     {"is_enchantable": true, "enchanted": true, "name": "Flint and Steel", "icon": "https://static.wikia.nocookie.net/minecraft_gamepedia/images/9/94/Flint_and_Steel_JE4_BE2.png/revision/latest/", "classes": ["Tools"]},
+    {"is_enchantable": true, "enchanted": true, "name": "Bow", "icon": "https://static.wikia.nocookie.net/minecraft_gamepedia/images/4/4c/Enchanted_Bow.gif/revision/latest/", "classes": ["Tools"]},
     {"is_enchantable": true, "enchanted": true, "name": "Crossbow", "icon": "https://static.wikia.nocookie.net/minecraft_gamepedia/images/3/35/Enchanted_Crossbow.gif/revision/latest/", "classes": ["Tools"]},
     {"is_enchantable": true, "enchanted": true, "name": "Trident", "icon": "https://static.wikia.nocookie.net/minecraft_gamepedia/images/0/02/Enchanted_Trident_%28item%29.gif/revision/latest/", "classes": ["Tools"]},
 

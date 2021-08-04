@@ -8,6 +8,7 @@ import math
 from django.contrib.auth.models import User
 from django.db import models
 from django.utils.text import slugify
+from markdownx.models import MarkdownxField
 
 from app.models import constants
 from app.models.constants import Enchantment, Potion, ItemIcon
@@ -18,7 +19,7 @@ logger = logging.getLogger()
 class Location(models.Model):
     name = models.CharField(max_length=50, unique=True)
     slug = models.SlugField()
-    description = models.CharField(max_length=500, null=True)
+    description = MarkdownxField(null=True)
     x_pos = models.IntegerField(default=0)
     y_pos = models.IntegerField(default=0)
     z_pos = models.IntegerField(default=0)
@@ -45,56 +46,68 @@ class Maintainer(models.Model):
 
 class StockRecord(models.Model):
     location = models.ForeignKey(Location, on_delete=models.CASCADE)
-
-    # Itemstack for sale
-    stock_item = models.ForeignKey(constants.Item, on_delete=models.CASCADE, related_name="stock")
-    stock_description = models.CharField(max_length=200, null=True, blank=True)
-    stock_stack_size = models.IntegerField()
-
-    # Itemstack accepted as payment
     cost_item = models.ForeignKey(constants.Item, on_delete=models.CASCADE, related_name="cost")
     cost_stack_size = models.IntegerField()
 
     units = models.IntegerField()
     last_updated = models.DateTimeField()
 
-    def __str__(self):
-        return f"{self.location}: {self.stock_stack_size}x {self.stock_item} - {self.cost_stack_size}x {self.cost_item}"
-
     def set_display_data(self, user):
         self.user_is_maintainer = user in [m.user for m in Maintainer.objects.filter(location=self.location)]
+        self.item_stacks = []
 
-        stock_enchanted = True if self.enchantmenttostockrecord_set.all() else False
-        stock_potion = self.potiontostockrecord_set.all()[0].potion if self.potiontostockrecord_set.all() else None
-        if stock_enchanted:
-            self.stock_labels = [str(i) for i in self.enchantmenttostockrecord_set.all()]
-        elif stock_potion:
-            self.stock_labels = [str(i) for i in self.potiontostockrecord_set.all()]
-        try:
-            self.stock_icon = ItemIcon.objects.get(item=self.stock_item, enchanted=stock_enchanted,
-                                                    potion=stock_potion).icon
-        except Exception:
-            logger.warning(f"Couldn't find icon for {self.stock_item} Enchanted={stock_enchanted} Potion={stock_potion}")
-            self.stock_icon = ItemIcon.objects.filter(item=self.stock_item)[0].icon
+        for idx, stack in enumerate(self.itemstacktostockrecord_set.all()):
+            stack_data = {}
+            stack_enchanted = True if stack.enchantmenttoitemstack_set.all() else False
+            stack_potion = stack.potiontoitemstack_set.all()[0].potion if stack.potiontoitemstack_set.all() else None
+
+            stack_data['stack_size'] = stack.stack_size
+            stack_data['item'] = stack.item.name
+            stack_data['description'] = stack.description
+            stack_data['final'] = True if idx == len(self.itemstacktostockrecord_set.all()) - 1 else False
+
+            stack_data['label_type'] = "N/A"
+            if stack_enchanted:
+                stack_data['labels'] = [str(i) for i in stack.enchantmenttoitemstack_set.all()]
+                stack_data['label_type'] = "enchantment"
+            elif stack_potion:
+                stack_data['labels'] = [str(i) for i in stack.potiontoitemstack_set.all()]
+                stack_data['label_type'] = "potion"
+            try:
+                stack_data['icon'] = ItemIcon.objects.get(item=stack.item, enchanted=stack_enchanted, potion=stack_potion).icon
+            except Exception:
+                logger.warning(f"Couldn't find icon for {stack.item} Enchanted={stack_enchanted} Potion={stack_potion}")
+                stack_data['icon'] = ItemIcon.objects.filter(item=stack.item)[0].icon
+            self.item_stacks.append(stack_data)
 
         try:
             self.cost_icon = ItemIcon.objects.get(item=self.cost_item, enchanted=False, potion=None).icon
         except Exception:
             logger.warning(f"Couldn't find icon for {self.cost_item} Enchanted=None Potion=None")
-            self.stock_icon = ItemIcon.objects.filter(item=self.stock_item)[0].icon
+            self.cost_icon = ItemIcon.objects.filter(item=self.cost_item)[0].icon
 
 
-class EnchantmentToStockRecord(models.Model):
-    enchantment = models.ForeignKey(Enchantment, on_delete=models.CASCADE)
+class ItemStackToStockRecord(models.Model):
+    item = models.ForeignKey(constants.Item, on_delete=models.CASCADE, related_name="stock")
+    description = models.CharField(max_length=200, null=True, blank=True)
+    stack_size = models.IntegerField()
     stock_record = models.ForeignKey(StockRecord, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f"{self.stack_size}x {self.item}"
+
+
+class EnchantmentToItemStack(models.Model):
+    enchantment = models.ForeignKey(Enchantment, on_delete=models.CASCADE)
+    item_stack = models.ForeignKey(ItemStackToStockRecord, on_delete=models.CASCADE)
 
     def __str__(self):
         return f"{self.enchantment}"
 
 
-class PotionToStockRecord(models.Model):
+class PotionToItemStack(models.Model):
     potion = models.ForeignKey(Potion, on_delete=models.CASCADE)
-    stock_record = models.ForeignKey(StockRecord, on_delete=models.CASCADE)
+    item_stack = models.ForeignKey(ItemStackToStockRecord, on_delete=models.CASCADE)
 
     def __str__(self):
         return f"{self.potion}"

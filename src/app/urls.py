@@ -18,6 +18,7 @@ urlpatterns = [
 
     path('locations/add', add.add_location, name='add_location'),
     path('locations/maintainers/add', add.add_maintainer, name='add_maintainer'),
+    path('stock/add', add.add_stock, name='add_stock'),
 
     path('location/maintainers/delete', delete.delete_maintainer, name='delete_maintainer'),
 
@@ -29,8 +30,6 @@ urlpatterns = [
     path('location/<str:slug>/farmables/modify', modify.modify_farmables, name='modify_farmables'),
 
     path('stock/update_availability', modify.update_availability, name='update_availability'),
-    path('stock/add', modify.add_stock, name='add_stock'),
 
     path('refdata/init/', ref_data.initialise, name='refdata_initialise'),
-    path('refdata/location/', ref_data.create_debug, name='refdata_create_debug'),
 ]

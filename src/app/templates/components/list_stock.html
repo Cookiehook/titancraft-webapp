@@ -23,16 +23,27 @@
             {% endif %}
         </div>
         <div class="col">
-            <img alt="{{ stock.stock_item }}" src="{{ stock.stock_icon }}" width="64px"/>
-            <p>{{ stock.stock_stack_size }} {{ stock.stock_item }}
-                {% if stock.stock_labels %}
-                    {% for label in stock.stock_labels %}
-                        <br>({{ label }})
-                    {% endfor %}
+            {% for stack in stock.item_stacks %}
+                <div class="item-stack">
+                    <div class="row">
+                        <img class="stack-icon" alt="{{ stack.item }}" src="{{ stack.icon }}"/>
+                    </div>
+                    <div class="row">
+                        {{ stack.stack_size }} {{ stack.item }}
+                        {% if stack.labels %}
+                            {% for label in stack.labels %}
+                                <br>({{ label }})
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+                    {% if stack.description %}
+                        <div class="row"><em>{{ stack.description }}</em></div>
+                    {% endif %}
+                </div>
+                {% if not stack.final %}
+                    <hr>
                 {% endif %}
-                {% if stock.stock_description %}
-                    <p><em>{{ stock.stock_description }}</em></p>
-                {% endif %}
+            {% endfor %}
         </div>
         <div class="col">
             <img alt="{{ stock.stock_item }}" src="{{ stock.cost_icon }}" width="64px"/>

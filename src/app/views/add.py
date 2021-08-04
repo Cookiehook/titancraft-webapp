@@ -1,10 +1,14 @@
+import datetime
+
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.shortcuts import redirect
 from django.urls import reverse
 
-from app.models.constants import Region
-from app.models.locations import Location, Maintainer
+from app.models.constants import Region, Item, Enchantment, Potion
+from app.models.locations import Location, Maintainer, StockRecord, PotionToItemStack, EnchantmentToItemStack, \
+    ItemStackToStockRecord
+from app.utils import is_maintainer
 
 
 @login_required()
@@ -31,6 +35,9 @@ def add_location(request):
 
 @login_required()
 def add_maintainer(request):
+    if not is_maintainer(request.user, id=int(request.POST['location'])):
+        return redirect(reverse("not_authorised"))
+
     location = Location.objects.get(id=request.POST['location'])
     maintainer = Maintainer(
         location=location,
@@ -39,3 +46,48 @@ def add_maintainer(request):
     maintainer.save()
     return redirect(reverse("modify_maintainers", args=(location.slug,)))
 
+
+@login_required()
+def add_stock(request):
+    if not is_maintainer(request.user, id=int(request.POST['location'])):
+        return redirect(reverse("not_authorised"))
+
+    if "id" in request.POST:
+        stock_record = StockRecord.objects.get(id=request.POST['id'])
+    else:
+        stock_record = StockRecord()
+
+    stock_record.location = Location.objects.get(id=int(request.POST['location']))
+    stock_record.cost_item = Item.objects.get(name=request.POST['cost_item'])
+    stock_record.cost_stack_size = int(request.POST['cost_stack_size'])
+    stock_record.units = int(request.POST['units'])
+    stock_record.last_updated = datetime.datetime.utcnow()
+    stock_record.save()
+
+    num_stacks = len([key for key in request.POST if key.startswith("stock_item")])
+
+    # Delete and re-create all itemstacks for this record. Otherwise, orphans would accumulate
+    # when users change the item for sale. Enchantments and Potions are implicitly deleted by DB relationship.
+    ItemStackToStockRecord.objects.filter(stock_record=stock_record).delete()
+    for i in range(1, num_stacks + 1):
+        if request.POST[f"stock_item_{i}"] == "":
+            continue  # Likely a hanging empty itemstack fieldset. Ignore it
+
+        item = Item.objects.get(name=request.POST[f"stock_item_{i}"])
+        stack_size = request.POST[f"stock_stack_size_{i}"]
+        description = request.POST[f"stock_description_{i}"]
+        enchantments = request.POST.getlist(f"enchantments_{i}", [])
+        potions = request.POST.getlist(f"potions_{i}", [])
+
+        item_stack = ItemStackToStockRecord(stock_record=stock_record, item=item,
+                                            description=description, stack_size=stack_size)
+        item_stack.save()
+
+        for enchantment_name in enchantments:
+            enchantment = Enchantment.objects.get(name=enchantment_name)
+            EnchantmentToItemStack(enchantment=enchantment, item_stack=item_stack).save()
+        for potion_name in potions:
+            potion = Potion.objects.get(name=potion_name)
+            PotionToItemStack(potion=potion, item_stack=item_stack).save()
+
+    return redirect(reverse('get_location', args=(stock_record.location.slug,)))

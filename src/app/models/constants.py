@@ -63,4 +63,4 @@ class ItemIcon(models.Model):  # Find appropriate icon based on Item and modifie
             return f"{self.item} (Enchanted)"
         elif self.potion is not None:
             return f"{self.item} ({self.potion})"
-        return self.item
+        return f"{self.item}"
