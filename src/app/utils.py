@@ -40,4 +40,4 @@ def get_secret(secret_name):
 def is_maintainer(user, **kwargs):
     location = Location.objects.get(**kwargs)
     maintainers = Maintainer.objects.filter(location=location)
-    return user in [m.user for m in maintainers]
+    return user.is_staff or user in [m.user for m in maintainers]

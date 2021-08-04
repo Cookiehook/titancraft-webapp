@@ -4,6 +4,7 @@ from django.shortcuts import render
 from app.models.locations import Maintainer, Location
 from app.models.stock import StockRecord
 from app.models.users import UserDetails
+from app.utils import is_maintainer
 
 
 @login_required()
@@ -40,7 +41,7 @@ def get_location(request, slug):
 
     context = {
         "all_stock": all_stock,
-        "is_maintainer": request.user in [m.user for m in maintainers],
+        "is_maintainer": is_maintainer(request.user, slug=slug),
         "location": location,
         "maintainers": maintainer_details
     }
