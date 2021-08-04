@@ -8,7 +8,8 @@ from django.urls import reverse
 
 from app.models.constants import Region, Item, Enchantment, Potion
 from app.models.locations import Location, Maintainer
-from app.models.stock import StockRecord, PotionToItemStack, EnchantmentToItemStack, ItemStackToStockRecord
+from app.models.stock import StockRecord, PotionToItemStack, EnchantmentToItemStack, ItemStackToStockRecord, \
+    ServiceRecord
 from app.utils import is_maintainer
 
 
@@ -102,3 +103,21 @@ def update_availability(request):
     stock.last_updated = datetime.datetime.utcnow()
     stock.save()
     return HttpResponse()
+
+
+@login_required()
+def upsert_service(request):
+    if not is_maintainer(request.user, id=int(request.POST['location'])):
+        return redirect(reverse("not_authorised"))
+
+    if "service" in request.POST:
+        service_record = ServiceRecord.objects.get(id=request.POST["service"])
+    else:
+        service_record = ServiceRecord(
+            location=Location.objects.get(id=int(request.POST['location'])),
+        )
+    service_record.name = request.POST['name']
+    service_record.description = request.POST['description']
+    service_record.save()
+
+    return redirect(reverse('get_location', args=(service_record.location.slug,)))

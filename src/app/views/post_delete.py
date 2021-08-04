@@ -3,7 +3,7 @@ from django.shortcuts import redirect
 from django.urls import reverse
 
 from app.models.locations import Maintainer, Location
-from app.models.stock import StockRecord
+from app.models.stock import StockRecord, ServiceRecord
 from app.utils import is_maintainer
 
 
@@ -35,4 +35,15 @@ def delete_stock(request):
 
     location_slug = stock_record.location.slug
     stock_record.delete()
+    return redirect(reverse("get_location", args=(location_slug,)))
+
+
+@login_required()
+def delete_service(request):
+    service_record = ServiceRecord.objects.get(id=request.POST['id'])
+    if not is_maintainer(request.user, id=service_record.location.id):
+        return redirect(reverse("not_authorised"))
+
+    location_slug = service_record.location.slug
+    service_record.delete()
     return redirect(reverse("get_location", args=(location_slug,)))

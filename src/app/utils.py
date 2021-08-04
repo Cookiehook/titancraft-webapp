@@ -1,12 +1,15 @@
 import base64
 import logging
 import os
+from copy import copy
+from urllib.parse import urlencode
 
 import boto3
 
 from app.models.locations import Location, Maintainer
 
 logger = logging.getLogger()
+PAGINATION = 25
 
 
 def get_secret(secret_name):
@@ -41,3 +44,14 @@ def is_maintainer(user, **kwargs):
     location = Location.objects.get(**kwargs)
     maintainers = Maintainer.objects.filter(location=location)
     return user.is_staff or user in [m.user for m in maintainers]
+
+
+def set_pagination_details(in_query, iterable, current_page, context):
+    query = copy(in_query)
+    if 'page' in query:
+        del query['page']
+    context['query'] = urlencode(query)
+    if len(iterable) == PAGINATION:
+        context["next_page"] = current_page + 1
+    if current_page > 0:
+        context['previous_page'] = current_page - 1

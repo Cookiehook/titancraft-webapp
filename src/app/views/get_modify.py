@@ -5,7 +5,7 @@ from django.urls import reverse
 
 from app.models.constants import Enchantment, Potion, Item
 from app.models.locations import Maintainer, Location
-from app.models.stock import StockRecord
+from app.models.stock import StockRecord, ServiceRecord
 from app.models.users import UserDetails
 from app.utils import is_maintainer
 
@@ -55,20 +55,24 @@ def modify_stock(request, slug):
 
 
 @login_required()
-def modify_services(request, slug):
-    template_name = 'pages/modify_services.html'
+def modify_service(request, slug):
+    template_name = 'pages/modify_service.html'
     if not is_maintainer(request.user, slug=slug):
         return redirect(reverse("not_authorised"))
 
     context = {
-
+        'location': Location.objects.get(slug=slug)
     }
+
+    if 'id' in request.GET:
+        context['service'] = ServiceRecord.objects.get(id=request.GET['id'])
+
     return render(request, template_name, context)
 
 
 @login_required()
-def modify_farmables(request, slug):
-    template_name = 'pages/modify_farmables.html'
+def modify_farm(request, slug):
+    template_name = 'pages/modify_farm.html'
     if not is_maintainer(request.user, slug=slug):
         return redirect(reverse("not_authorised"))
 

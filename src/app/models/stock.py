@@ -1,10 +1,12 @@
 import logging
 
 from django.db import models
+from markdownx.models import MarkdownxField
 
 from app.models import constants
 from app.models.constants import Enchantment, Potion, ItemIcon
 from app.models.locations import Location, Maintainer
+from app.utils import is_maintainer
 
 logger = logging.getLogger()
 
@@ -18,7 +20,7 @@ class StockRecord(models.Model):
     last_updated = models.DateTimeField()
 
     def set_display_data(self, user):
-        self.user_is_maintainer = user in [m.user for m in Maintainer.objects.filter(location=self.location)]
+        self.user_is_maintainer = is_maintainer(user, id=self.location.id)
         self.item_stacks = []
 
         for idx, stack in enumerate(self.itemstacktostockrecord_set.all()):
@@ -81,10 +83,13 @@ class PotionToItemStack(models.Model):
 class ServiceRecord(models.Model):
     location = models.ForeignKey(Location, on_delete=models.CASCADE)
     name = models.CharField(max_length=1000)
-    description = models.CharField(max_length=1000)
+    description = MarkdownxField()
 
     def __str__(self):
         return f"{self.location}: {self.name}"
+
+    def set_display_data(self, user):
+        self.user_is_maintainer = is_maintainer(user, id=self.location.id)
 
 
 class FarmRecord(models.Model):

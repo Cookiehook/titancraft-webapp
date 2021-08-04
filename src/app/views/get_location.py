@@ -1,8 +1,9 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 
+from app import utils
 from app.models.locations import Maintainer, Location
-from app.models.stock import StockRecord
+from app.models.stock import StockRecord, ServiceRecord
 from app.models.users import UserDetails
 from app.utils import is_maintainer
 
@@ -20,9 +21,6 @@ def manage_locations(request):
 @login_required()
 def get_location(request, slug):
     template_name = 'pages/get_location.html'
-    pagination = 25
-    page = int(request.GET.get("page", 0))
-    results = page * pagination
 
     location = Location.objects.get(slug=slug)
     maintainers = Maintainer.objects.filter(location=location)
@@ -36,18 +34,17 @@ def get_location(request, slug):
         })
 
     all_stock = StockRecord.objects.filter(location=location).order_by("-last_updated")
-    all_stock = all_stock[results:results + pagination]
     [s.set_display_data(request.user) for s in all_stock]
+
+    all_services = ServiceRecord.objects.filter(location=location).order_by("name")
+    [s.set_display_data(request.user) for s in all_services]
 
     context = {
         "all_stock": all_stock,
+        "all_services": all_services,
         "is_maintainer": is_maintainer(request.user, slug=slug),
         "location": location,
         "maintainers": maintainer_details
     }
-    if len(all_stock) == pagination:
-        context["next_page"] = page + 1
-    if page > 0:
-        context['previous_page'] = page - 1
 
     return render(request, template_name, context)

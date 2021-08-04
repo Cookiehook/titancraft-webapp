@@ -19,16 +19,18 @@ urlpatterns = [
     path('locations/add', post_upsert.upsert_location, name='add_location'),
     path('locations/maintainers/add', post_upsert.upsert_maintainer, name='add_maintainer'),
     path('locations/stock/add', post_upsert.upsert_stock, name='add_stock'),
+    path('locations/service/add', post_upsert.upsert_service, name='add_service'),
 
     path('location/maintainers/delete', post_delete.delete_maintainer, name='delete_maintainer'),
     path('location/stock/delete', post_delete.delete_stock, name='delete_stock'),
+    path('location/service/delete', post_delete.delete_service, name='delete_service'),
     path('location/location/delete', post_delete.delete_location, name='delete_location'),
 
     path('location/<str:slug>', get_location.get_location, name='get_location'),
     path('location/<str:slug>/modify', get_modify.modify_location, name='modify_location'),
     path('location/<str:slug>/stock/modify', get_modify.modify_stock, name='modify_stock'),
-    path('location/<str:slug>/services/modify', get_modify.modify_services, name='modify_services'),
-    path('location/<str:slug>/farmables/modify', get_modify.modify_farmables, name='modify_farmables'),
+    path('location/<str:slug>/services/modify', get_modify.modify_service, name='modify_service'),
+    path('location/<str:slug>/farmables/modify', get_modify.modify_farm, name='modify_farm'),
 
     path('stock/update_availability', post_upsert.update_availability, name='update_availability'),
 

@@ -1,4 +1,6 @@
+from copy import copy
 from functools import reduce
+from urllib.parse import urlencode
 
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
@@ -6,15 +8,16 @@ from django.shortcuts import render
 
 from app.models.constants import Region, Item, ItemClass, Enchantment, Potion
 from app.models.locations import Location
-from app.models.stock import StockRecord, EnchantmentToItemStack, PotionToItemStack, ItemStackToStockRecord
+from app.models.stock import StockRecord, EnchantmentToItemStack, PotionToItemStack, ItemStackToStockRecord, \
+    ServiceRecord, FarmRecord
+from app import utils
 
 
 @login_required()
 def list_stock(request):
     template_name = 'pages/list_stock.html'
-    pagination = 25
     page = int(request.GET.get("page", 0))
-    results = page * pagination
+    results = page * utils.PAGINATION
 
     enchantment_filter = Q()
     potion_filter =Q()
@@ -65,7 +68,7 @@ def list_stock(request):
         for stack_group in all_itemstacks:
             all_stock.extend(StockRecord.objects.filter(id__in=stack_group).order_by("-last_updated"))
 
-    all_stock = all_stock[results:results + pagination]
+    all_stock = all_stock[results:results + utils.PAGINATION]
     items = {i.name for i in Item.objects.all()}
     items.update({c.name for c in ItemClass.objects.all()})
     [s.set_display_data(request.user) for s in all_stock]
@@ -76,55 +79,70 @@ def list_stock(request):
         "enchantment_suggestions": Enchantment.objects.all(),
         "potion_suggestions": Potion.objects.all(),
         "all_classes": sorted({c.name for c in ItemClass.objects.all()}),
-        "query": request.GET.urlencode()
     }
 
-    if len(all_stock) == pagination:
-        context["next_page"] = page + 1
-    if page > 0:
-        context['previous_page'] = page - 1
-
+    utils.set_pagination_details(request.GET, all_stock, page, context)
     return render(request, template_name, context)
 
 
 @login_required()
 def list_services(request):
     template_name = 'pages/list_services.html'
-    context = {}
+    page = int(request.GET.get("page", 0))
+    results = page * utils.PAGINATION
+
+    if 'search' not in request.GET or request.GET.get('search') == '' or 'all' in request.GET:
+        all_services = ServiceRecord.objects.all()
+    else:
+        search_term = request.GET['search']
+        all_services = ServiceRecord.objects.filter(Q(name__icontains=search_term) | Q(description__icontains=search_term))
+
+    all_services = all_services[results:results + utils.PAGINATION]
+    [s.set_display_data(request.user) for s in all_services]
+    context = {
+        "all_services": all_services,
+        "search_placeholder": "Find a Service...",
+    }
+
+    utils.set_pagination_details(request.GET, all_services, page, context)
     return render(request, template_name, context)
 
 
 @login_required()
 def list_farms(request):
     template_name = 'pages/list_farms.html'
-    context = {}
+    page = int(request.GET.get("page", 0))
+    results = page * utils.PAGINATION
+
+    # TODO - Search
+    all_farms = FarmRecord.objects.all()
+
+    all_farms = all_farms[results:results + utils.PAGINATION]
+    context = {
+        "all_farms": all_farms
+    }
+    utils.set_pagination_details(request.GET, all_farms, page, context)
     return render(request, template_name, context)
 
 
 @login_required()
 def list_locations(request, region):
     template_name = 'pages/list_locations.html'
-    pagination = 25
     page = int(request.GET.get("page", 0))
-    results = page * pagination
+    results = page * utils.PAGINATION
 
     if 'search' not in request.GET or 'all' in request.GET:
-        locations = Location.objects.filter(region=Region.objects.get(name=region)).order_by("spawn_distance")[results:results + pagination]
+        all_locations = Location.objects.filter(region=Region.objects.get(name=region)).order_by("spawn_distance")[results:results + pagination]
     else:
         search_term = request.GET['search']
-        locations = Location.objects.filter(
+        all_locations = Location.objects.filter(
             Q(region=Region.objects.get(name=region)) & (Q(name__icontains=search_term) | Q(description__icontains=search_term))).order_by("spawn_distance")
 
     context = {
+        "all_locations": all_locations,
         "search_placeholder": f"Search {region}...",
-        "locations": locations,
-        "search_suggestions": [l.name for l in locations],
-        "query": request.GET.urlencode()
+        "search_suggestions": [l.name for l in all_locations],
     }
 
-    if len(locations) == pagination:
-        context["next_page"] = page + 1
-    if page > 0:
-        context['previous_page'] = page - 1
-
+    utils.set_pagination_details(request.GET, all_locations, page, context)
     return render(request, template_name, context)

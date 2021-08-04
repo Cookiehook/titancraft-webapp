@@ -1,6 +1,6 @@
 <div class="d-flex justify-content-center">
     <form method="get">
-        <input required autocomplete="off" name="search" list="search_suggestions" size="60%" placeholder="{{ search_placeholder }}">
+        <input autocomplete="off" name="search" list="search_suggestions" size="60%" placeholder="{{ search_placeholder }}">
         <datalist id="search_suggestions">
             {% for name in search_suggestions %}
                 <option value="{{ name }}">
