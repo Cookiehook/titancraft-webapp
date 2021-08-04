@@ -12,7 +12,7 @@
                 <table>
                     <tr>
                         <td><label for="stock_item">Item: </label></td>
-                        <td><select class="chosen-select" name="stock_item_1" id="stock_item_1"
+                        <td><select required class="chosen-select" name="stock_item_1" id="stock_item_1"
                                     data-placeholder="Choose Item...">
                             <option value=""></option>
                             {% for name in items %}
@@ -22,7 +22,7 @@
                     </tr>
                 <tr>
                     <td><label for="stock_stack_size_1">Stack Size: </label></td>
-                    <td><input size="3" type="number" name="stock_stack_size_1" id="stock_stack_size_1"
+                    <td><input required size="3" type="number" name="stock_stack_size_1" id="stock_stack_size_1"
                                    value="{{ stock_record.stock_stack_size }}"></td>
                 </tr>
                     <tr>
@@ -58,10 +58,10 @@
         <table>
             <tr>
                 <td><label for="cost_stack_size">Price: </label></td>
-                <td><input size="3" type="number" name="cost_stack_size" id="cost_stack_size"
+                <td><input required size="3" type="number" name="cost_stack_size" id="cost_stack_size"
                            value="{{ stock_record.cost_stack_size }}"></td>
                 <td>
-                    <select class="chosen-select" name="cost_item" id="cost_item" data-placeholder="Choose Item...">
+                    <select required class="chosen-select" name="cost_item" id="cost_item" data-placeholder="Choose Item...">
                         <option value=""></option>
                         {% for name in items %}
                             <option value="{{ name }}">{{ name }}
@@ -71,7 +71,7 @@
             </tr>
             <tr>
                 <td><label for="units">Units Available: </label></td>
-                <td><input size="3" type="number" name="units" id="units" value="{{ stock_record.units }}"></td>
+                <td><input required size="3" type="number" name="units" id="units" value="{{ stock_record.units }}"></td>
             </tr>
         </table>
         {% if stock_record %}

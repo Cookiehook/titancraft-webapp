@@ -16,24 +16,25 @@ def list_stock(request):
     page = int(request.GET.get("page", 0))
     results = page * pagination
 
-    enchantment_filter = StockRecord.objects.all()
-    potion_filter = StockRecord.objects.all()
+    enchantment_filter = Q()
+    potion_filter =Q()
     if enchantment_name := request.GET.get("enchantment"):
         enchantments = Enchantment.objects.filter(name__icontains=enchantment_name).all()
         if enchantments:
-            enchantment_filter = EnchantmentToItemStack.objects.filter(enchantment__in=enchantments).values("item_stack")
+            enchantment_filter = Q(id__in=[e.item_stack.id for e in EnchantmentToItemStack.objects.filter(enchantment__in=enchantments)])
 
     if potion_name := request.GET.get("potion"):
         potions = Potion.objects.filter(name__icontains=potion_name).all()
         if potions:
-            potion_filter = PotionToItemStack.objects.filter(potion__in=potions).values("item_stack")
+            potion_filter = Q(id__in=[p.item_stack.id for p in PotionToItemStack.objects.filter(potion__in=potions)])
 
     if 'class' in request.GET:
         items = [i.item.id for i in ItemClass.objects.filter(name=request.GET['class'])]
         all_stacks = ItemStackToStockRecord.objects.filter(item__in=items)
         all_stock = StockRecord.objects.filter(id__in=all_stacks.values("stock_record")).order_by("-last_updated")
     elif 'search' not in request.GET or request.GET.get('search') == '' or 'all' in request.GET:
-        all_stock = StockRecord.objects.filter(id__in=enchantment_filter).filter(id__in=potion_filter).order_by("-last_updated")
+        all_stacks = ItemStackToStockRecord.objects.filter(enchantment_filter).filter(potion_filter)
+        all_stock = StockRecord.objects.filter(id__in=all_stacks.values("stock_record")).order_by("-last_updated")
     else:
         search_term = request.GET['search']
         all_stock = []
@@ -54,11 +55,11 @@ def list_stock(request):
         match_class_name_items = ItemClass.objects.filter(Q(any_word_query & ~Q(item__in=match_exact_items | match_close_items | match_single_word_items))).values("item")
 
         # Fetch ItemStackToStockRecords matching the items found above, in that order
-        all_itemstacks.append(ItemStackToStockRecord.objects.filter(item__in=match_exact_items      ).filter(id__in=enchantment_filter).filter(id__in=potion_filter).values("stock_record"))
-        all_itemstacks.append(ItemStackToStockRecord.objects.filter(item__in=match_close_items      ).filter(id__in=enchantment_filter).filter(id__in=potion_filter).values("stock_record"))
-        all_itemstacks.append(ItemStackToStockRecord.objects.filter(item__in=match_single_word_items).filter(id__in=enchantment_filter).filter(id__in=potion_filter).values("stock_record"))
-        all_itemstacks.append(ItemStackToStockRecord.objects.filter(item__in=match_class_items      ).filter(id__in=enchantment_filter).filter(id__in=potion_filter).values("stock_record"))
-        all_itemstacks.append(ItemStackToStockRecord.objects.filter(item__in=match_class_name_items ).filter(id__in=enchantment_filter).filter(id__in=potion_filter).values("stock_record"))
+        all_itemstacks.append(ItemStackToStockRecord.objects.filter(item__in=match_exact_items      ).filter(enchantment_filter).filter(potion_filter).values("stock_record"))
+        all_itemstacks.append(ItemStackToStockRecord.objects.filter(item__in=match_close_items      ).filter(enchantment_filter).filter(potion_filter).values("stock_record"))
+        all_itemstacks.append(ItemStackToStockRecord.objects.filter(item__in=match_single_word_items).filter(enchantment_filter).filter(potion_filter).values("stock_record"))
+        all_itemstacks.append(ItemStackToStockRecord.objects.filter(item__in=match_class_items      ).filter(enchantment_filter).filter(potion_filter).values("stock_record"))
+        all_itemstacks.append(ItemStackToStockRecord.objects.filter(item__in=match_class_name_items ).filter(enchantment_filter).filter(potion_filter).values("stock_record"))
 
         # Get the parent StockRecords
         for stack_group in all_itemstacks:

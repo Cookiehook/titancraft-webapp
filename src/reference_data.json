@@ -69,11 +69,11 @@
   ],
 
   "items": [
-    {"name": "Oak Boat", "icon": "https://static.wikia.nocookie.net/minecraft_gamepedia/images/f/f4/Oak_Boat_JE4_BE2.png/revision/latest/", "classes": ["Boats"]},
-    {"name": "Spruce Boat", "icon": "https://static.wikia.nocookie.net/minecraft_gamepedia/images/b/bc/Spruce_Boat_JE3_BE2.png/revision/latest/", "classes": ["Boats"]},
-    {"name": "Birch Boat", "icon": "https://static.wikia.nocookie.net/minecraft_gamepedia/images/a/a7/Birch_Boat_JE3_BE2.png/revision/latest/", "classes": ["Boats"]},
-    {"name": "Jungle Boat", "icon": "https://static.wikia.nocookie.net/minecraft_gamepedia/images/b/b9/Jungle_Boat_JE3_BE2.png/revision/latest/", "classes": ["Boats"]},
-    {"name": "Acacia Boat", "icon": "https://static.wikia.nocookie.net/minecraft_gamepedia/images/8/85/Acacia_Boat_JE3_BE2.png/revision/latest/", "classes": ["Boats"]},
+    {"name": "Oak Boat", "icon": "https://static.wikia.nocookie.net/minecraft_gamepedia/images/f/f4/Oak_Boat_JE4_BE2.png/revision/latest/"},
+    {"name": "Spruce Boat", "icon": "https://static.wikia.nocookie.net/minecraft_gamepedia/images/b/bc/Spruce_Boat_JE3_BE2.png/revision/latest/"},
+    {"name": "Birch Boat", "icon": "https://static.wikia.nocookie.net/minecraft_gamepedia/images/a/a7/Birch_Boat_JE3_BE2.png/revision/latest/"},
+    {"name": "Jungle Boat", "icon": "https://static.wikia.nocookie.net/minecraft_gamepedia/images/b/b9/Jungle_Boat_JE3_BE2.png/revision/latest/"},
+    {"name": "Acacia Boat", "icon": "https://static.wikia.nocookie.net/minecraft_gamepedia/images/8/85/Acacia_Boat_JE3_BE2.png/revision/latest/"},
 
     {"name": "Arrow", "icon": "https://static.wikia.nocookie.net/minecraft_gamepedia/images/2/25/Arrow_%28item%29_JE1_BE1.png/revision/latest/", "classes": ["Tools", "Arrows"]},
     {"name": "Spectral Arrow", "icon": "https://static.wikia.nocookie.net/minecraft_gamepedia/images/a/af/Spectral_Arrow_%28item%29_JE1.png/revision/latest/", "classes": ["Tools", "Arrows"]},

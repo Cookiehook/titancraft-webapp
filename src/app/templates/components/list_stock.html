@@ -60,7 +60,7 @@
         <div class="col">
             <form class="update_units" id="{{ stock.id }}" action="{% url 'update_availability' %}" method="post">
                 {% csrf_token %}
-                <input type="number" size="5px" name="units" value="{{ stock.units }}"><br>
+                <input required type="number" size="5px" name="units" value="{{ stock.units }}"><br>
                 {% if stock.units == 0 %}
                     <i>(Out of Stock)</i><br>
                 {% endif %}
