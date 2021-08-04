@@ -1,6 +1,6 @@
 from django.urls import path
 
-from app.views import add, auth, delete, list, location, modify, ref_data
+from app.views import post_upsert, auth, post_delete, get_list, get_location, get_modify, ref_data
 
 urlpatterns = [
     path('', auth.index, name='index'),
@@ -10,26 +10,27 @@ urlpatterns = [
     path('auth/logout/', auth.logout, name='logout'),
     path('not_authorised/', auth.not_authorised, name='not_authorised'),
 
-    path('stock/', list.list_stock, name='list_stock'),
-    path('services/', list.list_services, name='list_services'),
-    path('farms/', list.list_farms, name='list_farms'),
-    path('locations/<str:region>/', list.list_locations, name='list_locations'),
-    path('locations/manage', location.manage_locations, name='manage_locations'),
+    path('stock/', get_list.list_stock, name='list_stock'),
+    path('services/', get_list.list_services, name='list_services'),
+    path('farms/', get_list.list_farms, name='list_farms'),
+    path('locations/<str:region>/', get_list.list_locations, name='list_locations'),
+    path('locations/manage', get_location.manage_locations, name='manage_locations'),
 
-    path('locations/add', add.add_location, name='add_location'),
-    path('locations/maintainers/add', add.add_maintainer, name='add_maintainer'),
-    path('stock/add', add.add_stock, name='add_stock'),
+    path('locations/add', post_upsert.upsert_location, name='add_location'),
+    path('locations/maintainers/add', post_upsert.upsert_maintainer, name='add_maintainer'),
+    path('locations/stock/add', post_upsert.upsert_stock, name='add_stock'),
 
-    path('location/maintainers/delete', delete.delete_maintainer, name='delete_maintainer'),
+    path('location/maintainers/delete', post_delete.delete_maintainer, name='delete_maintainer'),
+    path('location/stock/delete', post_delete.delete_stock, name='delete_stock'),
+    path('location/location/delete', post_delete.delete_location, name='delete_location'),
 
-    path('location/<str:slug>', location.get_location, name='get_location'),
-    path('location/<str:slug>/modify', modify.modify_location, name='modify_location'),
-    path('location/<str:slug>/maintainers/modify', modify.modify_maintainers, name='modify_maintainers'),
-    path('location/<str:slug>/stock/modify', modify.modify_stock, name='modify_stock'),
-    path('location/<str:slug>/services/modify', modify.modify_services, name='modify_services'),
-    path('location/<str:slug>/farmables/modify', modify.modify_farmables, name='modify_farmables'),
+    path('location/<str:slug>', get_location.get_location, name='get_location'),
+    path('location/<str:slug>/modify', get_modify.modify_location, name='modify_location'),
+    path('location/<str:slug>/stock/modify', get_modify.modify_stock, name='modify_stock'),
+    path('location/<str:slug>/services/modify', get_modify.modify_services, name='modify_services'),
+    path('location/<str:slug>/farmables/modify', get_modify.modify_farmables, name='modify_farmables'),
 
-    path('stock/update_availability', modify.update_availability, name='update_availability'),
+    path('stock/update_availability', post_upsert.update_availability, name='update_availability'),
 
     path('refdata/init/', ref_data.initialise, name='refdata_initialise'),
 ]

@@ -5,8 +5,8 @@ from django.db.models import Q
 from django.shortcuts import render
 
 from app.models.constants import Region, Item, ItemClass, Enchantment, Potion
-from app.models.locations import Location, StockRecord, EnchantmentToItemStack, PotionToItemStack, \
-    ItemStackToStockRecord
+from app.models.locations import Location
+from app.models.stock import StockRecord, EnchantmentToItemStack, PotionToItemStack, ItemStackToStockRecord
 
 
 @login_required()

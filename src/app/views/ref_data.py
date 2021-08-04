@@ -1,15 +1,11 @@
-import datetime
 import json
 
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.models import User
 from django.http import HttpResponseForbidden
 from django.shortcuts import redirect
 from django.urls import reverse
 
 from app.models.constants import Region, Enchantment, Potion, Item, ItemIcon, ItemClass, Mob
-from app.models.locations import Location, Maintainer, StockRecord, EnchantmentToItemStack, PotionToItemStack
-from app.models.users import UserDetails
 
 
 @login_required()
@@ -53,10 +49,10 @@ def initialise(request):
                                             ) for potion in potions]
         else:
             ItemIcon.objects.get_or_create(item=item,
-                                            enchanted=obj.get("enchanted", False),
-                                            potion=None,
-                                            icon=obj["icon"]
-                                            )
+                                           enchanted=obj.get("enchanted", False),
+                                           potion=None,
+                                           icon=obj["icon"]
+                                           )
 
         for item_class in obj.get("classes", []):
             ItemClass.objects.get_or_create(item=item, name=item_class)

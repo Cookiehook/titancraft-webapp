@@ -1,5 +1,6 @@
 from django.contrib import admin
-from app.models import constants, locations, users
+
+from app.models import constants, locations, stock, users
 
 admin.site.register(constants.Region)
 admin.site.register(constants.Mob)
@@ -11,11 +12,11 @@ admin.site.register(constants.ItemIcon)
 
 admin.site.register(locations.Location)
 admin.site.register(locations.Maintainer)
-admin.site.register(locations.StockRecord)
-admin.site.register(locations.ItemStackToStockRecord)
-admin.site.register(locations.EnchantmentToItemStack)
-admin.site.register(locations.PotionToItemStack)
-admin.site.register(locations.ServiceRecord)
-admin.site.register(locations.FarmRecord)
+admin.site.register(stock.StockRecord)
+admin.site.register(stock.ItemStackToStockRecord)
+admin.site.register(stock.EnchantmentToItemStack)
+admin.site.register(stock.PotionToItemStack)
+admin.site.register(stock.ServiceRecord)
+admin.site.register(stock.FarmRecord)
 
 admin.site.register(users.UserDetails)

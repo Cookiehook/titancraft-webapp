@@ -2,22 +2,23 @@ import datetime
 
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
+from django.http import HttpResponse
 from django.shortcuts import redirect
 from django.urls import reverse
 
 from app.models.constants import Region, Item, Enchantment, Potion
-from app.models.locations import Location, Maintainer, StockRecord, PotionToItemStack, EnchantmentToItemStack, \
-    ItemStackToStockRecord
+from app.models.locations import Location, Maintainer
+from app.models.stock import StockRecord, PotionToItemStack, EnchantmentToItemStack, ItemStackToStockRecord
 from app.utils import is_maintainer
 
 
 @login_required()
-def add_location(request):
-    location, _ = Location.objects.get_or_create(name=request.POST['name'])
-    if request.POST.get("delete"):
-        location.delete()
-        return redirect(reverse("manage_locations"))
+def upsert_location(request):
+    if 'location' in request.POST:
+        if not is_maintainer(request.user, id=int(request.POST['location'])):
+            return redirect(reverse("not_authorised"))
 
+    location, _ = Location.objects.get_or_create(name=request.POST['name'])
     location.description = request.POST['description']
     location.x_pos = int(request.POST['x_pos'])
     location.y_pos = int(request.POST['y_pos'])
@@ -34,21 +35,21 @@ def add_location(request):
 
 
 @login_required()
-def add_maintainer(request):
+def upsert_maintainer(request):
     if not is_maintainer(request.user, id=int(request.POST['location'])):
         return redirect(reverse("not_authorised"))
 
     location = Location.objects.get(id=request.POST['location'])
-    maintainer = Maintainer(
+    maintainer, _ = Maintainer.objects.get_or_create(
         location=location,
         user=User.objects.get(id=request.POST['user'])
     )
     maintainer.save()
-    return redirect(reverse("modify_maintainers", args=(location.slug,)))
+    return redirect(reverse("modify_location", args=(location.slug,)))
 
 
 @login_required()
-def add_stock(request):
+def upsert_stock(request):
     if not is_maintainer(request.user, id=int(request.POST['location'])):
         return redirect(reverse("not_authorised"))
 
@@ -91,3 +92,13 @@ def add_stock(request):
             PotionToItemStack(potion=potion, item_stack=item_stack).save()
 
     return redirect(reverse('get_location', args=(stock_record.location.slug,)))
+
+
+@login_required()
+def update_availability(request):
+    """Called Async from form in page, and returns empty response"""
+    stock = StockRecord.objects.get(id=request.POST['id'])
+    stock.units = int(request.POST['units'])
+    stock.last_updated = datetime.datetime.utcnow()
+    stock.save()
+    return HttpResponse()

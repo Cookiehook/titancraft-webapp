@@ -1,15 +1,11 @@
-import datetime
-
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-from django.http import HttpResponse
 from django.shortcuts import redirect, render
 from django.urls import reverse
-from django.utils.safestring import mark_safe
 
 from app.models.constants import Enchantment, Potion, Item
-from app.models.locations import Maintainer, Location, StockRecord, EnchantmentToItemStack, PotionToItemStack, \
-    ItemStackToStockRecord
+from app.models.locations import Maintainer, Location
+from app.models.stock import StockRecord
 from app.models.users import UserDetails
 from app.utils import is_maintainer
 
@@ -21,19 +17,6 @@ def modify_location(request, slug):
         return redirect(reverse("not_authorised"))
 
     location = Location.objects.get(slug=slug)
-    context = {
-        "location": location
-    }
-    return render(request, template_name, context)
-
-
-@login_required()
-def modify_maintainers(request, slug):
-    template_name = 'pages/modify_maintainers.html'
-    location = Location.objects.get(slug=slug)
-    if not is_maintainer(request.user, slug=slug):
-        return redirect(reverse("not_authorised"))
-
     maintainers = Maintainer.objects.filter(location=location)
     for maintainer in maintainers:
         details = UserDetails.objects.get(user=maintainer.user)
@@ -93,12 +76,3 @@ def modify_farmables(request, slug):
 
     }
     return render(request, template_name, context)
-
-
-@login_required()
-def update_availability(request):
-    stock = StockRecord.objects.get(id=request.POST['id'])
-    stock.units = int(request.POST['units'])
-    stock.last_updated = datetime.datetime.utcnow()
-    stock.save()
-    return HttpResponse()

@@ -15,10 +15,18 @@
             </div>
             {% if stock.user_is_maintainer %}
                 <div class="row">
-                <form action="{% url 'modify_stock' stock.location.slug %}" method="get">
-                    <input type="hidden" name="id" value="{{ stock.id }}">
-                    <input class="btn btn-primary" type="submit" value="Modify">
-                </form>
+                    <form action="{% url 'modify_stock' stock.location.slug %}" method="get">
+                        <input type="hidden" name="id" value="{{ stock.id }}">
+                        <input class="btn btn-primary" type="submit" value="Modify">
+                    </form>
+                </div>
+                <div class="row">
+                    <form action="{% url 'delete_stock' %}" method="post">
+                        {% csrf_token %}
+                        <input type="hidden" name="id" value="{{ stock.id }}">
+                        <input class="btn btn-danger" type="submit" value="Delete"
+                               onclick="return confirm('Are you sure you want to delete this stock record?');">
+                    </form>
                 </div>
             {% endif %}
         </div>

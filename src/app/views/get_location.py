@@ -1,7 +1,8 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 
-from app.models.locations import Maintainer, Location, StockRecord
+from app.models.locations import Maintainer, Location
+from app.models.stock import StockRecord
 from app.models.users import UserDetails
 
 
