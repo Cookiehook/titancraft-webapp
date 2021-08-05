@@ -8,7 +8,7 @@ from django.contrib.auth.models import User
 from django.shortcuts import render, redirect
 from django.urls import reverse
 
-from app import utils
+from project import settings
 from app.models.users import UserDetails
 
 logger = logging.getLogger()
@@ -42,7 +42,7 @@ def login(request):
     host = request.get_host()
     host = "http://127.0.0.1:5000" if "127.0.0.1" in host else "https://titancraft.cookiehook.com"
     params = {
-        'client_id': utils.get_secret('DISCORD_TITANCRAFT_CLIENT_ID'),
+        'client_id': settings.get_discord_client_id(),
         'redirect_uri': host + reverse('verify_callback'),
         'response_type': 'code',
         'scope': 'identify guilds',
@@ -64,8 +64,8 @@ def verify_callback(request):
     host = request.get_host()
     host = "http://127.0.0.1:5000" if "127.0.0.1" in host else f"https://titancraft.cookiehook.com"
     data = {
-        'client_id': utils.get_secret('DISCORD_TITANCRAFT_CLIENT_ID'),
-        'client_secret': utils.get_secret('DISCORD_TITANCRAFT_CLIENT_SECRET'),
+        'client_id': settings.get_discord_client_id(),
+        'client_secret': settings.get_discord_client_secret(),
         'grant_type': 'authorization_code',
         'code': request.GET['code'],
         'redirect_uri': host + reverse('verify_callback'),

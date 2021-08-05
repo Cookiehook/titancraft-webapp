@@ -5,7 +5,6 @@ from copy import copy
 from functools import reduce
 from urllib.parse import urlencode
 
-import boto3
 from django.db.models import Q
 
 from app.models.constants import Item, ItemClass
@@ -13,34 +12,6 @@ from app.models.stock import FarmRecord
 
 logger = logging.getLogger()
 PAGINATION = 25
-
-
-def get_secret(secret_name):
-    # Used when running on developer machine
-    if secret := os.getenv(secret_name):
-        logger.info(f"Retrieving {secret_name} secret from env vars")
-        return secret
-
-    # Used when running inside docker-compose network
-    if os.path.exists(f"/run/secrets/{secret_name}"):
-        logger.info(f"Retrieving {secret_name} secret from secret file")
-        with open(f"/run/secrets/{secret_name}") as sfile:
-            return sfile.read()
-
-    # Used when deployed to AWS
-    logger.info(f"Retrieving {secret_name} secret from secret manager")
-    session = boto3.session.Session()
-    client = session.client(
-        service_name='secretsmanager',
-        region_name="eu-west-2"
-    )
-
-    get_secret_value_response = client.get_secret_value(SecretId=secret_name)
-    logger.debug(f"Secret '{secret_name}' = {get_secret_value_response}")
-    if 'SecretString' in get_secret_value_response:
-        return get_secret_value_response['SecretString']
-    else:
-        return base64.b64decode(get_secret_value_response['SecretBinary'])
 
 
 def set_pagination_details(in_query, iterable, current_page, context):
