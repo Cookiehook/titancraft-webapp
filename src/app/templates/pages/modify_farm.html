@@ -60,15 +60,10 @@
                    onclick="return confirm('Are you sure you want to delete all farm records?');">
         </form>
     </div>
-
-    {% load static %}
-    <script src="{% static 'chosen/docsupport/jquery-3.2.1.min.js' %}" type="text/javascript"></script>
-    <script src="{% static 'chosen/chosen.jquery.js' %}" type="text/javascript"></script>
-    <script src="{% static 'chosen/docsupport/prism.js' %}" type="text/javascript" charset="utf-8"></script>
-    <script src="{% static 'chosen/docsupport/init.js' %}" type="text/javascript" charset="utf-8"></script>
-    <script src="{% static 'scripts/modify_farm.js' %}"></script>
+    {% include 'components/chosen_scripts.html' %}
     {% if current_records %}
         {{ current_records|json_script:"farm-data" }}
+        {% load static %}
         <script src="{% static 'scripts/populate_farm.js' %}" type="text/javascript" charset="utf-8"></script>
     {% endif %}
 {% endblock %}

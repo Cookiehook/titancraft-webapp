@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 from django.shortcuts import redirect, render
 from django.urls import reverse
 
-from app.models.constants import Enchantment, Potion, Item, Mob
+from app.models.constants import Enchantment, Potion, Item, Mob, Region
 from app.models.locations import Maintainer, Location
 from app.models.stock import StockRecord, ServiceRecord, FarmRecord
 from app.models.users import UserDetails
@@ -25,7 +25,9 @@ def modify_location(request, id):
     context = {
         "location": location,
         "maintainers": maintainers,
-        "users": User.objects.all()
+        "users": User.objects.all(),
+        "regions": Region.objects.all()
+
     }
     return render(request, template_name, context)
 

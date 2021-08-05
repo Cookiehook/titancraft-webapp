@@ -14,7 +14,7 @@ urlpatterns = [
     path('stock/', get_list.list_stock, name='list_stock'),
     path('services/', get_list.list_services, name='list_services'),
     path('farms/', get_list.list_farms, name='list_farms'),
-    path('locations/<str:region>/', get_list.list_locations, name='list_locations'),
+    path('locations/', get_list.list_locations, name='list_locations'),
     path('locations/manage', get_location.manage_locations, name='manage_locations'),
 
     path('locations/add', post_upsert.upsert_location, name='add_location'),

@@ -1,12 +1,12 @@
 {
   "regions": [
     {"name": "Overworld"},
-    {"name": "The-Nether"},
-    {"name": "The-End"},
-    {"name": "The-Above"},
-    {"name": "Resource-World", "parent": "Overworld"},
-    {"name": "Shopping-District", "parent": "Overworld"},
-    {"name": "Entertainment-District", "parent": "Overworld"}
+    {"name": "The Nether"},
+    {"name": "The End"},
+    {"name": "The Above"},
+    {"name": "Resource World"},
+    {"name": "Shopping District", "parent": "Overworld"},
+    {"name": "Entertainment District", "parent": "Overworld"}
   ],
 
   "enchantments": [

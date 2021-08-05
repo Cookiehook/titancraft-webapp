@@ -1,10 +1,39 @@
 {% extends 'components/base.html' %}
 {% load markdownify %}
 {% block content %}
-    {% include 'components/search_form.html' %}
+    <form action="{% url 'list_locations' %}" method="get">
+    <fieldset>
+    <legend>Browse by Name and Region</legend>
+    <p>The <em>Location</em> field will search for location names and descriptions</p>
+    <p>The <em>Region</em> filter is an OR filter. eg: Nether and End will show you locations from both dimensions</p>
+        <table>
+            <tr>
+                <td><label for="name">Location: </label></td>
+                <td><input autocomplete="off" id="name" name="search" list="location_suggestions" size="60%"
+                           placeholder="Find Location..."><br></td>
+            </tr>
+            <tr>
+                <td><label for="region">Region: </label></td>
+                <td><select class="chosen-select-width" name="region" id="region" data-placeholder="Select Regions..." multiple>
+                    <option value=""></option>
+                    {% for region in regions %}
+                        <option value="{{ region }}">{{ region }}
+                    {% endfor %}
+                </select></td>
+            </tr>
+        </table>
+        <input class="btn btn-success" type="submit" value="Search">
+        <button class="btn btn-info" type="submit" value="YES" name="all">All</button>
+        <datalist id="location_suggestions">
+            {% for name in location_suggestions %}
+                <option value="{{ name }}">
+            {% endfor %}
+        </datalist>
+    </fieldset>
+    </form>
     <div class="row">
-    <div class="col"><h3>Name</h3></div>
-    <div class="col"><h3>Description</h3></div>
+        <div class="col"><h3>Name</h3></div>
+        <div class="col"><h3>Description</h3></div>
     </div>
     {% for location in all_locations %}
         <div class="content-item">
@@ -16,11 +45,11 @@
                         ({{ location.region }})</p></div>
                 </div>
                 <div class="col">
-                    <p>{{ location.description|markdownify  }}</p>
+                    <p>{{ location.description|markdownify }}</p>
                 </div>
             </div>
         </div>
     {% endfor %}
-
     {% include 'components/pagination.html' %}
+    {% include 'components/chosen_scripts.html' %}
 {% endblock %}

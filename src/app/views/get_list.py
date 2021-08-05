@@ -1,3 +1,4 @@
+import operator
 from functools import reduce
 
 from django.contrib.auth.decorators import login_required
@@ -19,15 +20,13 @@ def list_stock(request):
 
     enchantment_filter = Q()
     potion_filter =Q()
-    if enchantment_name := request.GET.get("enchantment"):
-        enchantments = Enchantment.objects.filter(name__icontains=enchantment_name).all()
-        if enchantments:
-            enchantment_filter = Q(id__in=[e.item_stack.id for e in EnchantmentToItemStack.objects.filter(enchantment__in=enchantments)])
+    if enchantment_names := request.GET.getlist("enchantment"):
+        enchantments = Enchantment.objects.filter(name__in=enchantment_names).all()
+        enchantment_filter = Q(id__in=[e.item_stack.id for e in EnchantmentToItemStack.objects.filter(enchantment__in=enchantments)])
 
-    if potion_name := request.GET.get("potion"):
-        potions = Potion.objects.filter(name__icontains=potion_name).all()
-        if potions:
-            potion_filter = Q(id__in=[p.item_stack.id for p in PotionToItemStack.objects.filter(potion__in=potions)])
+    if potion_names := request.GET.getlist("potion"):
+        potions = Potion.objects.filter(name__in=potion_names).all()
+        potion_filter = Q(id__in=[p.item_stack.id for p in PotionToItemStack.objects.filter(potion__in=potions)])
 
     if 'class' in request.GET:
         items = [i.item.id for i in ItemClass.objects.filter(name=request.GET['class'])]
@@ -75,8 +74,14 @@ def list_services(request):
     if 'search' not in request.GET or request.GET.get('search') == '' or 'all' in request.GET:
         all_services = ServiceRecord.objects.all()
     else:
+        all_services = []
+
         search_term = request.GET['search']
-        all_services = ServiceRecord.objects.filter(Q(name__icontains=search_term) | Q(description__icontains=search_term))
+        split_term_filter = reduce(lambda x, y: x | y, [(Q(name__icontains=word) | Q(description__icontains=word)) for word in search_term.split()])
+        full_term_matches = ServiceRecord.objects.filter(Q(name__icontains=search_term) | Q(description__icontains=search_term))
+
+        all_services.extend(full_term_matches)
+        all_services.extend(ServiceRecord.objects.filter(split_term_filter).exclude(id__in=full_term_matches))
 
     all_services = all_services[results:results + utils.PAGINATION]
     [s.set_display_data(request.user) for s in all_services]
@@ -95,20 +100,23 @@ def list_farms(request):
     page = int(request.GET.get("page", 0))
     results = page * utils.PAGINATION
 
-    if ('search' not in request.GET or request.GET.get('search') == '' and 'mob' not in request.GET) or 'all' in request.GET:
+    if ('search' not in request.GET or request.GET.get('search') == '' and 'mob' not in request.GET and 'xp' not in request.GET) or 'all' in request.GET:
         farm_locations = FarmRecord.objects.distinct("location").values("location")
         locations = Location.objects.filter(id__in=farm_locations)
     else:
         item_filter = Q()
         mob_filter = Q()
+        xp_filter = Q()
         if search_term := request.GET.get("search"):
             items = []
             [items.extend(i) for i in utils.search_item(search_term)]
             item_filter = Q(item__in=items)
         if mobs := request.GET.getlist("mob"):
             mob_filter = Q(mob__in=Mob.objects.filter(name__in=mobs))
+        if 'xp' in request.GET:
+            xp_filter = Q(xp=True)
 
-        locations = [f.location for f in FarmRecord.objects.filter(item_filter | mob_filter)]
+        locations = [f.location for f in FarmRecord.objects.filter(item_filter & mob_filter & xp_filter)]
 
     locations = locations[results:results + utils.PAGINATION]
     all_farms = utils.get_farms_for_locations(locations, request.user)
@@ -122,24 +130,33 @@ def list_farms(request):
 
 
 @login_required()
-def list_locations(request, region):
+def list_locations(request):
     template_name = 'pages/list_locations.html'
     page = int(request.GET.get("page", 0))
     results = page * utils.PAGINATION
-    parent_region = Region.objects.get(name=region)
-    region_filter = Q(region__in=Region.objects.filter(parent=parent_region)) | Q(region=parent_region)
 
-    if 'search' not in request.GET or 'all' in request.GET:
-        all_locations = Location.objects.filter(region_filter).order_by("spawn_distance")[results:results + utils.PAGINATION]
+
+    if ('search' not in request.GET or request.GET.get('search') == '' and 'region' not in request.GET) or 'all' in request.GET:
+        all_locations = Location.objects.order_by("spawn_distance")[results:results + utils.PAGINATION]
     else:
-        search_term = request.GET['search']
-        all_locations = Location.objects.filter(
-            region_filter & (Q(name__icontains=search_term) | Q(description__icontains=search_term))).order_by("spawn_distance")
+        region_filter = Q()
+        search_filter = Q()
+        if 'search' in request.GET and request.GET.get('search') != '':
+            search_term = request.GET['search']
+            split_term_filter = reduce(lambda x, y: x | y, [(Q(name__icontains=word) | Q(description__icontains=word)) for word in search_term.split()])
+            search_filter = Q(name__icontains=search_term) | Q(description__icontains=search_term) | Q(split_term_filter)
+
+        if 'region' in request.GET:
+            parent_regions = Region.objects.filter(name__in=request.GET.getlist('region'))
+            region_filter = Q(region__in=Region.objects.filter(parent__in=parent_regions)) | Q(region__in=parent_regions)
+
+        all_locations = Location.objects.filter(region_filter & search_filter).order_by("spawn_distance")
 
     context = {
+        "regions": Region.objects.all(),
         "all_locations": all_locations,
-        "search_placeholder": f"Search {region}...",
-        "search_suggestions": [l.name for l in all_locations],
+        "search_placeholder": f"Search for Location...",
+        "location_suggestions": [l.name for l in all_locations],
     }
 
     utils.set_pagination_details(request.GET, all_locations, page, context)

@@ -2,6 +2,7 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 
 from app import utils
+from app.models.constants import Region
 from app.models.locations import Maintainer, Location
 from app.models.stock import StockRecord, ServiceRecord
 from app.models.users import UserDetails
@@ -12,7 +13,8 @@ def manage_locations(request):
     template_name = 'pages/manage_locations.html'
     locations = [m.location for m in Maintainer.objects.filter(user=request.user)]
     context = {
-        "locations": locations
+        "locations": locations,
+        "regions": Region.objects.all()
     }
     return render(request, template_name, context)
 

@@ -30,22 +30,18 @@
         </tr>
         <tr>
             <td><label for="region">Region: </label></td>
-            <td><select required name="region" id="region">
+            <td><select class="chosen-select-width" name="region" id="region" data-placeholder="Select Region...">
                 <option value=""></option>
-                <option value="Overworld">Overworld</option>
-                <option value="The-End">The End</option>
-                <option value="The-Nether">The Nether</option>
-                <option value="The-Above">The Above</option>
-                <option value="Resource-World">Resource World</option>
-                <option value="Shopping-District">Shopping District</option>
-                <option value="Entertainment-District">Entertainment District</option>
+                {% for region in regions %}
+                    <option value="{{ region }}">{{ region }}
+                {% endfor %}
             </select></td>
         </tr>
         <tr>
             {% if location %}
-            <td><input class="btn btn-success" type="submit" value="Update"></td>
+                <td><input class="btn btn-success" type="submit" value="Update"></td>
             {% else %}
-            <td><input class="btn btn-success" type="submit" value="Create"></td>
+                <td><input class="btn btn-success" type="submit" value="Create"></td>
             {% endif %}
         </tr>
     </table>
