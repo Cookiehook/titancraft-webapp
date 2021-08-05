@@ -82,6 +82,8 @@
     </form>
 
     {% include 'components/chosen_scripts.html' %}
+    {% load static %}
+    <script src="{% static 'scripts/modify_stock.js' %}" type="text/javascript" charset="utf-8"></script>
     {% if stock_record %}
         {{ stock_record.item_stacks|json_script:"itemstack-data" }}
         {% load static %}

@@ -61,6 +61,8 @@
         </form>
     </div>
     {% include 'components/chosen_scripts.html' %}
+    {% load static %}
+    <script src="{% static 'scripts/modify_farm.js' %}" type="text/javascript" charset="utf-8"></script>
     {% if current_records %}
         {{ current_records|json_script:"farm-data" }}
         {% load static %}
