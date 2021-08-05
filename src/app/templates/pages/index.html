@@ -10,15 +10,6 @@
         If you think a record for a shop or location is wrong, please contact the maintainers for that location. You can
         see a location's maintainers by opening the page for that location.
     </p>
-    <p>
-        To create an account, click the "Log In" button at the top of this site.
-        This will take you to the Discord authorisation page, where you will be asked to Authorise the <code>titancraft-info-portal</code> app.
-        This allows the site to check that you are part of the Titancraft server before allowing access. Click Authorise to continue.
-        Access can be revoked at any time by going to accessing Settings -> Authorised Apps in Discord.
-    </p>
-    <p>
-        You will not be able to access any other parts of the site until you have created an account.
-    </p>
     <p>If you're new to the site, or need assistance, read the <a href="{% url 'how_to' %}">How-To</a> pages</p>
     {% if user.is_authenticated %}
         <div class="row">

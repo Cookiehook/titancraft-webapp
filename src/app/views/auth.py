@@ -48,6 +48,8 @@ def login(request):
         'scope': 'identify guilds',
         'prompt': 'none'  # Skips auth screen if they've already authorised
     }
+    if next := request.GET.get("next"):
+        params['state'] = next  # state should be for security. We're co-opting it for post-login redirect
     url = base_url + urllib.parse.urlencode(params)
     return redirect(url)
 
@@ -102,7 +104,10 @@ def verify_callback(request):
     user_details.save()
 
     auth.login(request, user)
-    return redirect(reverse('index'))
+    if 'state' in request.GET:
+        return redirect(request.GET['state'])
+    else:
+        return redirect(reverse('index'))
 
 
 @login_required()

@@ -135,7 +135,6 @@ def list_locations(request):
     page = int(request.GET.get("page", 0))
     results = page * utils.PAGINATION
 
-
     if ('search' not in request.GET or request.GET.get('search') == '' and 'region' not in request.GET) or 'all' in request.GET:
         all_locations = Location.objects.order_by("spawn_distance")[results:results + utils.PAGINATION]
     else:
@@ -163,7 +162,6 @@ def list_locations(request):
     return render(request, template_name, context)
 
 
-@login_required()
 def how_to(request):
     template_name = "pages/how_to.html"
     return render(request, template_name)
