@@ -1,0 +1,26 @@
+{% extends 'components/base.html' %}
+{% block content %}
+    <form method="get">
+        <fieldset>
+            <legend>Browse by Service</legend>
+            <table>
+                <tr>
+                    <td><label for="search">Service: </label></td>
+                    <td><input autocomplete="off" name="search" id="search" list="service_suggestions" size="60%"
+                               placeholder="Find Services...">
+                        <datalist id="service_suggestions">
+                            {% for name in service_suggestions %}
+                                <option value="{{ name }}">
+                            {% endfor %}
+                        </datalist>
+                    </td>
+                </tr>
+            </table>
+            <input class="btn btn-success" type="submit" value="Search">
+            <button class="btn btn-info" type="submit" value="YES" name="all">All</button>
+        </fieldset>
+
+    </form>
+    {% include 'components/list_services.html' %}
+    {% include 'components/pagination.html' %}
+{% endblock %}

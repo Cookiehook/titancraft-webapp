@@ -5,15 +5,9 @@ These will generally be created once on project release, and maintained as Minec
 from django.db import models
 
 
-class BusinessType(models.Model):  # eg: Shop, Farm
+class Region(models.Model):  # eg: Overworld, Above, Shopping District
     name = models.CharField(max_length=50, unique=True)
-
-    def __str__(self):
-        return self.name
-
-
-class Dimension(models.Model):  # eg: Shop, Farm
-    name = models.CharField(max_length=50, unique=True)
+    parent = models.ForeignKey("self", null=True, blank=True, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.name
@@ -36,30 +30,15 @@ class Item(models.Model):  # eg: diamond_sword
         return self.name
 
 
-class EnchantmentLevel(models.Model):  # eg: I, II, III, IV, V
-    name = models.CharField(max_length=10)
-
-    def __str__(self):
-        return self.name
-
-
-class EnchantmentType(models.Model):  # eg: Efficiency, Protection
-    name = models.CharField(max_length=200, unique=True)
-    type = models.CharField(max_length=200)
-
-    def __str__(self):
-        return self.name
-
-
-class PotionModifier(models.Model):  # eg: Strong, Extended, Splash, Lingering
+class Enchantment(models.Model):  # eg: Efficiency, Protection
     name = models.CharField(max_length=200, unique=True)
 
     def __str__(self):
         return self.name
 
 
-class PotionType(models.Model):  # eg: Regeneration, Night Vision
-    name = models.CharField(max_length=200, unique=True)
+class Potion(models.Model):  # eg: Regeneration, Night Vision
+    name = models.CharField(max_length=200)
 
     def __str__(self):
         return self.name
@@ -77,7 +56,7 @@ class ItemClass(models.Model):
 class ItemIcon(models.Model):  # Find appropriate icon based on Item and modifiers
     item = models.ForeignKey(Item, on_delete=models.CASCADE)
     enchanted = models.BooleanField(default=False)
-    potion = models.ForeignKey(PotionType, on_delete=models.CASCADE, blank=True, null=True)
+    potion = models.ForeignKey(Potion, on_delete=models.CASCADE, blank=True, null=True)
     icon = models.CharField(max_length=200)
 
     def __str__(self):
@@ -85,4 +64,4 @@ class ItemIcon(models.Model):  # Find appropriate icon based on Item and modifie
             return f"{self.item} (Enchanted)"
         elif self.potion is not None:
             return f"{self.item} ({self.potion})"
-        return self.item
+        return f"{self.item}"

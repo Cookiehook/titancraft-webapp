@@ -1,0 +1,31 @@
+{% extends 'components/base.html' %}
+{% block content %}
+    <div class="row">
+        <div class="col">
+            <h2>Create New Location</h2>
+            <p>Use this form to create a new location that is present on the Titancraft server. For example:</p>
+            <ul>
+                <li>Your new shop selling enchanted books and tool repair services</li>
+                <li>A publicly accessible farm, or farm that you lease access to</li>
+                <li>Community locations such as a public trading hall</li>
+            </ul>
+            <p>
+                When created, you will be added as the sole staff member, and redirected to the new page for that
+                location.
+                From there you can add stock/service/mob details, or change who staffs that location.
+            </p>
+            {% include 'components/add_location.html' %}
+        </div>
+        <div class="col">
+            <h2>Update Existing Location</h2>
+            <p>The list below shows all locations of which you are a maintainer.</p>
+            <p>Select any from the list to be taken to that location's page, which will allow you to modify the
+                location.</p>
+            <ul>
+                {% for location in locations %}
+                    <li><a href="{% url 'get_location' location.id %}">{{ location.name }}</a></li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+{% endblock %}

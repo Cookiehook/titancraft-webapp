@@ -28,10 +28,16 @@ createsuperuser:
 run:
 	DOCKER_BUILDKIT=0 docker-compose up --build
 
-deploy:
+deploy-infra:
+	cd deployment && terraform init -var branch=$(BRANCH) && terraform apply -var branch=$(BRANCH) -input=false -auto-approve -target=module.infrastructure
+
+deploy-rds:
+	cd deployment && terraform init -var branch=$(BRANCH) && terraform apply -var branch=$(BRANCH) -input=false -auto-approve -target=module.rds
+
+deploy-app:
 	docker build -t cookiehook/titancraft:$(BRANCH) .
 	docker push cookiehook/titancraft:$(BRANCH)
-	cd deployment && terraform init -var branch=$(BRANCH) && terraform apply -var branch=$(BRANCH)
+	cd deployment && terraform init -var branch=$(BRANCH) && terraform apply -var branch=$(BRANCH) -input=false -auto-approve -target=module.app
 
-destroy:
-	cd deployment && terraform init -var branch=$(BRANCH) && terraform destroy -var branch=$(BRANCH)
+destroy-app:
+	cd deployment && terraform init -var branch=$(BRANCH) && terraform destroy -var branch=$(BRANCH) -target=module.app

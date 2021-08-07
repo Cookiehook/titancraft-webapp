@@ -1,0 +1,56 @@
+<form action="{% url 'add_location' %}" method="post">
+    {% csrf_token %}
+    {% if location %}
+        <input type="hidden" name="location" value="{{ location.id }}">
+    {% endif %}
+    <table>
+        <tr>
+            <td><label for="name">Name: </label></td>
+            <td><input required size="52px" name="name" id="name" value="{{ location.name }}"></td>
+        </tr>
+        <tr>
+            <td><label for="description">Description<br> <em>(Supports Markdown)</em>: </label></td>
+            <td><textarea rows="20" cols="100" name="description"
+                          id="description">{{ location.description }}</textarea>
+                <script>var editor = new Editor({element: document.getElementById("description")});
+                editor.render();</script>
+            </td>
+        </tr>
+        <tr>
+            <td><label for="x_pos">X: </label></td>
+            <td><input required type="number" size="5px" name="x_pos" id="x_pos" value="{{ location.x_pos }}"></td>
+        </tr>
+        <tr>
+            <td><label for="y_pos">Y: </label></td>
+            <td><input required type="number" size="5px" name="y_pos" id="y_pos" value="{{ location.y_pos }}"></td>
+        </tr>
+        <tr>
+            <td><label for="z_pos">Z: </label></td>
+            <td><input required type="number" size="5px" name="z_pos" id="z_pos" value="{{ location.z_pos }}"></td>
+        </tr>
+        <tr>
+            <td><label for="region">Region: </label></td>
+            <td><select class="chosen-select-width" name="region" id="region" data-placeholder="Select Region...">
+                <option value=""></option>
+                {% for region in regions %}
+                    <option value="{{ region }}">{{ region }}
+                {% endfor %}
+            </select></td>
+        </tr>
+        <tr>
+            {% if location %}
+                <td><input class="btn btn-success" type="submit" value="Update"></td>
+            {% else %}
+                <td><input class="btn btn-success" type="submit" value="Create"></td>
+            {% endif %}
+        </tr>
+    </table>
+</form>
+
+{% if location %}
+    <script>
+        $(document).ready(function () {
+            $('#region').val("{{ location.region }}").trigger('chosen:updated');
+        });
+    </script>
+{% endif %}

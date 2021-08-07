@@ -9,9 +9,14 @@ https://docs.djangoproject.com/en/3.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.2/ref/settings/
 """
+import base64
+import logging
 import os
 from pathlib import Path
 
+import boto3
+
+logger = logging.getLogger()
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
@@ -23,7 +28,7 @@ DEBUG = True
 ALLOWED_HOSTS = []
 INSTALLED_APPS = [
     'app.apps.AppConfig',
-    'rest_framework',
+    'markdownify.apps.MarkdownifyConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -99,15 +104,6 @@ STATIC_URL = '/static/'
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-
-REST_FRAMEWORK = {
-    'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
-    ],
-    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
-    'PAGE_SIZE': 10
-}
-
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
@@ -118,6 +114,73 @@ LOGGING = {
     },
     'root': {
         'handlers': ['console'],
-        'level': 'DEBUG',
+        'level': 'INFO',
     },
 }
+
+MARKDOWNIFY = {
+    "default": {
+        "WHITELIST_TAGS": [
+            'a',
+            'abbr',
+            'acronym',
+            'b',
+            'blockquote',
+            'em',
+            'i',
+            'li',
+            'ol',
+            'p',
+            'strong',
+            'ul',
+            'h1', 'h2', 'h3', 'h4', 'h5', 'h6'
+        ]
+    }
+}
+
+def get_secret(secret_name):
+    # Used when running on developer machine
+    if secret := os.getenv(secret_name):
+        logger.info(f"Retrieving {secret_name} secret from env vars")
+        return secret
+
+    # Used when running inside docker-compose network
+    if os.path.exists(f"/run/secrets/{secret_name}"):
+        logger.info(f"Retrieving {secret_name} secret from secret file")
+        with open(f"/run/secrets/{secret_name}") as sfile:
+            return sfile.read()
+
+    # Used when deployed to AWS
+    logger.info(f"Retrieving {secret_name} secret from secret manager")
+    session = boto3.session.Session()
+    client = session.client(
+        service_name='secretsmanager',
+        region_name="eu-west-2"
+    )
+
+    get_secret_value_response = client.get_secret_value(SecretId=secret_name)
+    logger.debug(f"Secret '{secret_name}' = {get_secret_value_response}")
+    if 'SecretString' in get_secret_value_response:
+        return get_secret_value_response['SecretString']
+    else:
+        return base64.b64decode(get_secret_value_response['SecretBinary'])
+
+
+DISCORD_TITANCRAFT_CLIENT_ID = None
+DISCORD_TITANCRAFT_CLIENT_SECRET = None
+
+
+# Only load secrets when required. Otherwise manage.py collecstatic fails,
+# as the secrets aren't available during the build process.
+def get_discord_client_id():
+    global DISCORD_TITANCRAFT_CLIENT_ID
+    if DISCORD_TITANCRAFT_CLIENT_ID is None:
+        DISCORD_TITANCRAFT_CLIENT_ID = get_secret('DISCORD_TITANCRAFT_CLIENT_ID')
+    return DISCORD_TITANCRAFT_CLIENT_ID
+
+
+def get_discord_client_secret():
+    global DISCORD_TITANCRAFT_CLIENT_SECRET
+    if DISCORD_TITANCRAFT_CLIENT_SECRET is None:
+        DISCORD_TITANCRAFT_CLIENT_SECRET = get_secret('DISCORD_TITANCRAFT_CLIENT_SECRET')
+    return DISCORD_TITANCRAFT_CLIENT_SECRET

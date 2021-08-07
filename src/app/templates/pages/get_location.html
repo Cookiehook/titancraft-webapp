@@ -1,0 +1,41 @@
+{% extends 'components/base.html' %}
+{% load markdownify %}
+{% block content %}
+    {% include 'components/location_nav.html' %}
+    <div class="row">
+        <div class="col">
+            <h2>{{ location.name }}</h2>
+            <p>Location: {{ location.x_pos }}/{{ location.y_pos }}/{{ location.z_pos }} ({{ location.region }})</p>
+            <p>{{ location.description|markdownify }}</p>
+        </div>
+        <div class="col">
+            <h2>Maintainers</h2>
+            <div class="row">
+                {% for detail in maintainers %}
+                    <div class="col">
+                        <img class="rounded-circle" alt="{{ detail.username }} avatar" src="{{ detail.avatar }}">
+                        <h4>{{ detail.username }}</h4>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    {% if all_stock %}
+        <div class="d-flex justify-content-center"><h2>Stock</h2></div>
+        <div class="topmast">
+            {% include 'components/list_stock.html' %}
+        </div>
+    {% endif %}
+    {% if all_services %}
+    <div class="d-flex justify-content-center"><h2>Services</h2></div>
+        <div class="topmast">
+            {% include 'components/list_services.html' %}
+        </div>
+    {% endif %}
+    {% if all_farms %}
+        <div class="d-flex justify-content-center"><h2>Farms</h2></div>
+        <div class="topmast">
+            {% include 'components/list_farms.html' %}
+        </div>
+    {% endif %}
+{% endblock %}

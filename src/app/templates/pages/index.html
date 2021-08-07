@@ -1,0 +1,90 @@
+{% extends "components/base.html" %}
+{% block content %}
+    <h1>Welcome TitanCrafters!</h1>
+    <p>
+        Welcome to your one-stop-shop for information about the Titancraft server.
+        Please read the instructions below in order to use this site.
+    <p>
+        This site is run by Cookiehook, with assistance from the lovely Titancraft community.
+        Please do not ask the Titancraft mods for support, they will not be able to help.
+        If you think a record for a shop or location is wrong, please contact the maintainers for that location. You can
+        see a location's maintainers by opening the page for that location.
+    </p>
+    <p>If you're new to the site, or need assistance, read the <a href="{% url 'how_to' %}">How-To</a> pages</p>
+    {% if user.is_authenticated %}
+        <div class="row">
+            <div class="col">
+                <div class="card h-100">
+                    <div class="card-header">
+                        <a class="stretched-link" href="{% url 'list_stock' %}"><h2>Browse Shops</h2></a>
+                    </div>
+                    <div class="card-body">
+                        <p>Find items for sale on the Titancraft server.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col">
+                <div class="card h-100">
+                    <div class="card-header">
+                        <a class="stretched-link" href="{% url 'list_services' %}"><h2>Browse Services</h2></a>
+                    </div>
+                    <div class="card-body">
+                        <p>Find services on offer on the TitanCrafter server.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col">
+                <div class="card h-100">
+                    <div class="card-header">
+                        <a class="stretched-link" href="{% url 'list_farms' %}"><h2>Browse Farms</h2></a>
+                    </div>
+                    <div class="card-body">
+                        <p>Find publicly accessible farms on Titancraft. Publicly available does not always mean "Free".
+                            Check descriptions and nearby signs before using any farms.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+
+            <div class="col">
+                <div class="card h-100">
+                    <div class="card-header">
+                        <a class="stretched-link" href="{% url 'list_locations' %}"><h2>Browse Locations</h2></a>
+                    </div>
+                    <div class="card-body">
+                        <p>Find public locations. For example: </p>
+                        <ul>
+                            <li>Public Trading Hall</li>
+                            <li>End/Nether Portals</li>
+                            <li>Entertainment District</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col">
+                <div class="card h-100">
+                    <div class="card-header">
+                        <a class="stretched-link" href="{% url 'manage_locations' %}"><h2>Manage Locations</h2></a>
+                    </div>
+                    <div class="card-body">
+                        <p>Create and update:</p>
+                        <ul>
+                            <li>Location Names, Co-ordinates and Admins</li>
+                            <li>Shop Stock</li>
+                            <li>Services</li>
+                            <li>Farms Drops</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+
+    {% endif %}
+{% endblock %}

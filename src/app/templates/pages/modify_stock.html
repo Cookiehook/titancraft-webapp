@@ -1,0 +1,104 @@
+{% extends 'components/base.html' %}
+{% block content %}
+    {% include 'components/location_nav.html' %}
+    <h2>Add/Modify Stock</h2>
+    <p>For The <em>Add Item +</em> button is for selling multiple items in one transaction, for one cost. e.g: 'Did You Die?' kits at 32 diamonds.</p>
+    <p>For adding multiple stock records with separate costs, use the <em>Save and Add Another</em> button.</p>
+    <form action="{% url 'add_stock' %}" method="post">
+        {% csrf_token %}
+        <input type="hidden" value="{{ location.id }}" name="location">
+        {% if stock_record %}
+            <input type="hidden" name="id" value="{{ stock_record.id }}">
+        {% endif %}
+        <div class="item-wrapper">
+            <div class="item-fieldset content-item">
+                <table>
+                    <tr>
+                        <td><label for="stock_item">Item: </label></td>
+                        <td><select required class="chosen-select" name="stock_item_1" id="stock_item_1"
+                                    data-placeholder="Choose Item...">
+                            <option value=""></option>
+                            {% for name in items %}
+                                <option value="{{ name }}">{{ name }}
+                            {% endfor %}
+                        </select></td>
+                    </tr>
+                <tr>
+                    <td><label for="stock_stack_size_1">Stack Size: </label></td>
+                    <td><input required size="3" type="number" name="stock_stack_size_1" id="stock_stack_size_1"
+                                   value="1"></td>
+                </tr>
+                    <tr>
+                        <td><label for="stock_description_1">Description<br><em>(Optional)</em>: </label></td>
+                        <td><input size="30" type="text" placeholder="Customisations, if any" name="stock_description_1"
+                                   id="stock_description_1" value="{{ stock_record.stock_description }}"></td>
+                    </tr>
+                    <tr>
+                        <td><label for="enchantments_1">Enchantments: </label></td>
+                        <td><select class="chosen-select" name="enchantments_1" id="enchantments_1"
+                                    data-placeholder="Choose Enchantment..." multiple>
+                            <option value=""></option>
+                            {% for enchantment in enchantments %}
+                                <option value="{{ enchantment }}">{{ enchantment }}
+                            {% endfor %}
+                        </select></td>
+                    </tr>
+                    <tr>
+                        <td><label for="potions_1">Potion Effects: </label></td>
+                        <td><select class="chosen-select" name="potions_1" id="potions_1"
+                                    data-placeholder="Choose Potions..." multiple>
+                            <option value=""></option>
+                            {% for potion in potions %}
+                                <option value="{{ potion }}">{{ potion }}
+                            {% endfor %}
+                        </select></td>
+                    </tr>
+                </table>
+                <button type="button" class="remove-fieldset btn btn-danger">Remove</button>
+            </div>
+        </div>
+        <button class="add-fieldset btn btn-primary">Add Item +</button>
+        <table>
+            <tr>
+                <td><label for="cost_stack_size">Price: </label></td>
+                <td><input required size="3" type="number" name="cost_stack_size" id="cost_stack_size"
+                           value="{{ stock_record.cost_stack_size }}"></td>
+                <td>
+                    <select required class="chosen-select" name="cost_item" id="cost_item" data-placeholder="Choose Item...">
+                        <option value=""></option>
+                        {% for name in items %}
+                            <option value="{{ name }}">{{ name }}
+                        {% endfor %}
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td><label for="units">Units Available: </label></td>
+                <td><input required size="3" type="number" name="units" id="units" value="{{ stock_record.units }}"></td>
+            </tr>
+        </table>
+        <input id="submit" class="btn btn-success" type="submit" value="Save">
+        <input id="submit" class="btn btn-success" type="submit" name="add-another" value="Save and Add Another">
+    </form>
+
+    {% include 'components/chosen_scripts.html' %}
+    {% load static %}
+    <script src="{% static 'scripts/modify_stock.js' %}" type="text/javascript" charset="utf-8"></script>
+    {% if stock_record %}
+        {{ stock_record.item_stacks|json_script:"itemstack-data" }}
+        {% load static %}
+        <script src="{% static 'scripts/populate_stock.js' %}" type="text/javascript" charset="utf-8"></script>
+    {% endif %}
+
+    <script>
+        // Default the cost to be Diamonds, as that's the most likely currency.
+        $(document).ready(function () {
+            let cost_field = $('#cost_item');
+            {% if stock_record %}
+                cost_field.val("{{ stock_record.cost_item.name }}").trigger('chosen:updated');
+            {% else %}
+                cost_field.val("Diamond").trigger('chosen:updated');
+            {% endif %}
+        });
+    </script>
+{% endblock %}

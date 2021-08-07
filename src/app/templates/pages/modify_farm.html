@@ -1,0 +1,71 @@
+{% extends 'components/base.html' %}
+{% block content %}
+    {% include 'components/location_nav.html' %}
+    <form action="{% url 'add_farm' %}" method="post">
+        {% csrf_token %}
+        <input type="hidden" name="location" value="{{ location.id }}">
+        <div class="row">
+
+            <div class="col">
+                <h2>Mobs</h2>
+                <div class="mob-wrapper">
+                    <div class="mob-fieldset content-item">
+                        <label for="mob_1">Mob: </label>
+                        <select class="chosen-select mob-select" name="mob_1" id="mob_1"
+                                data-placeholder="Choose Mob...">
+                            <option value=""></option>
+                            {% for name in mobs %}
+                                <option value="{{ name }}">{{ name }}
+                            {% endfor %}
+                        </select>
+                        <input class="mob-xp" type="checkbox" name="xp_1" id="xp_1">
+                        <label for="xp_1">XP farm</label>
+                        <br>
+                        <button type="button" class="remove-mob-fieldset btn btn-danger">Remove</button>
+                    </div>
+                </div>
+                <button type="button" class="add-mob-fieldset btn btn-primary">Add Another +</button>
+            </div>
+
+            <div class="col">
+                <h2>Items</h2>
+                <div class="item-wrapper">
+                    <div class="item-fieldset content-item">
+                        <label for="item_1">Item: </label>
+                        <select class="chosen-select item-select" name="item_1" id="item_1"
+                                data-placeholder="Choose Item...">
+                            <option value=""></option>
+                            {% for name in items %}
+                                <option value="{{ name }}">{{ name }}
+                            {% endfor %}
+                        </select>
+                        <br>
+                        <button type="button" class="remove-item-fieldset btn btn-danger">Remove</button>
+
+                    </div>
+                </div>
+                <button type="button" class="add-item-fieldset btn btn-primary">Add Another +</button>
+            </div>
+
+        </div>
+        <div class="row">
+            <input id="submit" class="btn btn-success" type="submit" value="Save All">
+        </div>
+    </form>
+    <div class="row">
+        <form action="{% url 'delete_farm' %}" method="post">
+            {% csrf_token %}
+            <input type="hidden" name="location" value="{{ location.id }}">
+            <input class="btn btn-danger" type="submit" name="delete" value="Delete All"
+                   onclick="return confirm('Are you sure you want to delete all farm records?');">
+        </form>
+    </div>
+    {% include 'components/chosen_scripts.html' %}
+    {% load static %}
+    <script src="{% static 'scripts/modify_farm.js' %}" type="text/javascript" charset="utf-8"></script>
+    {% if current_records %}
+        {{ current_records|json_script:"farm-data" }}
+        {% load static %}
+        <script src="{% static 'scripts/populate_farm.js' %}" type="text/javascript" charset="utf-8"></script>
+    {% endif %}
+{% endblock %}

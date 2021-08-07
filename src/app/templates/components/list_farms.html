@@ -1,0 +1,68 @@
+{% load markdownify %}
+<div class="row">
+    <div class="col"><h3>Farm</h3></div>
+    <div class="col"><h3>Mobs / Items</h3></div>
+    <div class="col"><h3>Description</h3></div>
+</div>
+{% for location, records in all_farms.items %}
+    <div class="row content-item">
+        <div class="col">
+            <div class="row"><a href="{% url 'get_location' location.id %}"><p>{{ location.name }}</p></a>
+            </div>
+            <div class="row"><p>
+                Location: {{ location.x_pos }}/{{ location.y_pos }}/{{ location.z_pos }}({{ location.region }})</p>
+            </div>
+            {% if location.user_is_maintainer %}
+                <div class="row">
+                    <form action="{% url 'modify_farm' location.id %}" method="get">
+                        <input class="btn btn-primary" type="submit" value="Modify">
+                    </form>
+                </div>
+                <div class="row">
+                    <form action="{% url 'delete_farm' %}" method="post">
+                        {% csrf_token %}
+                        <input type="hidden" name="location" value="{{ location.id }}">
+                        <input class="btn btn-danger" type="submit" value="Delete"
+                               onclick="return confirm('Are you sure you want to delete these farm records?\n' +
+                                '(This will not delete the location)');">
+                    </form>
+                </div>
+            {% endif %}
+        </div>
+        <div class="col">
+            <div class="row">
+                {% for record in records %}
+                    <div class="col">
+                        <div class="row">
+                            <img class="stack-icon" alt="{{ record.label }}" src="{{ record.icon }}"/>
+                        </div>
+                        <div class="row">
+                            <p>
+                                {{ record.label }}
+                                {% if record.xp %}
+                                    (XP Farm)
+                                {% endif %}
+                            </p>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="col">
+            {{ location.description|markdownify }}
+        </div>
+    </div>
+{% endfor %}
+
+<script>
+    $(function () {
+        $(".update_units").on("submit", function (e) {
+            $.ajax({
+                type: "POST",
+                url: "{% url 'update_availability' %}",
+                data: $(this).serialize(),
+            });
+            e.preventDefault();
+        });
+    });
+</script>

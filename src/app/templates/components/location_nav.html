@@ -1,0 +1,11 @@
+{% if location.user_is_maintainer %}
+    <nav class="navbar navbar-expand-sm bg-dark navbar-dark justify-content-center">
+        <ul class="navbar-nav">
+            <li class="nav-item"><a class="nav-link" href="{% url 'get_location' location.id %}">Location Home</a></li>
+            <li class="nav-item"><a class="nav-link" href="{% url 'modify_location' location.id %}">Update/Delete Location</a></li>
+            <li class="nav-item"><a class="nav-link" href="{% url 'modify_stock' location.id %}">Add Stock</a></li>
+            <li class="nav-item"><a class="nav-link" href="{% url 'modify_service' location.id %}">Add Service</a></li>
+            <li class="nav-item"><a class="nav-link" href="{% url 'modify_farm' location.id %}">Add Farm</a></li>
+        </ul>
+    </nav>
+{% endif %}

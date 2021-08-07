@@ -6,17 +6,12 @@ name = "pypi"
 [packages]
 django = "*"  # Web framework
 psycopg2-binary = "*"  # Postgres DB Driver
-djangorestframework = "*"  # API Framework
-django-oauth-toolkit = "*"  # OAuth2 Framework
+django-markdownx = "*"
+django-markdownify = "*"  # Markdown for location descriptions
 boto3 = "*"  # AWS SDK. Used to retrieve RDS password
 requests = "*"  # HTTP requests to Discord API
 gunicorn = "*"  # Production webserver
 supervisor = "*"  # Process manager for nginx and gunicorn
-
-[dev-packages]
-pytest = "*"  # Unit test framework
-pytest-cov = "*"  # Unit test coverage calculator
-flake8 = "*"  # Code quality analysis
 
 [requires]
 python_version = "3.9"

@@ -1,0 +1,62 @@
+{% extends 'components/base.html' %}
+{% block content %}
+    <div class="d-flex justify-content-center">
+        <form action="{% url 'list_stock' %}" method="get">
+            <fieldset>
+                <legend>Browse by Item</legend>
+                <p>
+                    The <em>Item</em> filter will try to find exact matches, then more loosely related matches.
+                    If you are finding no matches, use the auto-complete options to find an item by it's exact name.
+                    If there are still no results, then no shops are stocking that item.
+                </p>
+                <p>
+                    The <em>Enchantment</em> and <em>Potion Effect</em> filters are AND filters.
+                    If selected, only results which have those enchantments / effects will be returned.
+                </p>
+                <table>
+                    <tr>
+                        <td><label for="name">Item: </label></td>
+                        <td><input autocomplete="off" id="name" name="search" list="item_suggestions" size="60%"
+                                   placeholder="I want to buy..."><br></td>
+                    </tr>
+                    <tr>
+                        <td><label for="enchantment">Enchantments: </label></td>
+                        <td><select class="chosen-select-width item-select" name="enchantment" id="enchantment"
+                                    data-placeholder="Choose Enchantments..." multiple>
+                            <option value=""></option>
+                            {% for name in enchantment_suggestions %}
+                                <option value="{{ name }}">{{ name }}
+                            {% endfor %}
+                        </select></td>
+                    </tr>
+                    <tr>
+                        <td><label for="potion">Potion Effect: </label></td>
+                        <td><select class="chosen-select-width item-select" name="potion" id="potion"
+                                    data-placeholder="Choose Potion Effects..." multiple>
+                            <option value=""></option>
+                            {% for name in potion_suggestions %}
+                                <option value="{{ name }}">{{ name }}
+                            {% endfor %}
+                        </select></td>
+                    </tr>
+                </table>
+                <datalist id="item_suggestions">
+                    {% for name in item_suggestions %}
+                        <option value="{{ name }}">
+                    {% endfor %}
+                </datalist>
+                <input class="btn btn-success" type="submit" value="Search">
+                <button class="btn btn-info" type="submit" value="YES" name="all">All Items</button>
+            </fieldset>
+            <fieldset>
+                <legend>Browse by Category:</legend>
+                {% for class in all_classes %}
+                    <button class="btn btn-light" type="submit" value="{{ class }}" name="class">{{ class }}</button>
+                {% endfor %}
+            </fieldset>
+        </form>
+    </div>
+    {% include 'components/list_stock.html' %}
+    {% include 'components/pagination.html' %}
+    {% include 'components/chosen_scripts.html' %}
+{% endblock %}
