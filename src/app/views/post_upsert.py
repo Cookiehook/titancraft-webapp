@@ -69,7 +69,7 @@ def upsert_stock(request):
     stock_record.last_updated = datetime.datetime.utcnow()
     stock_record.save()
 
-    num_stacks = len([key for key in request.POST if key.startswith("stock_item")])
+    num_stacks = len([key for key in request.POST if key.startswith("stock_item_")])
 
     # Delete and re-create all itemstacks for this record. Otherwise, orphans would accumulate
     # when users change the item for sale. Enchantments and Potions are implicitly deleted by DB relationship.
@@ -79,7 +79,7 @@ def upsert_stock(request):
             continue  # Likely a hanging empty itemstack fieldset. Ignore it
 
         item = Item.objects.get(name=request.POST[f"stock_item_{i}"])
-        stack_size = request.POST[f"stock_stack_size_{i}"]
+        stack_size = (int(request.POST[f"stock_stacks_{i}"]) * 64) + (int(request.POST[f"stock_items_{i}"]))
         description = request.POST[f"stock_description_{i}"]
         enchantments = request.POST.getlist(f"enchantments_{i}", [])
         potions = request.POST.getlist(f"potions_{i}", [])

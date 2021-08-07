@@ -23,11 +23,18 @@
                             {% endfor %}
                         </select></td>
                     </tr>
-                <tr>
-                    <td><label for="stock_stack_size_1">Stack Size: </label></td>
-                    <td><input required size="3" type="number" name="stock_stack_size_1" id="stock_stack_size_1"
-                                   value="1"></td>
-                </tr>
+                    <tr>
+                        <td><label>Amount: </label></td>
+                        <td><input required size="3" type="number" name="stock_stacks_1" id="stock_stacks_1"
+                                   value="1">
+                            <label for="stock_stacks_1">stacks </label>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td><input required size="3" type="number" name="stock_items_1" id="stock_items_1"
+                                   value="0">
+                            <label for="stock_items_1">items </label>
+                    </tr>
                     <tr>
                         <td><label for="stock_description_1">Description<br><em>(Optional)</em>: </label></td>
                         <td><input size="30" type="text" placeholder="Customisations, if any" name="stock_description_1"

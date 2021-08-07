@@ -1,12 +1,12 @@
 {% load markdownify %}
 <div class="row">
-    <div class="col"><h3>Shop</h3></div>
-    <div class="col"><h3>Service</h3></div>
-    <div class="col"><h3>Description</h3></div>
+    <div class="col-sm-3"><h3>Shop</h3></div>
+    <div class="col-sm-2"><h3>Service</h3></div>
+    <div class="col-sm-6"><h3>Description</h3></div>
 </div>
 {% for service in all_services %}
     <div class="row content-item">
-        <div class="col">
+        <div class="col-sm-3">
             <div class="row"><a href="{% url 'get_location' service.location.id %}"><p>{{ service.location.name }}</p>
             </a>
             </div>
@@ -29,10 +29,10 @@
                 </div>
             {% endif %}
         </div>
-        <div class="col">
+        <div class="col-sm-2">
             {{ service.name }}
         </div>
-        <div class="col">
+        <div class="col-sm-6">
             {{ service.description|markdownify }}
         </div>
     </div>
