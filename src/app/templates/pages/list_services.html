@@ -6,7 +6,7 @@
             <table>
                 <tr>
                     <td><label for="search">Service: </label></td>
-                    <td><input autocomplete="off" name="search" id="search" list="service_suggestions" size="60%"
+                    <td><input autocomplete="off" name="search" id="search" list="service_suggestions"
                                placeholder="Find Services..." value="{{ search_term }}">
                         <datalist id="service_suggestions">
                             {% for name in service_suggestions %}
