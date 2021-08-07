@@ -24,8 +24,8 @@
         <tr>
             <td>Near Co-ordinates:</td>
             <td>
-                <input type="number" id="x_pos" name="x_pos" placeholder="X" size="5%" value="{{ x_pos }}">
-                <input type="number" id="z_pos" name="z_pos" placeholder="Z" size="5%" value="{{ z_pos }}">
+                <input type="number" id="x_pos" name="x_pos" placeholder="X" size="5%" value="{{ search_x_pos }}">
+                <input type="number" id="z_pos" name="z_pos" placeholder="Z" size="5%" value="{{ search_z_pos }}">
             </td>
         </tr>
         </table>
@@ -61,7 +61,7 @@
     {% include 'components/chosen_scripts.html' %}
     <script>
         $(document).ready(function () {
-            $('#region').val({{ region|safe }}).trigger('chosen:updated');
+            $('#region').val({{ search_region|safe }}).trigger('chosen:updated');
         });
     </script>
 {% endblock %}

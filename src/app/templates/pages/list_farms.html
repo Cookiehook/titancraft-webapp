@@ -14,7 +14,7 @@
                     <tr>
                         <td><label for="name">Item: </label></td>
                         <td><input autocomplete="off" id="name" name="search" list="item_suggestions" size="60%"
-                                   placeholder="Farm Item..."><br></td>
+                                   placeholder="Farm Item..." value="{{ search_term }}"><br></td>
                     </tr>
                     <tr>
                         <td><label for="mob">Mob: </label></td>
@@ -45,4 +45,12 @@
     {% include 'components/list_farms.html' %}
     {% include 'components/pagination.html' %}
     {% include 'components/chosen_scripts.html' %}
+        <script>
+        $(document).ready(function () {
+            $('#mob').val({{ search_mob|safe }}).trigger('chosen:updated');
+            {% if search_xp %}
+                $('#xp').prop("checked", true);
+            {% endif %}
+        });
+    </script>
 {% endblock %}

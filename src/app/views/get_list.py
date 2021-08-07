@@ -61,6 +61,11 @@ def list_stock(request):
         "all_classes": sorted({c.name for c in ItemClass.objects.all()}),
     }
 
+    if 'all' not in request.GET:
+        context["search_term"] = request.GET.get("search", "")
+        context["search_enchantment"] = request.GET.getlist("enchantment")
+        context["search_potion"] = request.GET.getlist("potion")
+
     utils.set_pagination_details(request.GET, all_stock, page, context)
     return render(request, template_name, context)
 
@@ -89,6 +94,9 @@ def list_services(request):
         "all_services": all_services,
         "search_placeholder": "Find a Service...",
     }
+
+    if 'all' not in request.GET:
+        context["search_term"] = request.GET.get("search", "")
 
     utils.set_pagination_details(request.GET, all_services, page, context)
     return render(request, template_name, context)
@@ -125,6 +133,12 @@ def list_farms(request):
         "item_suggestions": Item.objects.all(),
         "mobs": Mob.objects.all()
     }
+
+    if 'all' not in request.GET:
+        context["search_term"] = request.GET.get("search", "")
+        context["search_mob"] = request.GET.getlist("mob", [])
+        context["search_xp"] = request.GET.get("xp", False)
+
     utils.set_pagination_details(request.GET, locations, page, context)
     return render(request, template_name, context)
 
@@ -162,12 +176,14 @@ def list_locations(request):
         "regions": Region.objects.all(),
         "all_locations": all_locations,
         "search_placeholder": f"Search for Location...",
-        "location_suggestions": [l.name for l in all_locations],
-        "x_pos": request.GET.get("x_pos"),
-        "z_pos": request.GET.get("z_pos"),
-        "region": request.GET.getlist('region', []),
-        "search_term": request.GET.get("search", "")
+        "location_suggestions": [l.name for l in all_locations]
     }
+
+    if 'all' not in request.GET:
+        context["search_x_pos"] = request.GET.get("x_pos")
+        context["search_z_pos"] = request.GET.get("z_pos")
+        context["search_region"] = request.GET.getlist('region', [])
+        context["search_term"] = request.GET.get("search", "")
 
     utils.set_pagination_details(request.GET, all_locations, page, context)
     return render(request, template_name, context)
