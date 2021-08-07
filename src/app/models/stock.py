@@ -41,7 +41,7 @@ class StockRecord(models.Model):
             else:
                 stack_data["stacks"] = 0
                 stack_data["items"] = stack.stack_size
-                stack_data['stack_size'] = f"{stack.stack_size} Items"
+                stack_data['stack_size_label'] = f"{stack.stack_size} Items"
 
             stack_data['item'] = stack.item.name
             stack_data['description'] = stack.description

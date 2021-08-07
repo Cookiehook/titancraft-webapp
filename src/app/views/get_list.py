@@ -151,11 +151,22 @@ def list_locations(request):
 
         all_locations = Location.objects.filter(region_filter & search_filter).order_by("spawn_distance")
 
+    if 'x_pos' in request.GET and 'z_pos' in request.GET and \
+            request.GET.get('x_pos') != '' and request.GET.get('z_pos') != '':
+        x_centre = int(request.GET.get('x_pos'))
+        z_centre = int(request.GET.get('z_pos'))
+        [l.set_player_distance(x_centre, z_centre) for l in all_locations]
+        all_locations = sorted(all_locations, key=lambda l: l.player_distance)
+
     context = {
         "regions": Region.objects.all(),
         "all_locations": all_locations,
         "search_placeholder": f"Search for Location...",
         "location_suggestions": [l.name for l in all_locations],
+        "x_pos": request.GET.get("x_pos"),
+        "z_pos": request.GET.get("z_pos"),
+        "region": request.GET.getlist('region', []),
+        "search_term": request.GET.get("search", "")
     }
 
     utils.set_pagination_details(request.GET, all_locations, page, context)

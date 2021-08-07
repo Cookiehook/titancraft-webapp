@@ -38,6 +38,10 @@ class Location(models.Model):
         maintainers = Maintainer.objects.filter(location=self)
         return user.is_staff or user in [m.user for m in maintainers]
 
+    def set_player_distance(self, x_pos, z_pos):
+        self.player_distance = math.sqrt((self.x_pos - x_pos)*(self.x_pos - x_pos) +
+                                         (self.z_pos - z_pos)*(self.z_pos - z_pos))
+
 
 class Maintainer(models.Model):
     location = models.ForeignKey(Location, on_delete=models.CASCADE)
