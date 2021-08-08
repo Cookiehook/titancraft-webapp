@@ -32,27 +32,11 @@ resource "aws_route_table" "eu-west-2a-private" {
 
   }
 }
-resource "aws_route_table" "eu-west-2b-private" {
-  vpc_id = aws_vpc.vpc.id
-  route {
-    cidr_block     = "0.0.0.0/0"
-    nat_gateway_id = aws_nat_gateway.eu-west-2b.id
-  }
-  tags = {
-    Name    = "${var.application}-eu-west-2b-private"
-    service = var.application
-  }
-}
 
 // Route Table associations with subnets / VPC
 resource "aws_route_table_association" "eu-west-2a-private" {
   route_table_id = aws_route_table.eu-west-2a-private.id
   subnet_id      = aws_subnet.eu-west-2a-private.id
-}
-
-resource "aws_route_table_association" "eu-west-2b-private" {
-  route_table_id = aws_route_table.eu-west-2b-private.id
-  subnet_id      = aws_subnet.eu-west-2b-private.id
 }
 
 resource "aws_route_table_association" "eu-west-2a-public" {

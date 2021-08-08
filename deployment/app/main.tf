@@ -30,13 +30,6 @@ data "aws_subnet" "eu-west-2b-public" {
   }
 }
 
-data "aws_subnet" "eu-west-2b-private" {
-  filter {
-    name = "tag:Name"
-    values = ["${var.application}-eu-west-2b-private"]
-  }
-}
-
 data "aws_iam_role" "rds-monitoring" {
   name = "rds-monitoring-role"
 }

@@ -8,19 +8,19 @@ secrets:
     file: ./secrets/TITANCRAFT_WEBAPP_SECRET_KEY.secret
 
 services:
-#  app:
-#    build: .
-#    depends_on:
-#      db:
-#        condition: service_healthy
-#    ports:
-#      - "127.0.0.1:5000:5000"
-#    environment:
-#      - titancraft_db_dsn=postgresql://postgres:bob@db:5432
-#    secrets:
-#      - DISCORD_TITANCRAFT_CLIENT_ID
-#      - DISCORD_TITANCRAFT_CLIENT_SECRET
-#      - TITANCRAFT_WEBAPP_SECRET_KEY
+  app:
+    build: .
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "127.0.0.1:5000:5000"
+    environment:
+      - titancraft_db_dsn=postgresql://postgres:bob@db:5432
+    secrets:
+      - DISCORD_TITANCRAFT_CLIENT_ID
+      - DISCORD_TITANCRAFT_CLIENT_SECRET
+      - TITANCRAFT_WEBAPP_SECRET_KEY
   db:
     image: postgres
 #    command: [ "postgres", "-c", "log_statement=all" ]
