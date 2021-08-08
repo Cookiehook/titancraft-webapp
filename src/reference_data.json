@@ -1,11 +1,11 @@
 {
   "regions": [
-    {"name": "Overworld"},
-    {"name": "The Nether"},
-    {"name": "The End"},
+    {"name": "Overworld", "x_pos": -743, "z_pos": -1240},
+    {"name": "The Nether", "x_pos": -89, "z_pos": -160},
+    {"name": "The End", "x_pos": 0, "z_pos": 0},
     {"name": "The Above"},
-    {"name": "Resource World"},
-    {"name": "Shopping District", "parent": "Overworld"},
+    {"name": "Resource World", "x_pos": 0, "z_pos": 0},
+    {"name": "Shopping District", "parent": "Overworld", "x_pos": -743, "z_pos": -1240},
     {"name": "Entertainment District", "parent": "Overworld"}
   ],
 

@@ -20,13 +20,15 @@ def list_stock(request):
 
     enchantment_filter = Q()
     potion_filter =Q()
-    if enchantment_names := request.GET.getlist("enchantment"):
-        enchantments = Enchantment.objects.filter(name__in=enchantment_names).all()
-        enchantment_filter = Q(id__in=[e.item_stack.id for e in EnchantmentToItemStack.objects.filter(enchantment__in=enchantments)])
+    
+    if 'all' not in request.GET:
+        if enchantment_names := request.GET.getlist("enchantment"):
+            enchantments = Enchantment.objects.filter(name__in=enchantment_names).all()
+            enchantment_filter = Q(id__in=[e.item_stack.id for e in EnchantmentToItemStack.objects.filter(enchantment__in=enchantments)])
 
-    if potion_names := request.GET.getlist("potion"):
-        potions = Potion.objects.filter(name__in=potion_names).all()
-        potion_filter = Q(id__in=[p.item_stack.id for p in PotionToItemStack.objects.filter(potion__in=potions)])
+        if potion_names := request.GET.getlist("potion"):
+            potions = Potion.objects.filter(name__in=potion_names).all()
+            potion_filter = Q(id__in=[p.item_stack.id for p in PotionToItemStack.objects.filter(potion__in=potions)])
 
     if 'class' in request.GET:
         items = [i.item.id for i in ItemClass.objects.filter(name=request.GET['class'])]
