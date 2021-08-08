@@ -53,33 +53,12 @@ resource "aws_eip" "eu-west-2a" {
   }
 }
 
-resource "aws_eip" "eu-west-2b" {
-  vpc = "true"
-  network_border_group = "eu-west-2"
-  public_ipv4_pool     = "amazon"
-
-  tags = {
-    Name    = "${var.application}-eu-west-2b"
-    service = var.application
-  }
-}
-
 resource "aws_nat_gateway" "eu-west-2a" {
   allocation_id     = aws_eip.eu-west-2a.id
   connectivity_type = "public"
   subnet_id         = aws_subnet.eu-west-2a-public.id
   tags = {
     Name    = "${var.application}-eu-west-2a"
-    service = var.application
-  }
-}
-
-resource "aws_nat_gateway" "eu-west-2b" {
-  allocation_id     = aws_eip.eu-west-2b.id
-  connectivity_type = "public"
-  subnet_id         = aws_subnet.eu-west-2b-public.id
-  tags = {
-    Name    = "${var.application}-eu-west-2b"
     service = var.application
   }
 }

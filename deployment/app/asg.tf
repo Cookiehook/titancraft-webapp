@@ -7,7 +7,6 @@ resource "aws_autoscaling_group" "asg" {
   launch_configuration = aws_launch_configuration.launch_configuration.name
   vpc_zone_identifier = [
     data.aws_subnet.eu-west-2a-private.id,
-    data.aws_subnet.eu-west-2b-private.id,
   ]
   target_group_arns = [
     aws_lb_target_group.target-group.arn
