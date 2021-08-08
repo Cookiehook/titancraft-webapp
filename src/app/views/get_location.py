@@ -1,9 +1,10 @@
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render
+from django.shortcuts import render, redirect
+from django.urls import reverse
 
 from app import utils
 from app.models.constants import Region
-from app.models.locations import Maintainer, Location
+from app.models.locations import Maintainer, Location, Path
 from app.models.stock import StockRecord, ServiceRecord
 from app.models.users import UserDetails
 
@@ -53,3 +54,18 @@ def get_location(request, id):
         context["all_farms"] = farm_records
 
     return render(request, template_name, context)
+
+
+@login_required()
+def manage_paths(request):
+    template_name = "pages/manage_paths.html"
+    if not request.user.is_staff:
+        return redirect(reverse("not_authorised"))
+
+    context = {
+        "paths": Path.objects.order_by("region")
+    }
+
+    return render(request, template_name, context)
+
+

@@ -50,3 +50,23 @@ class Maintainer(models.Model):
 
     def __str__(self):
         return f"{self.location} - {self.user}"
+
+
+class Path(models.Model):
+    name = models.CharField(max_length=200)
+    region = models.ForeignKey(constants.Region, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f"{self.name} - {self.region}"
+
+
+class PathLink(models.Model):
+    path = models.ForeignKey(Path, on_delete=models.CASCADE)
+    position = models.IntegerField()
+    start_x = models.IntegerField()
+    start_z = models.IntegerField()
+    end_x = models.IntegerField()
+    end_z = models.IntegerField()
+
+    def __str__(self):
+        return f"{self.path} {self.position} - ({self.start_x}/{self.start_z}) - ({self.end_x}/{self.end_z})"

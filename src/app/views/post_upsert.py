@@ -7,7 +7,7 @@ from django.shortcuts import redirect
 from django.urls import reverse
 
 from app.models.constants import Region, Item, Enchantment, Potion, Mob
-from app.models.locations import Location, Maintainer
+from app.models.locations import Location, Maintainer, Path, PathLink
 from app.models.stock import StockRecord, PotionToItemStack, EnchantmentToItemStack, ItemStackToStockRecord, \
     ServiceRecord, FarmRecord
 
@@ -130,6 +130,7 @@ def upsert_service(request):
     return redirect(reverse('get_location', args=(service_record.location.id,)))
 
 
+@login_required()
 def upsert_farm(request):
     location = Location.objects.get(id=int(request.POST['location']))
     if not location.is_maintainer(request.user):
@@ -150,3 +151,32 @@ def upsert_farm(request):
             ).save()
 
     return redirect(reverse('get_location', args=(location.id,)))
+
+
+@login_required()
+def upsert_path(request):
+    if not request.user.is_staff:
+        return redirect(reverse("not_authorised"))
+
+    region = Region.objects.get(name=request.POST['region'])
+    if "path" in request.POST:
+        path = Path.objects.get(id=request.POST['path'])
+    else:
+        path = Path(name=request.POST["name"], region=region)
+        path.save()
+
+    PathLink.objects.filter(path=path).delete()
+    num_points = len([key for key in request.POST if key.startswith("x_pos")])
+    for i in range(1, num_points):
+        if request.POST[f"x_pos_{i}"] == "":
+            continue  # Likely a hanging empty fieldset. Ignore it
+
+        PathLink(path=path,
+                 position=i,
+                 start_x=request.POST[f"x_pos_{i}"],
+                 start_z=request.POST[f"z_pos_{i}"],
+                 end_x=request.POST[f"x_pos_{i+1}"],
+                 end_z=request.POST[f"z_pos_{i+1}"]).save()
+
+    return redirect(reverse('manage_paths'))
+
