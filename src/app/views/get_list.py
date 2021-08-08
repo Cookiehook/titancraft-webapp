@@ -20,13 +20,15 @@ def list_stock(request):
 
     enchantment_filter = Q()
     potion_filter =Q()
-    if enchantment_names := request.GET.getlist("enchantment"):
-        enchantments = Enchantment.objects.filter(name__in=enchantment_names).all()
-        enchantment_filter = Q(id__in=[e.item_stack.id for e in EnchantmentToItemStack.objects.filter(enchantment__in=enchantments)])
+    
+    if 'all' not in request.GET:
+        if enchantment_names := request.GET.getlist("enchantment"):
+            enchantments = Enchantment.objects.filter(name__in=enchantment_names).all()
+            enchantment_filter = Q(id__in=[e.item_stack.id for e in EnchantmentToItemStack.objects.filter(enchantment__in=enchantments)])
 
-    if potion_names := request.GET.getlist("potion"):
-        potions = Potion.objects.filter(name__in=potion_names).all()
-        potion_filter = Q(id__in=[p.item_stack.id for p in PotionToItemStack.objects.filter(potion__in=potions)])
+        if potion_names := request.GET.getlist("potion"):
+            potions = Potion.objects.filter(name__in=potion_names).all()
+            potion_filter = Q(id__in=[p.item_stack.id for p in PotionToItemStack.objects.filter(potion__in=potions)])
 
     if 'class' in request.GET:
         items = [i.item.id for i in ItemClass.objects.filter(name=request.GET['class'])]
@@ -61,6 +63,11 @@ def list_stock(request):
         "all_classes": sorted({c.name for c in ItemClass.objects.all()}),
     }
 
+    if 'all' not in request.GET:
+        context["search_term"] = request.GET.get("search", "")
+        context["search_enchantment"] = request.GET.getlist("enchantment")
+        context["search_potion"] = request.GET.getlist("potion")
+
     utils.set_pagination_details(request.GET, all_stock, page, context)
     return render(request, template_name, context)
 
@@ -89,6 +96,9 @@ def list_services(request):
         "all_services": all_services,
         "search_placeholder": "Find a Service...",
     }
+
+    if 'all' not in request.GET:
+        context["search_term"] = request.GET.get("search", "")
 
     utils.set_pagination_details(request.GET, all_services, page, context)
     return render(request, template_name, context)
@@ -125,6 +135,12 @@ def list_farms(request):
         "item_suggestions": Item.objects.all(),
         "mobs": Mob.objects.all()
     }
+
+    if 'all' not in request.GET:
+        context["search_term"] = request.GET.get("search", "")
+        context["search_mob"] = request.GET.getlist("mob", [])
+        context["search_xp"] = request.GET.get("xp", False)
+
     utils.set_pagination_details(request.GET, locations, page, context)
     return render(request, template_name, context)
 
@@ -151,12 +167,25 @@ def list_locations(request):
 
         all_locations = Location.objects.filter(region_filter & search_filter).order_by("spawn_distance")
 
+    if 'x_pos' in request.GET and 'z_pos' in request.GET and \
+            request.GET.get('x_pos') != '' and request.GET.get('z_pos') != '':
+        x_centre = int(request.GET.get('x_pos'))
+        z_centre = int(request.GET.get('z_pos'))
+        [l.set_player_distance(x_centre, z_centre) for l in all_locations]
+        all_locations = sorted(all_locations, key=lambda l: l.player_distance)
+
     context = {
         "regions": Region.objects.all(),
         "all_locations": all_locations,
         "search_placeholder": f"Search for Location...",
-        "location_suggestions": [l.name for l in all_locations],
+        "location_suggestions": [l.name for l in all_locations]
     }
+
+    if 'all' not in request.GET:
+        context["search_x_pos"] = request.GET.get("x_pos")
+        context["search_z_pos"] = request.GET.get("z_pos")
+        context["search_region"] = request.GET.getlist('region', [])
+        context["search_term"] = request.GET.get("search", "")
 
     utils.set_pagination_details(request.GET, all_locations, page, context)
     return render(request, template_name, context)

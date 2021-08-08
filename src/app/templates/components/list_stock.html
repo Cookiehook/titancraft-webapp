@@ -37,7 +37,7 @@
                         <img class="stack-icon" alt="{{ stack.item }}" src="{{ stack.icon }}"/>
                     </div>
                     <div class="row">
-                        {{ stack.stack_size }} {{ stack.item }}
+                        {{ stack.item }} <br>{{ stack.stack_size_label }}
                         {% if stack.labels %}
                             {% for label in stack.labels %}
                                 <br>({{ label }})

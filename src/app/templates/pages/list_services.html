@@ -1,13 +1,17 @@
 {% extends 'components/base.html' %}
 {% block content %}
-    <form method="get">
+    <form action="{% url 'list_services' %}" method="get">
         <fieldset>
             <legend>Browse by Service</legend>
             <table>
                 <tr>
+                    <th></th>
+                    <th class="wide-row"></th>
+                </tr>
+                <tr>
                     <td><label for="search">Service: </label></td>
-                    <td><input autocomplete="off" name="search" id="search" list="service_suggestions" size="60%"
-                               placeholder="Find Services...">
+                    <td><input autocomplete="off" name="search" id="search" list="service_suggestions" class="search-term"
+                               placeholder="Find Services..." value="{{ search_term }}">
                         <datalist id="service_suggestions">
                             {% for name in service_suggestions %}
                                 <option value="{{ name }}">

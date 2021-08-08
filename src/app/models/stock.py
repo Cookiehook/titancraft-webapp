@@ -27,7 +27,22 @@ class StockRecord(models.Model):
             stack_enchanted = True if stack.enchantmenttoitemstack_set.all() else False
             stack_potion = stack.potiontoitemstack_set.all()[0].potion if stack.potiontoitemstack_set.all() else None
 
-            stack_data['stack_size'] = stack.stack_size
+            if stack.stack_size == 64:
+                stack_data["stacks"] = 1
+                stack_data["items"] = 0
+                stack_data['stack_size_label'] = "1 Stack"
+            elif stack.stack_size > 64:
+                stack_data["stacks"] = int(stack.stack_size / 64)
+                stack_data["items"] = 0
+                stack_data['stack_size_label'] = f"{stack_data['stacks']} Stacks"
+                if stack.stack_size % 64:
+                    stack_data["items"] = stack.stack_size % 64
+                    stack_data['stack_size_label'] += f" + {stack_data['items']} Items"
+            else:
+                stack_data["stacks"] = 0
+                stack_data["items"] = stack.stack_size
+                stack_data['stack_size_label'] = f"{stack.stack_size} Items"
+
             stack_data['item'] = stack.item.name
             stack_data['description'] = stack.description
             stack_data['final'] = True if idx == len(self.itemstacktostockrecord_set.all()) - 1 else False

@@ -15,9 +15,13 @@
                 </p>
                 <table>
                     <tr>
+                        <th></th>
+                        <th class="wide-row"></th>
+                    </tr>
+                    <tr>
                         <td><label for="name">Item: </label></td>
-                        <td><input autocomplete="off" id="name" name="search" list="item_suggestions" size="60%"
-                                   placeholder="I want to buy..."><br></td>
+                        <td><input autocomplete="off" id="name" name="search" list="item_suggestions" class="search-term"
+                                   placeholder="I want to buy..." value="{{ search_term }}"><br></td>
                     </tr>
                     <tr>
                         <td><label for="enchantment">Enchantments: </label></td>
@@ -59,4 +63,10 @@
     {% include 'components/list_stock.html' %}
     {% include 'components/pagination.html' %}
     {% include 'components/chosen_scripts.html' %}
+    <script>
+        $(document).ready(function () {
+            $('#enchantment').val({{ search_enchantment|safe }}).trigger('chosen:updated');
+            $('#potion').val({{ search_potion|safe }}).trigger('chosen:updated');
+        });
+    </script>
 {% endblock %}

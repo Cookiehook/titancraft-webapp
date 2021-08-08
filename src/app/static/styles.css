@@ -1,3 +1,11 @@
+.title-logo {
+	width: 80%;
+}
+
+.tt-logo {
+	width: 9%;
+}
+
 .title-bar {
     padding-top: 5px;
 }
@@ -44,4 +52,12 @@ body {
 .stack-icon {
 	display: block;
 	width: 64px;
+}
+
+.wide-row {
+	width: 85%;
+}
+
+.search-term {
+	width: 100%;
 }

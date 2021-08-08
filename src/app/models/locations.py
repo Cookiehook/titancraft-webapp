@@ -28,7 +28,8 @@ class Location(models.Model):
 
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
         # Disregard height when calculating distance to spawn. It's close enough for ordering a web page.
-        self.spawn_distance = math.sqrt((self.x_pos * self.x_pos) + (self.z_pos * self.z_pos))
+        self.spawn_distance = math.sqrt((self.x_pos - self.region.x_pos)*(self.x_pos - self.region.x_pos) +
+                                         (self.z_pos - self.region.z_pos)*(self.z_pos - self.region.z_pos))
         super(Location, self).save(force_insert, force_update, using, update_fields)
 
     def set_display_data(self, user):
@@ -37,6 +38,10 @@ class Location(models.Model):
     def is_maintainer(self, user):
         maintainers = Maintainer.objects.filter(location=self)
         return user.is_staff or user in [m.user for m in maintainers]
+
+    def set_player_distance(self, x_pos, z_pos):
+        self.player_distance = math.sqrt((self.x_pos - x_pos)*(self.x_pos - x_pos) +
+                                         (self.z_pos - z_pos)*(self.z_pos - z_pos))
 
 
 class Maintainer(models.Model):

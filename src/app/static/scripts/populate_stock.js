@@ -2,7 +2,8 @@ $(document).ready(function () {
     let itemstacks = JSON.parse(document.getElementById('itemstack-data').textContent);
     for (var i = 1; i < itemstacks.length + 1; i++) {
         $('#stock_item_' + i).val(itemstacks[i - 1]['item']).trigger('chosen:updated');
-        $('#stock_stack_size_' + i).val(itemstacks[i - 1]['stack_size']);
+        $('#stock_stacks_' + i).val(itemstacks[i - 1]['stacks']);
+        $('#stock_items_' + i).val(itemstacks[i - 1]['items']);
         $('#stock_description_' + i).val(itemstacks[i - 1]['description']);
 
         if (itemstacks[i - 1]['label_type'] === "enchantment") {
