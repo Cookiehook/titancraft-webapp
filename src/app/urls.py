@@ -39,6 +39,7 @@ urlpatterns = [
     path('location/<int:id>/farm/modify', get_modify.modify_farm, name='modify_farm'),
     path('path/modify', get_modify.modify_path, name='modify_new_path'),
     path('path/<int:id>/modify', get_modify.modify_path, name='modify_path'),
+    path('map/<int:region_id>', get_location.get_map, name='get_map'),
 
     path('stock/update_availability', post_upsert.update_availability, name='update_availability'),
 

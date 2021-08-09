@@ -1,0 +1,9 @@
+{% extends 'components/base_template.html' %}
+{% block main %}
+    <script src="https://cdn.jsdelivr.net/npm/@svgdotjs/svg.js@3.0/dist/svg.min.js"></script>
+    <main class="container-fluid topmast">
+        <div class="content" id="map">
+            {% block content %}{% endblock %}
+        </div>
+    </main>
+{% endblock %}

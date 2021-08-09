@@ -59,6 +59,24 @@ class Path(models.Model):
     def __str__(self):
         return f"{self.name} - {self.region}"
 
+    def get_display_data(self):
+        path_data = {
+            "id": self.id,
+            "name": self.name,
+            "region": self.region.name,
+            "points": []
+        }
+        for point in self.pathlink_set.order_by("position"):
+            path_data['points'].append({
+                "x_pos": point.start_x,
+                "z_pos": point.start_z,
+            })
+        path_data['points'].append({
+            "x_pos": point.end_x,
+            "z_pos": point.end_z,
+        })
+        return path_data
+
 
 class PathLink(models.Model):
     path = models.ForeignKey(Path, on_delete=models.CASCADE)

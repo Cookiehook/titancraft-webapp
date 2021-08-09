@@ -162,8 +162,10 @@ def upsert_path(request):
     if "path" in request.POST:
         path = Path.objects.get(id=request.POST['path'])
     else:
-        path = Path(name=request.POST["name"], region=region)
-        path.save()
+        path = Path(name=request.POST["name"])
+
+    path.region = region
+    path.save()
 
     PathLink.objects.filter(path=path).delete()
     num_points = len([key for key in request.POST if key.startswith("x_pos")])

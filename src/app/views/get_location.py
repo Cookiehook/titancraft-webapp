@@ -21,6 +21,19 @@ def manage_locations(request):
 
 
 @login_required()
+def manage_paths(request):
+    template_name = "pages/manage_paths.html"
+    if not request.user.is_staff:
+        return redirect(reverse("not_authorised"))
+
+    context = {
+        "paths": Path.objects.order_by("region")
+    }
+
+    return render(request, template_name, context)
+
+
+@login_required()
 def get_location(request, id):
     template_name = 'pages/get_location.html'
 
@@ -57,15 +70,14 @@ def get_location(request, id):
 
 
 @login_required()
-def manage_paths(request):
-    template_name = "pages/manage_paths.html"
-    if not request.user.is_staff:
-        return redirect(reverse("not_authorised"))
+def get_map(request, region_id):
+    template_name = 'pages/get_map.html'
+
+    region = Region.objects.get(name="Shopping District")
+    paths = [p.get_display_data() for p in Path.objects.filter(region=region)]
 
     context = {
-        "paths": Path.objects.order_by("region")
+        "paths": paths,
+        "region": {"name": region.name, "x_pos": region.x_pos, "z_pos": region.z_pos}
     }
-
     return render(request, template_name, context)
-
-

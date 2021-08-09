@@ -109,22 +109,6 @@ def modify_path(request, id=None):
     }
     if id:
         path = Path.objects.get(id=id)
-        path_data = {
-            "id": path.id,
-            "name": path.name,
-            "region": path.region.name,
-            "points": []
-        }
-        for point in path.pathlink_set.order_by("position"):
-            path_data['points'].append({
-                "x_pos": point.start_x,
-                "z_pos": point.start_z,
-            })
-        path_data['points'].append({
-            "x_pos": point.end_x,
-            "z_pos": point.end_z,
-        })
-
-        context['path'] = path_data
+        context['path'] = path.get_display_data()
 
     return render(request, template_name, context)

@@ -1,0 +1,7 @@
+{% extends 'components/map_page.html' %}
+{% block content %}
+    {% load static %}
+    {{ paths|json_script:"paths-data" }}
+    {{ region|json_script:"region-data" }}
+    <script src="{% static 'scripts/draw_map.js' %}" type="text/javascript" charset="utf-8"></script>
+{% endblock %}
