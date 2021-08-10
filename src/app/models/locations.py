@@ -66,15 +66,16 @@ class Path(models.Model):
             "region": self.region.name,
             "points": []
         }
-        for point in self.pathlink_set.order_by("position"):
+        if self.pathlink_set.all():
+            for point in self.pathlink_set.order_by("position"):
+                path_data['points'].append({
+                    "x_pos": point.start_x,
+                    "z_pos": point.start_z,
+                })
             path_data['points'].append({
-                "x_pos": point.start_x,
-                "z_pos": point.start_z,
+                "x_pos": point.end_x,
+                "z_pos": point.end_z,
             })
-        path_data['points'].append({
-            "x_pos": point.end_x,
-            "z_pos": point.end_z,
-        })
         return path_data
 
 

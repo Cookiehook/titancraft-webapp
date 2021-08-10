@@ -27,7 +27,7 @@ def manage_paths(request):
         return redirect(reverse("not_authorised"))
 
     context = {
-        "paths": Path.objects.order_by("region")
+        "paths": Path.objects.order_by("region", "name")
     }
 
     return render(request, template_name, context)
@@ -74,10 +74,16 @@ def get_map(request, region_id):
     template_name = 'pages/get_map.html'
 
     region = Region.objects.get(name="Shopping District")
-    paths = [p.get_display_data() for p in Path.objects.filter(region=region)]
+    paths = [p.get_display_data() for p in Path.objects.filter(region=region).order_by("name")]
+    locations = [{
+        "name": l.name,
+        "x_pos": l.x_pos,
+        "z_pos": l.z_pos
+    } for l in Location.objects.filter(region=region)]
 
     context = {
         "paths": paths,
-        "region": {"name": region.name, "x_pos": region.x_pos, "z_pos": region.z_pos}
+        "region": {"name": region.name, "x_pos": region.x_pos, "z_pos": region.z_pos},
+        "locations": locations
     }
     return render(request, template_name, context)

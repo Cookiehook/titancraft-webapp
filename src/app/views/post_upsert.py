@@ -158,13 +158,13 @@ def upsert_path(request):
     if not request.user.is_staff:
         return redirect(reverse("not_authorised"))
 
-    region = Region.objects.get(name=request.POST['region'])
     if "path" in request.POST:
         path = Path.objects.get(id=request.POST['path'])
     else:
-        path = Path(name=request.POST["name"])
+        path = Path()
 
-    path.region = region
+    path.name = request.POST["name"]
+    path.region = Region.objects.get(name=request.POST['region'])
     path.save()
 
     PathLink.objects.filter(path=path).delete()
