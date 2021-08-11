@@ -1,51 +1,37 @@
 function locationSpawnOffset(region, location) {
+    let scale_factor = 1.77
+    let x_pos = (location['x_pos'] - region['x_pos']) * scale_factor
+    let z_pos = (location['z_pos'] - region['z_pos']) * scale_factor
     return {
-        "x_pos": location['x_pos'] - region['x_pos'],
-        "z_pos": location['z_pos'] - region['z_pos'],
+        "x_pos": x_pos,
+        "z_pos": z_pos,
     }
-}
-
-function polylineSpawnOffset(region, points) {
-    var points_corrected = []
-    for (let i = 0; i < points.length; i++) {
-        points_corrected.push(points[i]['x_pos'] - region.x_pos)
-        points_corrected.push(points[i]['z_pos'] - region.z_pos)
-    }
-    return points_corrected
 }
 
 
 $(document).ready(function () {
-    let map_width = 250
-    let paths = JSON.parse(document.getElementById('paths-data').textContent);
-    let region = JSON.parse(document.getElementById('region-data').textContent);
-    let locations = JSON.parse(document.getElementById('location-data').textContent);
+    let region_data = JSON.parse(document.getElementById('region-data').textContent);
+    let location_data = JSON.parse(document.getElementById('location-data').textContent);
+    let map_width = 631
+    let map_height = 948
+    let x_origin = map_width * 0.542789
+    let z_origin = map_height * 0.56698
 
-    // TODO - Make this dependent on map size. Maybe allow zoom / pan?
-    let svg = SVG().addTo('#map').viewbox(0, 0, map_width*2, map_width*2);
+    let svg = SVG().addTo('.content').viewbox(0, 0, map_width, map_height)
 
-    // Draw paths relative to region centre, then move into map
-    for (let i = 0; i < paths.length; i++) {
-        let path = svg.polyline(polylineSpawnOffset(region, paths[i]['points']))
-        path.center(map_width + path.cx(), map_width + path.cy())
-        path.attr("name", paths[i]["name"])
-    }
+    for (let i = 0; i < location_data.length; i++) {
+        let position = locationSpawnOffset(region_data, location_data[i])
+        let loc = svg.circle(6).center(position['x_pos']  + x_origin, position['z_pos'] + z_origin)
+        loc.attr({"name": location_data[i]["name"]})
 
-    // Draw location dots relative to region centre, then move into map
-    for (let i = 0; i < locations.length; i++) {
-        let position = locationSpawnOffset(region, locations[i])
-        let loc = svg.circle(3).center(map_width + position['x_pos'], map_width + position['z_pos'])
-        loc.attr({"name": locations[i]["name"]})
-
-        // Hover-over details
-        loc.mouseenter(function() {
-            this.radius(3)
+        loc.mouseenter(function () {
+            this.radius(6)
             console.log(this.attr('name'))
         })
 
-        // destroy hover-over element
-        loc.mouseout(function() {
-            this.radius(1.5)
+        loc.mouseout(function () {
+            this.radius(3)
         })
+        locations.push(loc)
     }
 })

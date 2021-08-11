@@ -4,7 +4,7 @@ from django.shortcuts import redirect, render
 from django.urls import reverse
 
 from app.models.constants import Enchantment, Potion, Item, Mob, Region
-from app.models.locations import Maintainer, Location, Path
+from app.models.locations import Maintainer, Location
 from app.models.stock import StockRecord, ServiceRecord, FarmRecord
 from app.models.users import UserDetails
 
@@ -94,21 +94,5 @@ def modify_farm(request, id):
         "mobs": Mob.objects.all().order_by("name"),
         "current_records": [f.view_data for f in current_records],
     }
-
-    return render(request, template_name, context)
-
-
-@login_required()
-def modify_path(request, id=None):
-    if not request.user.is_staff:
-        return redirect(reverse("not_authorised"))
-
-    template_name = 'pages/modify_path.html'
-    context = {
-        "regions": Region.objects.all()
-    }
-    if id:
-        path = Path.objects.get(id=id)
-        context['path'] = path.get_display_data()
 
     return render(request, template_name, context)

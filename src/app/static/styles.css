@@ -63,13 +63,20 @@ body {
 }
 
 svg {
-    width: 100%;
+    background-image: url("images/sd_map.png");
+    background-repeat: no-repeat;
+    /*background-position: center;*/
+    background-size: cover;
 }
 
 svg polyline {
     fill: none;
-    stroke: #f06;
+    stroke: #9132a8;
     stroke-linecap: round;
     stroke-linejoin: round;
     stroke-width: 4;
+}
+
+svg circle {
+    fill: #ff0000
 }

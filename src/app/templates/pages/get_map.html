@@ -1,8 +1,9 @@
-{% extends 'components/map_page.html' %}
+{% extends 'components/base.html' %}
 {% block content %}
-    {% load static %}
-    {{ paths|json_script:"paths-data" }}
     {{ locations|json_script:"location-data" }}
     {{ region|json_script:"region-data" }}
+
+    <script src="https://cdn.jsdelivr.net/npm/@svgdotjs/svg.js@3.0/dist/svg.min.js"></script>
+    {% load static %}
     <script src="{% static 'scripts/draw_map.js' %}" type="text/javascript" charset="utf-8"></script>
 {% endblock %}

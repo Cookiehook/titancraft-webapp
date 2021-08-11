@@ -10,9 +10,6 @@ admin.site.register(constants.Potion)
 admin.site.register(constants.ItemClass)
 admin.site.register(constants.ItemIcon)
 
-admin.site.register(locations.Path)
-admin.site.register(locations.PathLink)
-
 admin.site.register(locations.Location)
 admin.site.register(locations.Maintainer)
 admin.site.register(stock.StockRecord)
